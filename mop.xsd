@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  MeOS Online Protocol 1.0
+
+-->
+
+<xsd:schema xmlns="http://www.melin.nu/mop"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.melin.nu/mop"
+            elementFormDefault="qualified"
+            xml:lang="en"
+            version="1.0">
+  <xsd:annotation>
+    <xsd:documentation>
+      This schema describes the MeOS Online Protocol for web results.
+
+      Authors:
+      Erik Melin
+
+      Date:
+      November 2013
+    </xsd:documentation>
+  </xsd:annotation>
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+
+  <!-- ROOT ELEMENTS -->
+
+  <!-- Usage: To send a complete picture of the results of an event at a certain state. -->
+  <xsd:element name="MOPComplete">
+    <xsd:annotation>
+      <xsd:documentation>
+        Complete event data at the current point. All existing (remote) data related to the event should be cleared and replaced by the sent data.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="competition" type="Competition"/>
+        <xsd:element name="ctrl" type="Control" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="cls" type="Class" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="org" type="Organization" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="cmp" type="Competitor" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="tm" type="Team" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <!-- Usage: To update the remote representation of an event to a certain state.. -->
+  <xsd:element name="MOPDiff">
+    <xsd:annotation>
+      <xsd:documentation>
+        An update to the existing remote event data. The remote data should be updated and new can be data added, but no data can be deleted.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="competition" type="Competition" minOccurs="0" maxOccurs="1"/>
+        <xsd:element name="ctrl" type="Control" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="cls" type="Class" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="org" type="Organization" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="cmp" type="Competitor" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="tm" type="Team" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <!-- END ROOT ELEMENTS -->
+
+  <xsd:complexType name="Competition">
+    <xsd:annotation>
+      <xsd:documentation>
+        The name of the competition.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="homepage" type="xsd:string" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>
+              The URL to the competition homepage.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+
+        <xsd:attribute name="organizer" type="xsd:string" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>
+              The name of the organizer.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        
+        <xsd:attribute name="date" type="xsd:date" use="optional">
+          <xsd:annotation>                      
+            <xsd:documentation>
+              The date of the event, expressed in ISO 8601 format.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="Control">
+    <xsd:annotation>
+      <xsd:documentation>
+        The name of radio control. (Radio 1, etc)
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="id" type="xsd:integer" use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              Unique identifier of the radio control.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+
+  <xsd:complexType name="Class">
+    <xsd:annotation>
+      <xsd:documentation>
+        The name of the class
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="id" type="xsd:integer" use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              Unique identifier of the class.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        
+        <xsd:attribute name="radio" type="xsd:string" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>
+              Ordered radio control id:s for each leg in the class. 
+              The legs are separated with semicolon (;) and the 
+              radio control id:s of a leg are separated by comma (,).
+              Examples: Single leg, two radio controls "67,150". 
+                        Two legs, one radio on each leg (same radio) "67;67".
+                        Two legs, two radios on each leg "67,150;77;150".
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        
+        <xsd:attribute name="ord" type="xsd:integer" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>
+              Number used to order classes. Classes should be sorted on this number (increasing), otherwise on their id:s.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+
+ <xsd:complexType name="Organization">
+    <xsd:annotation>
+      <xsd:documentation>
+        The name of the club etc. Prefer an abbrivation for a nice display, if suitable.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="id" type="xsd:integer" use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              Unique identifier of the organization.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+
+ <xsd:complexType name="BaseCompetitor">
+    <xsd:annotation>
+      <xsd:documentation>
+        The name of the competitor, team, etc.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="rt" type="xsd:integer" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>
+              Running time, in tenths of a second.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        
+        <xsd:attribute name="st" type="xsd:integer" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>
+              Start time, in tenths of a second after 00:00:00 of the day the competition started.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+
+        <xsd:attribute name="stat" type="xsd:integer" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>
+              Status of the competitor.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+                
+        <xsd:attribute name="cls" type="xsd:integer" use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              Id of the class.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+                
+        <xsd:attribute name="org" type="xsd:integer" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>
+              Id of the organization.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="Input">
+    <xsd:annotation>
+      <xsd:documentation>
+        Input status.
+      </xsd:documentation>
+    </xsd:annotation>    
+    
+    <xsd:attribute name="it" type="xsd:integer" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          Input time, i.e. accumulated time of prevous races/legs/stages etc., in tenths of a second.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    
+    <xsd:attribute name="tstat" type="xsd:integer" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          Total status of the competitor after this race/leg/stage etc.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>    
+  </xsd:complexType>
+  
+  <xsd:complexType name="Competitor">
+    <xsd:annotation>
+      <xsd:documentation>
+        A person running the race.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+        <xsd:element name="base" type="BaseCompetitor"/>
+        <xsd:element name="radio" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+        <xsd:element name="input" type="Input" minOccurs="0" maxOccurs="1"/>
+      </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:integer" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          Unique identifier of the competitor.
+        </xsd:documentation>
+        </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="Team">
+    <xsd:annotation>
+      <xsd:documentation>
+        A team running the race.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="base" type="BaseCompetitor"/>
+      <xsd:element name="r" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>
+            Id:s of competitors running in this team. Each leg is separated by a semicolon (;)
+            and if several competitors run the same leg (in parallel or as a patrol), the id:s
+            within a leg is separated by comma (,). 
+            Examples: Three legs, one runner on each leg: "31;32;33".
+                      A patrol of two: "31,32".
+                      Three legs, three parallel runners on the middle leg: "31;32,33,34;35".
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:integer" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          Unique identifier of the team.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+</xsd:schema>
