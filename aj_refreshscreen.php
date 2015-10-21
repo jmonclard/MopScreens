@@ -1,6 +1,6 @@
 <?php
   /*
-  Copyright 2014 Metraware
+  Copyright 2014-2015 Metraware
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,17 +16,15 @@
   */
   
 
-    include_once('functions.php');
-    session_start();
-    header('Content-type: text/html;charset=utf-8');
+  include_once('functions.php');
+  session_start();
+  header('Content-type: text/html;charset=utf-8');
 
-    $PHP_SELF = $_SERVER['PHP_SELF'];
-    ConnectToDB();
+  $PHP_SELF = $_SERVER['PHP_SELF'];
+  ConnectToDB();
 	
 	$rcid = ((isset($_GET['rcid'])) ? intval($_GET['rcid']) : 0);
-	
 	$out = array();
-	
 	$now = time();
 	
 	if($rcid > 0)
@@ -39,7 +37,7 @@
 			while($current = mysql_fetch_assoc($res))
 			{
 				$out[] = $current['fulllastrefresh'];
-				$out[] = $current['fulllastredraw'];
+				$out[] = $current['fulllastredraw']; //JM ???
 			}
 		}
 		

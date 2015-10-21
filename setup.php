@@ -1,7 +1,7 @@
 <?php
   /*
   Copyright 2013 Melin Software HB
-  Copyright 2014 Metraware
+  Copyright 2014-2015 Metraware
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -172,9 +172,9 @@ $sql = "CREATE TABLE `resultscreen` (
   `lefthtml` varchar(128) default NULL,
   `leftfixedlines` tinyint(4) NOT NULL default '3',
   `leftscrolledlines` tinyint(4) NOT NULL default '17',
-  `leftscrolltime` tinyint(4) NOT NULL default '3' COMMENT 'en 1/10s',
-  `leftscrollbeforetime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
-  `leftscrollaftertime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
+  `leftscrolltime` tinyint(4) NOT NULL default '3' COMMENT 'in 1/10s',
+  `leftscrollbeforetime` tinyint(4) NOT NULL default '50' COMMENT 'in 0.1s',
+  `leftscrollaftertime` tinyint(4) NOT NULL default '50' COMMENT 'in 0.1s',
   `leftupdateduration` int(11) NOT NULL default '10',
   `leftlastrefresh` int(11) NOT NULL default '0',
   `leftlastredraw` int(11) NOT NULL default '0',
@@ -186,9 +186,9 @@ $sql = "CREATE TABLE `resultscreen` (
   `righthtml` varchar(128) default NULL,
   `rightfixedlines` tinyint(4) NOT NULL default '3',
   `rightscrolledlines` tinyint(4) NOT NULL default '17',
-  `rightscrolltime` tinyint(4) NOT NULL default '3' COMMENT 'en 1/10s',
-  `rightscrollbeforetime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
-  `rightscrollaftertime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
+  `rightscrolltime` tinyint(4) NOT NULL default '3' COMMENT 'in 1/10s',
+  `rightscrollbeforetime` tinyint(4) NOT NULL default '50' COMMENT 'in 0.1s',
+  `rightscrollaftertime` tinyint(4) NOT NULL default '50' COMMENT 'in 0.1s',
   `rightupdateduration` int(11) NOT NULL default '10',
   `rightlastrefresh` int(11) NOT NULL default '0',
   `rightlastredraw` int(11) NOT NULL default '0',

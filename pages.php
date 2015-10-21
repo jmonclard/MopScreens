@@ -195,60 +195,6 @@
             }
         }
         
-        /*
-        
-        /////////////////////////
-        ////////////////////////
-        // récuperation de la configuration utilisateur
-        //$configuration = array($configGauche, $configDroite);
-        
-        $panelIndex = isset($_GET['panelIndex']) ? intval($_GET['panelIndex']) : 0;
-        //$configSouhaitee = $configuration[$panelIndex];
-
-        global $courses;
-        
-        
-        $cats = $courses[$configGauche[0]]["categories"];
-        
-        foreach($cats as $cat)
-        {
-            if ($cat["className"] == $configGauche[1])
-            {
-                $cls[0] = intval($cat["classId"]);
-            }
-        }
-      
-        $cmpId[0] = $courses[$configGauche[0]]["competitionId"];
-        $numlegs[0] = null;
-        $leg[0] = 0;
-        $ord[0] = 0;
-        $radio[0] = "finish";
-        $cats = $courses[$configDroite[0]]["categories"];
-
-        foreach($cats as $cat)
-        {
-            if ($cat["className"] == $configDroite[1])
-            {
-                $cls[1] = intval($cat["classId"]);
-            }
-        }
-      
-        $cmpId[1] = $courses[$configDroite[0]]["competitionId"];
-        $numlegs[1] = null;
-        $leg[1] = 0;
-        $ord[1] = 0;
-        $radio[1] = "finish";
-
-
-
-        defineVariableArr("phpTitle", $configGauche[1], $configDroite[1]);
-        defineVariableArr("phpcls", $cls[0], $cls[1]);
-        defineVariableArr("phpcmpId", $cmpId[0], $cmpId[1]);
-        defineVariableArr("phpleg", $leg[0], $leg[1]);
-        defineVariableArr("phpord", $ord[0], $ord[1]);
-        defineVariableArr("phpradio", $radio[0], $radio[1]);
-        */
-        
         if($screenmode == CST_SCREENMODE_DIVISE)
         {
             defineVariableArr2x("phpTitle", $classNameLeft, $classNameRight);
@@ -723,16 +669,6 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                             {
                                 if(e > 5)
                                 {
-                                    /*if(e == (count - 1))
-                                    {
-                                        r += '<td class="tdtimediff">' + line[e] + '</td>\r\n';
-                                    }
-                                    else
-                                    if(e == (count - 2))
-                                    {
-                                        r += '<td class="tdtimeresult">' + line[e] + '</td>\r\n';
-                                    }
-                                    else*/
                                     if(((line[5] > 1) && (e < 20)) || ((line[5] > 2) && (e < 26)) || e < 13)
                                     {
                                         r += '<td class="'+ prefix_class + (e-6) +'">' + line[e] + '</td>\r\n';
@@ -817,16 +753,6 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                                     {
                                         if(e > 5)
                                         {
-                                            /*if(e == (count - 1))
-                                            {
-                                                r += '<td class="tdtimediff">' + line[e] + '</td>\r\n';
-                                            }
-                                            else
-                                            if(e == (count - 2))
-                                            {
-                                                r += '<td class="tdtimeresult">' + line[e] + '</td>\r\n';
-                                            }
-                                            else*/
                                             if(((line[5] > 1) && (e < 20)) || ((line[5] > 2) && (e < 26)) || e < 13)
                                             {
                                                 r += '<td class="'+ prefix_class + (e-6) +'">' + line[e] + '</td>\r\n';
@@ -891,8 +817,6 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                     {
                         before_decrement_counter[panelIndex] = phpscrollbeforetime[panelIndex] / phpscrolltime[panelIndex];
                         bUpdateNeeded = true;
-                        /*displayScrollIndex[panelIndex] = 0;
-                        after_decrement_counter[panelIndex] = 0;*/
                     }
                     r += "</tbody>\r\n";
                     r += '</table>\r\n';
@@ -1004,10 +928,6 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                     }
                     after_decrement_counter[panelIndex] = phpscrollaftertime[panelIndex] / phpscrolltime[panelIndex];
                 }
-            }
-            else
-            {
-                //after_decrement_counter[panelIndex] = phpscrollaftertime[panelIndex] / phpscrolltime[panelIndex];
             }
             
             return r;

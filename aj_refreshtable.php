@@ -1,6 +1,6 @@
 <?php
   /*
-  Copyright 2014 Metraware
+  Copyright 2014-2015 Metraware
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,39 +15,25 @@
   limitations under the License.
   */
 
-    include_once('functions.php');
-    session_start();
-    header('Content-type: text/html;charset=utf-8');
+  include_once('functions.php');
+  session_start();
+  header('Content-type: text/html;charset=utf-8');
 
-    $PHP_SELF = $_SERVER['PHP_SELF'];
-    ConnectToDB();
+  $PHP_SELF = $_SERVER['PHP_SELF'];
+  ConnectToDB();
 
-    /*
-    if (isset($_GET['cmp']))
-    $_SESSION['competition'] = 1 * (int)$_GET['cmp'];
-
-    $cmpId = $_SESSION['competition'];
-    */
-
-    $cls = ((isset($_GET['cls'])) ? $_GET['cls'] : "0");
-    $cmpId = ((isset($_GET['cmpId'])) ? $_GET['cmpId'] : "0");
-    $leg = ((isset($_GET['leg'])) ? $_GET['leg'] : "0");
-    $ord = ((isset($_GET['ord'])) ? $_GET['ord'] : "0");
-    $radio = ((isset($_GET['radio'])) ? $_GET['radio'] : "finish");
-    
-    
-    $rcid = ((isset($_GET['rcid'])) ? $_GET['rcid'] : "0");
-    $sid = ((isset($_GET['sid'])) ? $_GET['sid'] : "0");
-    $sql = 'UPDATE resultscreen SET fulllastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
-    mysql_query($sql);
+  $cls = ((isset($_GET['cls'])) ? $_GET['cls'] : "0");
+  $cmpId = ((isset($_GET['cmpId'])) ? $_GET['cmpId'] : "0");
+  $leg = ((isset($_GET['leg'])) ? $_GET['leg'] : "0");
+  $ord = ((isset($_GET['ord'])) ? $_GET['ord'] : "0");
+  $radio = ((isset($_GET['radio'])) ? $_GET['radio'] : "finish");
   
-  /*
-  $sql = "SELECT max(leg) FROM mopTeamMember tm, mopTeam t WHERE tm.cid = '$cmpId' AND t.cid = '$cmpId' AND tm.id = t.id AND t.cls = $cls";
-  $res = mysql_query($sql);
-  $r = mysql_fetch_array($res);
-  $numlegs = $r[0];
-  */
-  //print "<h2>$cname</h2>\n";
+  
+  $rcid = ((isset($_GET['rcid'])) ? $_GET['rcid'] : "0");
+  $sid = ((isset($_GET['sid'])) ? $_GET['sid'] : "0");
+  $sql = 'UPDATE resultscreen SET fulllastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
+  mysql_query($sql);
+
   
   $arr_radio = array();
   $sql = 'SELECT * FROM mopclasscontrol WHERE cid ='.$cmpId.' AND id='.$cls.' AND leg='.$leg.' ORDER BY ord ASC';
@@ -69,24 +55,8 @@
     }
   }
   
-  /*if($arr_radio != null)
-  {
-    $nb_radio = min($nb_radio, count($arr_radio));
-  }*/
 
   if ($numlegs > 1) {
-    //Multiple legs, relay etc. 
-    /*
-    if (isset($_GET['leg'])) {
-      $leg = (int)$_GET['leg'];
-    }
-    if (isset($_GET['ord'])) {
-      $ord = (int)$_GET['ord'];
-    }
-    if (isset($_GET['radio'])) {
-      $radio = $_GET['radio'];
-    }
-    */
     for ($k = 1; $k <= $numlegs; $k++) {
       $sql = "SELECT max(ord) FROM mopTeamMember tm, mopTeam t WHERE t.cls = '$cls' AND tm.leg=$k AND ".
               "tm.cid = '$cmpId' AND t.cid = '$cmpId' AND tm.id = t.id";
@@ -116,10 +86,6 @@
         if($arr_radio != null)
         {
             $rid = implode(', ', $arr_radio);
-            /*$sql = "SELECT name FROM mopControl WHERE cid='$cmpId' AND id='$rid'";
-            $res = mysql_query($sql);
-            $rinfo = mysql_fetch_array($res);
-            $rname = $rinfo['name'];*/
    
             $sql = "SELECT team.id AS id, cmp.name AS name, team.name AS team, radio.rt AS time, radio.timestamp, 1 AS status, ".
                  "cmp.it+radio.rt AS tottime, cmp.tstat AS totstat ".
@@ -136,21 +102,18 @@
             $res = mysql_query($sql);
             $results = addRadioResult($res, $results);
       }
-      //print "<h3>Leg $leg, $rname</h3>\n";
       formatResult($results);
     }      
   }
   else {
     if (is_null($numlegs)) {
       //No teams;        
-      //$radio = selectRadio($cls);              
       if ($radio!='') {
         if ($radio == 'finish') {
             $sql = "SELECT cmp.id AS id, cmp.timestamp, cmp.name AS name, org.name AS team, cmp.rt AS time, cmp.stat AS status ".
                  "FROM mopCompetitor cmp LEFT JOIN mopOrganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
                  "WHERE cmp.cls = '$cls' ".
                  "AND cmp.cid = '$cmpId' ".
-                 //"AND cmp.stat=1 ".
                  "AND ((cmp.stat>0) OR ((cmp.stat=0) AND ((SELECT COUNT(*) FROM mopradio AS mr WHERE mr.cid='$cmpId' AND cmp.id=mr.id) > 0)))".
                  "ORDER BY FIELD(cmp.stat, 1) DESC, cmp.stat ASC, cmp.rt ASC, cmp.id";
             $rname = $lang["finish"];
@@ -164,12 +127,6 @@
         {
             $rid = implode(', ', $arr_radio);
             
-            /*
-            $sql = 'SELECT name FROM mopControl WHERE cid='.$cmpId.' AND id IN ('.$rid.')';
-            $res = mysql_query($sql);
-            $rinfo = mysql_fetch_array($res);
-            $rname = $rinfo['name'];
-            */        
             $sql = "SELECT cmp.id AS id, cmp.name AS name, org.name AS team, radio.ctrl, radio.timestamp, radio.rt AS time, 1 AS status ".
                  "FROM mopRadio AS radio, mopCompetitor AS cmp ".
                  "LEFT JOIN mopOrganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
@@ -182,13 +139,11 @@
             $res = mysql_query($sql);
             $results = addRadioResult($res, $results);
         }
-        //print "<h3>$rname</h3>\n";         
         formatResult($results); 
       }
     }
     else {
       // Single leg (patrol etc)        
-      //$radio = selectRadio($cls);
     
      if ($radio!='') {
        if ($radio == 'finish') {
@@ -207,18 +162,12 @@
         if($arr_radio != null)
         {
             $rid = implode(', ', $arr_radio);
-            /*$sql = "SELECT name FROM mopControl WHERE cid='$cmpId' AND id='$rid'";
-            $res = mysql_query($sql);
-            $rinfo = mysql_fetch_array($res);
-            $rname = $rinfo['name'];
-            */        
             $sql = "SELECT team.id AS id, cmp.name AS name, team.name AS team, radio.rt AS time, radio.timestamp, 1 AS status ".
                  "FROM mopRadio AS radio, mopTeamMember AS m, mopTeam AS team, mopCompetitor AS cmp ".
                  "WHERE radio.ctrl IN(".$rid.") ".
                  "AND radio.id=cmp.id ".
                  "AND m.rid = radio.id ".
                  "AND m.id = team.id ".
-                 /*"AND cmp.stat<=1 ".*/
                  "AND m.leg=1 ".
                  "AND cmp.cls='$cls' ".
                  "AND radio.cid = '$cmpId' AND m.cid = '$cmpId' AND team.cid = '$cmpId' AND cmp.cid = '$cmpId' ".
@@ -227,7 +176,6 @@
             $results = addRadioResult($res, $results);
        }
        
-       //print "<h3>$rname</h3>\n";         
        formatResult($results);
       }
     }

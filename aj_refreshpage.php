@@ -39,12 +39,12 @@
     $res = mysql_query($sql);
     if (mysql_num_rows($res) > 0)
     {
-        $r = mysql_fetch_array($res);
-        $rcid_active = $r['rcid'];
-        if($rcid_active != $rcid)
-        {
-            $refresh = $now + 1;
-        }
+      $r = mysql_fetch_array($res);
+      $rcid_active = $r['rcid'];
+      if($rcid_active != $rcid)
+      {
+        $refresh = $now + 1;
+      }
     }
     
     print '['.$refresh.', '.$now.'];';

@@ -1,6 +1,6 @@
 <?php
   /*
-  Copyright 2014 Metraware
+  Copyright 2014-2015 Metraware
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -21,13 +21,6 @@
     $PHP_SELF = $_SERVER['PHP_SELF'];
     ConnectToDB();
 
-    /*
-    if (isset($_GET['cmp']))
-    $_SESSION['competition'] = 1 * (int)$_GET['cmp'];
-
-    $cmpId = $_SESSION['competition'];
-    */
-
     $cls = ((isset($_GET['cls'])) ? $_GET['cls'] : "0");
     $cmpId = ((isset($_GET['cmpId'])) ? $_GET['cmpId'] : "0");
     $leg = ((isset($_GET['leg'])) ? $_GET['leg'] : "0");
@@ -39,27 +32,8 @@
     $sql = 'UPDATE resultscreen SET fulllastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
     mysql_query($sql);
   
-  /*
-  $sql = "SELECT max(leg) FROM mopTeamMember tm, mopTeam t WHERE tm.cid = '$cmpId' AND t.cid = '$cmpId' AND tm.id = t.id AND t.cls = $cls";
-  $res = mysql_query($sql);
-  $r = mysql_fetch_array($res);
-  $numlegs = $r[0];
-  */
-  //print "<h2>$cname</h2>\n";
   date_default_timezone_set('UTC');
   if ($numlegs > 1) {
-    //Multiple legs, relay etc. 
-    /*
-    if (isset($_GET['leg'])) {
-      $leg = (int)$_GET['leg'];
-    }
-    if (isset($_GET['ord'])) {
-      $ord = (int)$_GET['ord'];
-    }
-    if (isset($_GET['radio'])) {
-      $radio = $_GET['radio'];
-    }
-    */
     for ($k = 1; $k <= $numlegs; $k++) {
       $sql = "SELECT max(ord) FROM mopTeamMember tm, mopTeam t WHERE t.cls = '$cls' AND tm.leg=$k AND ".
               "tm.cid = '$cmpId' AND t.cid = '$cmpId' AND tm.id = t.id";
@@ -123,15 +97,12 @@
         $results = calculeStart($res);
         $res2 = mysql_query($sql2);
         $results2 = calculeStart($res2);
-        //print "<h3>$rname</h3>\n";
         $results3 = null;
         foreach($results as $i => $v)
         {
-            //if(isset($results[$k]))
             $results3[] = array($results[$i]['start_time'], $results[$i]['name'], $results[$i]['team'], $results2[$i]['name'], $results2[$i]['team'], $results2[$i]['start_time']);
-            //$results3[$i] = array_merge($results[$i], $results2[$i]);
         }
-        formatResult($results3); ////////////
+        formatResult($results3);
     }      
   }
   else {
@@ -179,17 +150,12 @@
         $res2 = mysql_query($sql2);
         $results2 = calculeStart($res2);  
         
-        //$results = array(array('a'), array('b'), array('c'));
-        //$results2 = array(array('d'), array('e'), array('f'));
-        //print "<h3>$rname</h3>\n";
         $results3 = null;
         foreach($results as $i => $v)
         {
-            //if(isset($results[$k]))
             $results3[] = array($results[$i]['start_time'], $results[$i]['name'], $results[$i]['team'], $results2[$i]['name'], $results2[$i]['team'], $results2[$i]['start_time']);
-            //$results3[$i] = array_merge($results[$i], $results2[$i]);
         }
-        formatResult($results3); ////////////
+        formatResult($results3);
       }
     }
     else {
@@ -241,15 +207,12 @@
        $results = calculeStart($res);
 	   $res2 = mysql_query($sql2);
        $results2 = calculeStart($res2);         
-       //print "<h3>$rname</h3>\n";         
        $results3 = null;
         foreach($results as $i => $v)
         {
-            //if(isset($results[$k]))
             $results3[] = array($results[$i]['start_time'], $results[$i]['name'], $results[$i]['team'], $results2[$i]['name'], $results2[$i]['team'], $results2[$i]['start_time']);
-            //$results3[$i] = array_merge($results[$i], $results2[$i]);
         }
-        formatResult($results3); ////////////
+        formatResult($results3);
       }
     }
   }

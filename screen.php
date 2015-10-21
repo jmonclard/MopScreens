@@ -1,6 +1,6 @@
 <?php
   /*
-  Copyright 2014 Metraware
+  Copyright 2014-2015 Metraware
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -419,9 +419,6 @@
         {
             print "screen:display screen config";
 
-            //$sql = "DELETE FROM resultscreen WHERE rcid=$rcid";
-            //$res = mysql_query($sql);        
-            //for ($i=1; $i<=NB_SCREEN; $i++)
             if ($n<1)
             {
                 $n=1;
@@ -724,7 +721,7 @@
                           $nentry=$r2[0];
                         }
                     }
-					$pctentries=round(1000*$nentry/$totalentry)/10.0;
+                    $pctentries=round(1000*$nentry/$totalentry)/10.0;
                     print "<td class='class_entries'>$nentry</td>\n";
                     print "<td class='class_entries'>$pctentries %</td>\n";
 

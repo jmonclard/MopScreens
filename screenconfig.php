@@ -158,7 +158,7 @@
                 $res = mysql_query($sql);
             }
         }
-        mysql_query($sql);
+        mysql_query($sql);     //JM ???
   
     }
 	
@@ -179,7 +179,7 @@
     }
 	
     
-    // Determine next available rcid for add or clone operations
+    //-- Determine next available rcid for add or clone operations
     
     $sql = "SELECT rcid FROM resultconfig";
     $res = mysql_query($sql);
@@ -195,6 +195,7 @@
             }
         }
     }
+
     print "<table border>\n";
     print "<tr>";
     print "<th colspan=4>Configuration</th>";
@@ -205,34 +206,34 @@
     $res = mysql_query($sql);
     if (mysql_num_rows($res) > 0)
     {
-        while ($r = mysql_fetch_array($res))
+      while ($r = mysql_fetch_array($res))
+      {
+        $rcid=$r['rcid'];
+        $name=$r['name'];
+        $active = $r['active'];
+        print "<tr>\n";
+        print "<td><a href='screen.php?rcid=$rcid'>$name</a></td>\n";
+        print "<td><img src='img/ecran.png' title='View' onclick='ViewConfig($rcid);'></img></td>\n";
+        print "<td><img src='img/play.png' title='View' onclick='PlayConfig($rcid);'></img></td>\n";
+        if ($active==1)
         {
-            $rcid=$r['rcid'];
-            $name=$r['name'];
-            $active = $r['active'];
-            print "<tr>\n";
-            print "<td><a href='screen.php?rcid=$rcid'>$name</a></td>\n";
-            print "<td><img src='img/ecran.png' title='View' onclick='ViewConfig($rcid);'></img></td>\n";
-            print "<td><img src='img/play.png' title='View' onclick='PlayConfig($rcid);'></img></td>\n";
-            if ($active==1)
-            {
-                print "<td><img src='img/run.png' title='View'></img></td>\n";
-            }
-            else
-            {
-                print "<td>&nbsp;</td>\n";
-            }
-            print "<td><img src='img/edit.png' title='edit' onclick='EditConfig($rcid);'></img></td>\n";
-            print "<td><img src='img/clone.png' title='clone' onclick='CloneConfig($rcid,$nextrcid);'></img></td>\n";
-            print "<td><img src='img/suppr.png' title='delete' onclick='DelConfig($rcid,\"$rcname\");'></img></td>\n";
-            print "</tr>\n";
-        } 
+          print "<td><img src='img/run.png' title='View'></img></td>\n";
+        }
+        else
+        {
+          print "<td>&nbsp;</td>\n";
+        }
+        print "<td><img src='img/edit.png' title='edit' onclick='EditConfig($rcid);'></img></td>\n";
+        print "<td><img src='img/clone.png' title='clone' onclick='CloneConfig($rcid,$nextrcid);'></img></td>\n";
+        print "<td><img src='img/suppr.png' title='delete' onclick='DelConfig($rcid,\"$rcname\");'></img></td>\n";
+        print "</tr>\n";
+      } 
     }
     print "</table>\n";
     print "<input type='button' value='Add' onclick='AddConfig($nextrcid);'>";
 
 	
-	//------------------- display competitions -------------
+    //------------------- display competitions -------------
     print "<br/><br/><table border>\n";
     print "<tr>\n";
     print "<th>Id</th>\n";
@@ -246,20 +247,20 @@
     $res = mysql_query($sql);
     if (mysql_num_rows($res) > 0)
     {
-        while ($r = mysql_fetch_array($res))
-        {
-            $cid=$r['cid'];
-            $name=$r['name'];
-            $date=$r['date'];
-            $organizer=$r['organizer'];
-            print "<tr>\n";
-            print "<td class=class_competid>$cid</td>\n";
-            print "<td>$name</td>\n";
-            print "<td>$date</td>\n";
-            print "<td>$organizer</td>\n";
-            print "<td><img src='img/suppr.png' title='delete' onclick='DelCompetition($cid,\"$name\");'></img></td>\n";
-            print "</tr>\n";
-        } 
+      while ($r = mysql_fetch_array($res))
+      {
+        $cid=$r['cid'];
+        $name=$r['name'];
+        $date=$r['date'];
+        $organizer=$r['organizer'];
+        print "<tr>\n";
+        print "<td class=class_competid>$cid</td>\n";
+        print "<td>$name</td>\n";
+        print "<td>$date</td>\n";
+        print "<td>$organizer</td>\n";
+        print "<td><img src='img/suppr.png' title='delete' onclick='DelCompetition($cid,\"$name\");'></img></td>\n";
+        print "</tr>\n";
+      } 
     }
     print "</table>\n";
 	
