@@ -2,7 +2,9 @@
 Large event results display for MeOS
 
 * Master  branch holds the original MeOS version
-* Ligue PACA holds the new created one to be used.
+* Ligue PACA branch holds the new created one to be used.
+
+<b>Please select the Ligue PACA branch</b>
 
 MopScreens is a set of php files to be used on a web server (mainly a local one) to display large event results in real time in an O'Ringen like style.
 It uses MeOS Online Protocol for data updating, and reuse part of the Mop example provided with MeOS.
