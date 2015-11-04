@@ -1,6 +1,6 @@
 <?php
   /*
-  Copyright 2014-2015 Metraware
+  Copyright 2014 Metraware
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -233,6 +233,7 @@
             $fulltxtsize = isset($_GET['fulltxtsize']) ? intval($_GET['fulltxtsize']) : 16;
             $fulltxtcolor = isset($_GET['fulltxtcolor']) ? stripSlashes($_GET['fulltxtcolor']) : "000000";
             $fullhtml = isset($_GET['fullhtml']) ? stripSlashes($_GET['fullhtml']) : "exemple.html";
+            $fullfirstline = isset($_GET['fullfirstline']) ? intval($_GET['fullfirstline']) : 3;
             $fullfixedlines = isset($_GET['fullfixedlines']) ? intval($_GET['fullfixedlines']) : 3;
             $fullscrolledlines = isset($_GET['fullscrolledlines']) ? intval($_GET['fullscrolledlines']) : 3;
             $fullscrolltime = isset($_GET['fullscrolltime']) ? intval($_GET['fullscrolltime']) : 3;
@@ -246,6 +247,7 @@
             $lefttxtsize = isset($_GET['lefttxtsize']) ? intval($_GET['lefttxtsize']) : 16;
             $lefttxtcolor = isset($_GET['lefttxtcolor']) ? stripSlashes($_GET['lefttxtcolor']) : "000000";
             $lefthtml = isset($_GET['lefthtml']) ? stripSlashes($_GET['lefthtml']) : "exemple.html";
+            $leftfirstline = isset($_GET['leftfirstline']) ? intval($_GET['leftfirstline']) : 3;
             $leftfixedlines = isset($_GET['leftfixedlines']) ? intval($_GET['leftfixedlines']) : 3;
             $leftscrolledlines = isset($_GET['leftscrolledlines']) ? intval($_GET['leftscrolledlines']) : 3;
             $leftscrolltime = isset($_GET['leftscrolltime']) ? intval($_GET['leftscrolltime']) : 3;
@@ -259,6 +261,7 @@
             $righttxtsize = isset($_GET['righttxtsize']) ? intval($_GET['righttxtsize']) : 16;
             $righttxtcolor = isset($_GET['righttxtcolor']) ? stripSlashes($_GET['righttxtcolor']) : "000000";
             $righthtml = isset($_GET['righthtml']) ? stripSlashes($_GET['righthtml']) : "exemple.html";
+            $rightfirstline = isset($_GET['rightfirstline']) ? intval($_GET['rightfirstline']) : 3;
             $rightfixedlines = isset($_GET['rightfixedlines']) ? intval($_GET['rightfixedlines']) : 3;
             $rightscrolledlines = isset($_GET['rightscrolledlines']) ? intval($_GET['rightscrolledlines']) : 3;
             $rightscrolltime = isset($_GET['rightscrolltime']) ? intval($_GET['rightscrolltime']) : 3;
@@ -294,6 +297,7 @@
                 $str = $str."fulltxtsize='".$fulltxtsize."', ";
                 $str = $str."fulltxtcolor='".addSlashes($fulltxtcolor)."', ";
                 $str = $str."fullhtml='".addSlashes($fullhtml)."', ";
+                $str = $str."fullfirstline='".$fullfirstline."', ";
                 $str = $str."fullfixedlines='".$fullfixedlines."', ";
                 $str = $str."fullscrolledlines='".$fullscrolledlines."', ";
                 $str = $str."fullscrolltime='".$fullscrolltime."', ";
@@ -308,6 +312,7 @@
                 $str = $str."lefttxtsize='".$lefttxtsize."', ";
                 $str = $str."lefttxtcolor='".addSlashes($lefttxtcolor)."', ";
                 $str = $str."lefthtml='".addSlashes($lefthtml)."', ";
+                $str = $str."leftfirstline='".$leftfirstline."', ";
                 $str = $str."leftfixedlines='".$leftfixedlines."', ";
                 $str = $str."leftscrolledlines='".$leftscrolledlines."', ";
                 $str = $str."leftscrolltime='".$leftscrolltime."', ";
@@ -321,6 +326,7 @@
                 $str = $str."righttxtsize='".$righttxtsize."', ";
                 $str = $str."righttxtcolor='".addSlashes($righttxtcolor)."', ";
                 $str = $str."righthtml='".addSlashes($righthtml)."', ";
+                $str = $str."rightfirstline='".$rightfirstline."', ";
                 $str = $str."rightfixedlines='".$rightfixedlines."', ";
                 $str = $str."rightscrolledlines='".$rightscrolledlines."', ";
                 $str = $str."rightscrolltime='".$rightscrolltime."', ";
@@ -362,6 +368,7 @@
                         if ($v=="fulltxt") $str = $str."fulltxtsize='".$fulltxtsize."', ";
                         if ($v=="fulltxt") $str = $str."fulltxtcolor='".addSlashes($fulltxtcolor)."', ";
                         if ($v=="fullhtml") $str = $str."fullhtml='".addSlashes($fullhtml)."', ";
+                        if ($v=="fullfirstline") $str = $str."fullfirstline='".$fullfirstline."', ";
                         if ($v=="fullfixedlines") $str = $str."fullfixedlines='".$fullfixedlines."', ";
                         if ($v=="fullscrolledlines") $str = $str."fullscrolledlines='".$fullscrolledlines."', ";
                         if ($v=="fullscrolltime") $str = $str."fullscrolltime='".$fullscrolltime."', ";
@@ -375,6 +382,7 @@
                         if ($v=="lefttxt") $str = $str."lefttxtsize='".$lefttxtsize."', ";
                         if ($v=="lefttxt") $str = $str."lefttxtcolor='".addSlashes($lefttxtcolor)."', ";
                         if ($v=="lefthtml") $str = $str."lefthtml='".addSlashes($lefthtml)."', ";
+                        if ($v=="leftfirstline") $str = $str."leftfirstline='".$leftfirstline."', ";
                         if ($v=="leftfixedlines") $str = $str."leftfixedlines='".$leftfixedlines."', ";
                         if ($v=="leftscrolledlines") $str = $str."leftscrolledlines='".$leftscrolledlines."', ";
                         if ($v=="leftscrolltime") $str = $str."leftscrolltime='".$leftscrolltime."', ";
@@ -388,6 +396,7 @@
                         if ($v=="righttxt") $str = $str."righttxtsize='".$righttxtsize."', ";
                         if ($v=="righttxt") $str = $str."righttxtcolor='".addSlashes($righttxtcolor)."', ";
                         if ($v=="righthtml") $str = $str."righthtml='".addSlashes($righthtml)."', ";
+                        if ($v=="rightfirstline") $str = $str."rightfirstline='".$rightfirstline."', ";
                         if ($v=="rightfixedlines") $str = $str."rightfixedlines='".$rightfixedlines."', ";
                         if ($v=="rightscrolledlines") $str = $str."rightscrolledlines='".$rightscrolledlines."', ";
                         if ($v=="rightscrolltime") $str = $str."rightscrolltime='".$rightscrolltime."', ";
@@ -417,8 +426,6 @@
 
         if ($n < NB_SCREEN)
         {
-            print "screen:display screen config";
-
             if ($n<1)
             {
                 $n=1;
@@ -477,6 +484,7 @@
 
             $sqlcname = "SELECT name FROM mopcompetition WHERE cid=$cid";
             $rescname = mysql_query($sqlcname);
+	    $cname = "";
             if($rcname = mysql_fetch_array($rescname))
             {
               $cname=$rcname['name'];
@@ -515,7 +523,7 @@
                     print "<td $bgcolfull>$fullhtml</td>\n";
                     break;
                 case 4:
-                    print "<td class='screen_fullcontent' $bgcolfull><img src='img/podium.png' title='Relay Results'/></td>\n";
+                    print "<td class='screen_fullcontent' $bgcolfull><a href=screenclasses.php?rcid=$rcid&cid=$cid&sid=$sid&panel=1&ret=1><img src='img/podium.png' title='Relay Results'/></a></td>\n";
                     print "<td $bgcolfull>$fullclasses</td>\n";
                     break;
             }
@@ -721,7 +729,7 @@
                           $nentry=$r2[0];
                         }
                     }
-                    $pctentries=round(1000*$nentry/$totalentry)/10.0;
+					$pctentries=round(1000*$nentry/$totalentry)/10.0;
                     print "<td class='class_entries'>$nentry</td>\n";
                     print "<td class='class_entries'>$pctentries %</td>\n";
 

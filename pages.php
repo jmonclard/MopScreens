@@ -23,13 +23,14 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <title>CFCO 2014 (page <?php print $screenIndex; ?>)</title>
-        <link rel="stylesheet" type="text/css" href="styles/co2014.css" />
+        <title>CO (page <?php print $screenIndex; ?>)</title>
+        <link rel="stylesheet" type="text/css" href="styles/co2015-10-30a.css" />
        
         <script type="text/javascript">
             <!--
         var screenIndex;
-        var rcid;
+		var displayScrollIndex = [1,1];
+		var rcid;
         var phpTitle;
         var phpcls;
         var phpcmpId;
@@ -78,6 +79,7 @@
                 $fulltxtsize=$r['fulltxtsize'];
                 $fulltxtcolor=$r['fulltxtcolor'];
                 $fullhtml=$r['fullhtml'];
+				$fullfirstline=$r['fullfirstline'];
                 $fullfixedlines=$r['fullfixedlines'];
                 $fullscrolledlines=$r['fullscrolledlines'];
                 $fullscrolltime=$r['fullscrolltime'];
@@ -91,6 +93,7 @@
                 $lefttxtsize=$r['lefttxtsize'];
                 $lefttxtcolor=$r['lefttxtcolor'];
                 $lefthtml=$r['lefthtml'];
+				$leftfirstline=$r['leftfirstline'];
                 $leftfixedlines=$r['leftfixedlines'];
                 $leftscrolledlines=$r['leftscrolledlines'];
                 $leftscrolltime=$r['leftscrolltime'];
@@ -104,6 +107,7 @@
                 $righttxtsize=$r['righttxtsize'];
                 $righttxtcolor=$r['righttxtcolor'];
                 $righthtml=$r['righthtml'];
+				$rightfirstline=$r['rightfirstline'];
                 $rightfixedlines=$r['rightfixedlines'];
                 $rightscrolledlines=$r['rightscrolledlines'];
                 $rightscrolltime=$r['rightscrolltime'];
@@ -201,6 +205,7 @@
             defineVariableArr2x("phpcls", $classLeft, $classRight);
             
             defineVariableArr("phpscrolltime", $leftscrolltime, $rightscrolltime);
+            defineVariableArr("phpfirstline", $leftfirstline, $rightfirstline);
             defineVariableArr("phpfixedlines", $leftfixedlines, $rightfixedlines);
             defineVariableArr("phpscrolledlines", $leftscrolledlines, $rightscrolledlines);
             defineVariableArr("phpscrollaftertime", $leftscrollaftertime, $rightscrollaftertime);
@@ -214,6 +219,7 @@
             defineVariableArr2x("phpcls", $classLeft, $classLeft);
             
             defineVariableArr("phpscrolltime", $fullscrolltime, $fullscrolltime);
+            defineVariableArr("phpfirstline", $fullfirstline, $fullfirstline);
             defineVariableArr("phpfixedlines", $fullfixedlines, $fullfixedlines);
             defineVariableArr("phpscrolledlines", $fullscrolledlines, $fullscrolledlines);
             defineVariableArr("phpscrollaftertime", $fullscrollaftertime, $fullscrollaftertime);
@@ -232,6 +238,8 @@
         defineVariable("rcid", $rcid);
         
 ?>
+        phpfirstline[0] = parseInt(phpfirstline[0], 10);
+        phpfirstline[1] = parseInt(phpfirstline[1], 10);
         phpscrolledlines[0] = parseInt(phpscrolledlines[0], 10);
         phpscrolledlines[1] = parseInt(phpscrolledlines[1], 10);
         phpfixedlines[0] = parseInt(phpfixedlines[0], 10);
@@ -244,6 +252,8 @@
         
         phpscrollaftertime[0] = parseInt(phpscrollaftertime[0], 10);
         phpscrollaftertime[1] = parseInt(phpscrollaftertime[1], 10);
+
+        displayScrollIndex = [phpfixedlines[0] + phpfirstline[0] - 1,phpfixedlines[1] + phpfirstline[1] - 1];
         
         if(phpscrolltime[0] <= 0)
             phpscrolltime[0] = 10;
@@ -306,6 +316,7 @@ if($screenmode == CST_SCREENMODE_DIVISE)
             create_refresh_table();
             create_refresh_start();
             create_refresh_display();
+
 <?php
     }
 }
@@ -329,7 +340,6 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
 
         var dataArray = new Array(2);
         var tableUpdated = new Array(2);
-        var displayScrollIndex = [1, 1];
         
         var bfirst = true;
         var mytime = 0;
@@ -395,7 +405,6 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                         tableUpdated[panelIndex] = true;
                     }
                 }
-                    
                 xmlhttp.open("GET", "aj_refreshtable.php?cls=" + phpcls[panelIndex][categorieIndex[panelIndex]] +
                                     "&cmpId=" + phpcmpId[panelIndex] +
                                     "&leg=" + phpleg[panelIndex] +
@@ -508,13 +517,15 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
 ?>
         }
         
-        function ConvertToNiceHtmlTableRow(panelIndex, identifiant)
+        function ConvertToNiceHtmlTableRow(panelIndex, identifiant, startline)
         {
             var r = "";
             var bUpdateNeeded = false;
             
             var prefix_class = 'td';
-            var position = 0;
+            var position = startline - 1;
+			if(position <= 0)
+				position = 0;
             var count = 5;
 
             if(identifiant === 'start')
@@ -583,14 +594,13 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
 
 			
 
-            if (length > 0)             
-
+            if (length > 0)
             {
                 r +='<tbody class="scrollContent">';
 
                 // lignes fixes
-                var endPosition = phpfixedlines[panelIndex];
-                if (length < (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
+                var endPosition = phpfixedlines[panelIndex] + startline - 1;
+                if (length - startline + 1 < (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex])) // if (length < (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
                 {
                     endPosition = length;
                 }
@@ -617,7 +627,7 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                     r += '</tr>\r\n';
                 }
                 
-                while((position < endPosition) && (position<length))
+                while((position < endPosition) && (position < length))
                 {
                     line = eval(dataArray[panelIndex][position++]);
                     if(line != null)
@@ -685,7 +695,7 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                 }
                 
                 
-                if (length >= (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
+                if (length - startline + 1 >= (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex])) // if (length >= (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
                 {
                     if((identifiant === 'result') || (identifiant === 'relais'))
                     {
@@ -813,7 +823,7 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                     {
                         before_decrement_counter[panelIndex]--;
                     }
-                    if (displayScrollIndex[panelIndex] > length-5)
+                    if (displayScrollIndex[panelIndex] > length - (phpscrolledlines[panelIndex]-2))
                     {
                         before_decrement_counter[panelIndex] = phpscrollbeforetime[panelIndex] / phpscrolltime[panelIndex];
                         bUpdateNeeded = true;
@@ -909,7 +919,7 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                 after_decrement_counter[panelIndex]--;
                 if(after_decrement_counter[panelIndex] <= 0)
                 {
-                    displayScrollIndex[panelIndex] = 0;
+                    displayScrollIndex[panelIndex] = phpfixedlines[panelIndex] + startline - 1;
                     categorieIndex[panelIndex] = (categorieIndex[panelIndex] + 1) % phpcls[panelIndex].length;
                     tableUpdated[panelIndex] = false;
                     if(identifiant === 'start')
@@ -937,14 +947,14 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
         {
             if(document.getElementById("tableContainer0"))
             {
-                document.getElementById("tableContainer0").innerHTML = ConvertToNiceHtmlTableRow(0, 'start');
+                document.getElementById("tableContainer0").innerHTML = ConvertToNiceHtmlTableRow(0, 'start', <?php echo $leftfirstline; ?>);
             }
         }
         function updateDisplayStart2()
         {
             if(document.getElementById("tableContainer1"))
             {
-                document.getElementById("tableContainer1").innerHTML = ConvertToNiceHtmlTableRow(1, 'start');
+                document.getElementById("tableContainer1").innerHTML = ConvertToNiceHtmlTableRow(1, 'start', <?php echo $rightfirstline; ?>);
             }            
         }
 
@@ -952,21 +962,21 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
         {
             if(document.getElementById("tableContainer0"))
             {
-                document.getElementById("tableContainer0").innerHTML = ConvertToNiceHtmlTableRow(0, 'result');
+                document.getElementById("tableContainer0").innerHTML = ConvertToNiceHtmlTableRow(0, 'result', <?php echo $leftfirstline; ?>);
             }
         }
         function updateDisplay2()
         {
             if(document.getElementById("tableContainer1"))
             {
-                document.getElementById("tableContainer1").innerHTML = ConvertToNiceHtmlTableRow(1, 'result');
+                document.getElementById("tableContainer1").innerHTML = ConvertToNiceHtmlTableRow(1, 'result', <?php echo $rightfirstline; ?>);
             }            
         }
         function updateDisplayRelais()
         {
             if(document.getElementById("tableContainer3"))
             {
-                document.getElementById("tableContainer3").innerHTML = ConvertToNiceHtmlTableRow(0, 'relais');
+                document.getElementById("tableContainer3").innerHTML = ConvertToNiceHtmlTableRow(0, 'relais', <?php echo $fullfirstline; ?>);
             }
         }
         function create_refresh_display()

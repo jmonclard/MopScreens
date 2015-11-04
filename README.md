@@ -1,8 +1,27 @@
 # MopScreens
 Large event results display for MeOS
 
-Version used by CSP Orienteering club on September the 13th.
-Include a temporary fix of the lost of class allocation on MeOS service restart.
+2015-11-04 Source code cleaning and small fixes and improvements
+	What's New ?
+		Icons for configuration rename and edit have been change to remove any possible confusion
+		It is now possible to define the fisrt line of a screen or panel (for instance to keep the content of a panel fixed while on another panel the remaining of the class is scrolling)
+		When scrolling, stops now after 3 empty lines
+		It is now possible to select classes in full screen mode right from the summary table of screen.php clicking on the podium icon
+	
+	Known bugs
+		When screens' panels are empty, they are not correctly refreshed. Workaround : edit the screen in screenconfig.php and press ok.
+		In relay mode it is mandatory to have at least one radio control
+		If pressing classes edit button while editing a screen configuration, all changes altready made in the form fields are lost. Workaround : use podium icon in screen.php
+	Missing features
+		Relay must be extended to 10 team members
+		Screens should be dividable in three panels
+		Rows height should be decreased in order to stack more lines on the screen
+		It should be possible from screenconfig.php to upload pictures and html files to their respective directories
+		Add language support
+		Add documentation access from the interface
+
+2015-09-13 Version used by CSP Orienteering club
+	Includes a temporary fix of the lost of class allocation on MeOS service restart.
 
     Master branch holds the original MeOS version
     Ligue PACA branch holds the new created one to be used.

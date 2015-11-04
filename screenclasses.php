@@ -91,20 +91,20 @@
                 var n=takenlist.options.length;
               	for(var i=0; i<n ; i++)
               	{
-              		if(takenlist.options[i].selected == true)
-              		{
+              	  if(takenlist.options[i].selected == true)
+              	  {
                     var id = takenlist.options[i].value;
                     var txt = takenlist.options[i].text;
                     availlist.options[availlist.options.length] = new Option(txt, id);
-              		}
+              	  }
               	}
               	for(var i=n-1; i>=0; i--)
               	{
-              		if(takenlist.options[i].selected == true)
-              		{
+              	  if(takenlist.options[i].selected == true)
+              	  {
                     takenlist.remove(i);
                   }
-              	}
+                }
               }                
             }
             
@@ -116,7 +116,7 @@
               if (n>0)
               {
               	for(var i=0; i<n ; i++)
-              	{
+               	{
                   var id = takenlist.options[i].value;
                   str = str+"&selclasses[]="+id.toString();
               	}

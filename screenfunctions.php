@@ -34,16 +34,16 @@
 
   function DEBUG($varname,$value)
   {
-      print ("<br/>$varname=$value<br/>");
+    print ("<br/>$varname=$value<br/>");
   }
 
   function DUMPARRAY($a)
   {
-      print "<br/>\n";
-      foreach ($a as $k => $v)
-      {
-        print "key=$k , value=$v<br/>\n";
-      } 
+    print "<br/>\n";
+    foreach ($a as $k => $v)
+    {
+      print "key=$k , value=$v<br/>\n";
+    } 
   }
 
   function NumericIntList($ctrlname,$minval,$maxval,$defval)
@@ -63,7 +63,7 @@
     $str=$str."</select>\n";
     return $str;
   }
-  
+
   //-------- screens configuration functions ---------
   
   function GetConfigurationName($rcid)
@@ -90,7 +90,7 @@
   {
     $sql = "DELETE FROM resultconfig WHERE rcid='$rcid'";  
     mysql_query($sql);
-    
+
     $sql = "DELETE FROM resultscreen WHERE rcid=$rcid";
     mysql_query($sql);
 
@@ -103,10 +103,10 @@
   function AddNewScreen($rcid,$sid)
   {
     $title="Screen #$sid";
-    $sql = "INSERT INTO resultscreen SET rcid=$rcid, sid=$sid, title='$title'"; 
+    $sql = "INSERT INTO resultscreen SET rcid=$rcid, sid=$sid, title='$title', fullscrolltime=10, leftscrolltime=10, rightscrolltime=10"; 
     $ret=mysql_query($sql);
   }
-  
+
   function CloneScreen($oldrcid,$newrcid)
   {
     $sql = "SELECT * FROM resultscreen WHERE rcid=$oldrcid";
@@ -116,7 +116,6 @@
       while ($r = mysql_fetch_array($res))
       {
         $str = "rcid=$newrcid, ";
-
 
         $sid=$r['sid'];
         $str = $str."sid=$sid, ";
@@ -175,6 +174,9 @@
         $fullhtml=$r['fullhtml'];
         $str = $str."fullhtml='$fullhtml', ";
 
+        $fullfirstline=$r['fullfirstline'];
+        $str = $str."fullfirstline='$fullfirstline', ";
+
         $fullfixedlines=$r['fullfixedlines'];
         $str = $str."fullfixedlines='$fullfixedlines', ";
 
@@ -213,6 +215,9 @@
         $lefthtml=$r['lefthtml'];
         $str = $str."lefthtml='$lefthtml', ";
 
+        $leftfirstline=$r['leftfirstline'];
+        $str = $str."leftfirstline='$leftfirstline', ";
+
         $leftfixedlines=$r['leftfixedlines'];
         $str = $str."leftfixedlines='$leftfixedlines', ";
 
@@ -250,6 +255,9 @@
 
         $righthtml=$r['righthtml'];
         $str = $str."righthtml='$righthtml', ";
+
+        $rightfirstline=$r['rightfirstline'];
+        $str = $str."rightfirstline='$rightfirstline', ";
 
         $rightfixedlines=$r['rightfixedlines'];
         $str = $str."rightfixedlines='$rightfixedlines', ";
@@ -302,17 +310,16 @@
     return $panelclasses;            
   }
 	
-  
   function GetClassesAndEntries($rcid, $cid, $sid, $panel)
   {
     $sqltmp = "SELECT mopclass.id AS classid, name, ord FROM resultclass, mopclass WHERE ";
-		$sqltmp = $sqltmp."mopclass.cid=resultclass.cid AND ";
-		$sqltmp = $sqltmp."mopclass.id=resultclass.id AND ";
-		$sqltmp = $sqltmp."mopclass.cid=$cid AND ";
-		$sqltmp = $sqltmp."resultclass.rcid=$rcid AND ";
-		$sqltmp = $sqltmp."resultclass.panel=$panel AND ";
-		$sqltmp = $sqltmp."resultclass.sid=$sid ";
-		$sqltmp = $sqltmp."ORDER BY ord";
+    $sqltmp = $sqltmp."mopclass.cid=resultclass.cid AND ";
+	$sqltmp = $sqltmp."mopclass.id=resultclass.id AND ";
+	$sqltmp = $sqltmp."mopclass.cid=$cid AND ";
+	$sqltmp = $sqltmp."resultclass.rcid=$rcid AND ";
+	$sqltmp = $sqltmp."resultclass.panel=$panel AND ";
+	$sqltmp = $sqltmp."resultclass.sid=$sid ";
+	$sqltmp = $sqltmp."ORDER BY ord";
     $restmp = mysql_query($sqltmp);
 
     $nentry=0;
@@ -330,19 +337,19 @@
         {
           $panelclasses=$nametmp;
         }
-				// determines number of entries
-				$classid = intval($rtmp['classid']);
-				$sql2 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid AND cls=$classid";
-				$res2 = mysql_query($sql2);
-				if (mysql_num_rows($res2) > 0)
-				{
-					if ($r2 = mysql_fetch_array($res2))
-					{
-					  $nentry=$nentry+$r2[0];
-					}
-				}
+		// determines number of entries
+		$classid = intval($rtmp['classid']);
+		$sql2 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid AND cls=$classid";
+		$res2 = mysql_query($sql2);
+		if (mysql_num_rows($res2) > 0)
+		{
+          if ($r2 = mysql_fetch_array($res2))
+		  {
+		    $nentry=$nentry+$r2[0];
+		  }
+		}
       }
-			$panelclasses = "<b>$nentry : </b>".$panelclasses;
+	  $panelclasses = "<b>$nentry : </b>".$panelclasses;
     }
     return $panelclasses;            
   }
@@ -366,5 +373,4 @@
       }
     }
   }
-    
 ?>

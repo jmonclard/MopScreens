@@ -35,7 +35,7 @@ function setupBaseCompetitor() {
 }
 
 function setup() {  
- $sql = "CREATE TABLE IF NOT EXISTS mopCompetition (".
+ $sql = "CREATE TABLE IF NOT EXISTS mopcompetition (".
    			setupIddBase().
    			" name VARCHAR(64) NOT NULL DEFAULT '',".
    			" date DATE NOT NULL DEFAULT '2013-11-04',".
@@ -46,14 +46,14 @@ function setup() {
   query($sql);
  
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopControl (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopcontrol (".
    			setupIddBase().
    			" name VARCHAR(64) NOT NULL DEFAULT ''".
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
  
   query($sql);
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopClass (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopclass (".
    			setupIddBase().
    			" name VARCHAR(64) NOT NULL DEFAULT '',".
    			" ord INT NOT NULL DEFAULT 0, INDEX(ord)".
@@ -61,14 +61,14 @@ function setup() {
    			
   query($sql);
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopOrganization (".
+  $sql = "CREATE TABLE IF NOT EXISTS moporganization (".
    			 setupIddBase().
    			" name VARCHAR(64) NOT NULL DEFAULT ''".
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
    			
   query($sql);
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopCompetitor (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopcompetitor (".
    			 setupIddBase().
    			 setupBaseCompetitor().
          ", tstat TINYINT NOT NULL DEFAULT 0,". // Total status
@@ -78,14 +78,14 @@ function setup() {
   			
   query($sql);
  
-  $sql = "CREATE TABLE IF NOT EXISTS mopTeam (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopteam (".
    			 setupIddBase().
    			 setupBaseCompetitor().
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
 
   query($sql);
    
-  $sql = "CREATE TABLE IF NOT EXISTS mopTeamMember (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopteammember (".
          " cid INT NOT NULL, id INT NOT NULL,".
          " leg TINYINT NOT NULL, ord TINYINT NOT NULL,".
          " PRIMARY KEY(cid, id, leg, ord), ".
@@ -94,7 +94,7 @@ function setup() {
 
   query($sql);
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopClassControl (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopclasscontrol (".
          " cid INT NOT NULL, id INT NOT NULL,".
          " leg TINYINT NOT NULL, ord TINYINT NOT NULL,".
          " PRIMARY KEY(cid, id, leg, ord), ".
@@ -103,7 +103,7 @@ function setup() {
 
   query($sql);
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopRadio (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopradio (".
          " cid INT NOT NULL, id INT NOT NULL,".
          " ctrl INT NOT NULL,".
          " PRIMARY KEY(cid, id, ctrl), ".
@@ -156,6 +156,7 @@ $sql = "CREATE TABLE `resultscreen` (
   `fulltxtsize` tinyint(4) default '12',
   `fulltxtcolor` varchar(6) default '000000',
   `fullhtml` varchar(128) default NULL,
+  `fullfirstline` tinyint(4) NOT NULL default '1',
   `fullfixedlines` tinyint(4) NOT NULL default '3',
   `fullscrolledlines` tinyint(4) NOT NULL default '17',
   `fullscrolltime` tinyint(4) NOT NULL default '3',
@@ -170,11 +171,12 @@ $sql = "CREATE TABLE `resultscreen` (
   `lefttxtsize` tinyint(4) default '12',
   `lefttxtcolor` varchar(6) default '000000',
   `lefthtml` varchar(128) default NULL,
+  `leftfirstline` tinyint(4) NOT NULL default '1',
   `leftfixedlines` tinyint(4) NOT NULL default '3',
   `leftscrolledlines` tinyint(4) NOT NULL default '17',
-  `leftscrolltime` tinyint(4) NOT NULL default '3' COMMENT 'in 1/10s',
-  `leftscrollbeforetime` tinyint(4) NOT NULL default '50' COMMENT 'in 0.1s',
-  `leftscrollaftertime` tinyint(4) NOT NULL default '50' COMMENT 'in 0.1s',
+  `leftscrolltime` tinyint(4) NOT NULL default '3' COMMENT 'en 1/10s',
+  `leftscrollbeforetime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
+  `leftscrollaftertime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
   `leftupdateduration` int(11) NOT NULL default '10',
   `leftlastrefresh` int(11) NOT NULL default '0',
   `leftlastredraw` int(11) NOT NULL default '0',
@@ -184,11 +186,12 @@ $sql = "CREATE TABLE `resultscreen` (
   `righttxtsize` tinyint(4) default '12',
   `righttxtcolor` varchar(6) default '000000',
   `righthtml` varchar(128) default NULL,
+  `rightfirstline` tinyint(4) NOT NULL default '1',
   `rightfixedlines` tinyint(4) NOT NULL default '3',
   `rightscrolledlines` tinyint(4) NOT NULL default '17',
-  `rightscrolltime` tinyint(4) NOT NULL default '3' COMMENT 'in 1/10s',
-  `rightscrollbeforetime` tinyint(4) NOT NULL default '50' COMMENT 'in 0.1s',
-  `rightscrollaftertime` tinyint(4) NOT NULL default '50' COMMENT 'in 0.1s',
+  `rightscrolltime` tinyint(4) NOT NULL default '3' COMMENT 'en 1/10s',
+  `rightscrollbeforetime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
+  `rightscrollaftertime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
   `rightupdateduration` int(11) NOT NULL default '10',
   `rightlastrefresh` int(11) NOT NULL default '0',
   `rightlastredraw` int(11) NOT NULL default '0',

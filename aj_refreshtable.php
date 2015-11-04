@@ -58,7 +58,7 @@
 
   if ($numlegs > 1) {
     for ($k = 1; $k <= $numlegs; $k++) {
-      $sql = "SELECT max(ord) FROM mopTeamMember tm, mopTeam t WHERE t.cls = '$cls' AND tm.leg=$k AND ".
+      $sql = "SELECT max(ord) FROM mopteammember tm, mopteam t WHERE t.cls = '$cls' AND tm.leg=$k AND ".
               "tm.cid = '$cmpId' AND t.cid = '$cmpId' AND tm.id = t.id";
       $res = mysql_query($sql);
       $r = mysql_fetch_array($res);
@@ -73,7 +73,7 @@
       if ($radio == 'finish') {
         $sql = "SELECT t.id AS id, cmp.name AS name, t.name AS team, cmp.rt AS time, cmp.timestamp, cmp.stat AS status, ".
                "cmp.it+cmp.rt AS tottime, cmp.tstat AS totstat ".
-               "FROM mopTeamMember tm, mopCompetitor cmp, mopTeam t ".
+               "FROM mopteammember tm, mopcompetitor cmp, mopteam t ".
                "WHERE t.cls = '$cls' AND t.id = tm.id AND tm.rid = cmp.id ".
                "AND t.cid = '$cmpId' AND tm.cid = '$cmpId' AND cmp.cid = '$cmpId' ".
                "AND ((t.stat>0) OR ((t.stat=0) AND ((SELECT COUNT(*) FROM mopradio AS mr WHERE mr.cid='$cmpId' AND tm.rid=mr.id) > 0)))".
@@ -89,7 +89,7 @@
    
             $sql = "SELECT team.id AS id, cmp.name AS name, team.name AS team, radio.rt AS time, radio.timestamp, 1 AS status, ".
                  "cmp.it+radio.rt AS tottime, cmp.tstat AS totstat ".
-                 "FROM mopRadio AS radio, mopTeamMember AS m, mopTeam AS team, mopCompetitor AS cmp ".
+                 "FROM mopradio AS radio, mopteammember AS m, mopteam AS team, mopcompetitor AS cmp ".
                  "WHERE radio.ctrl IN(".$rid.") ".
                  "AND radio.id=cmp.id ".
                  "AND m.rid = radio.id ".
@@ -111,7 +111,7 @@
       if ($radio!='') {
         if ($radio == 'finish') {
             $sql = "SELECT cmp.id AS id, cmp.timestamp, cmp.name AS name, org.name AS team, cmp.rt AS time, cmp.stat AS status ".
-                 "FROM mopCompetitor cmp LEFT JOIN mopOrganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
+                 "FROM mopcompetitor cmp LEFT JOIN moporganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
                  "WHERE cmp.cls = '$cls' ".
                  "AND cmp.cid = '$cmpId' ".
                  "AND ((cmp.stat>0) OR ((cmp.stat=0) AND ((SELECT COUNT(*) FROM mopradio AS mr WHERE mr.cid='$cmpId' AND cmp.id=mr.id) > 0)))".
@@ -128,8 +128,8 @@
             $rid = implode(', ', $arr_radio);
             
             $sql = "SELECT cmp.id AS id, cmp.name AS name, org.name AS team, radio.ctrl, radio.timestamp, radio.rt AS time, 1 AS status ".
-                 "FROM mopRadio AS radio, mopCompetitor AS cmp ".
-                 "LEFT JOIN mopOrganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
+                 "FROM mopradio AS radio, mopcompetitor AS cmp ".
+                 "LEFT JOIN moporganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
                  "WHERE radio.ctrl IN(".$rid.") ".
                  "AND radio.id=cmp.id ".
                  /*"AND cmp.stat<=1 ".*/
@@ -148,7 +148,7 @@
      if ($radio!='') {
        if ($radio == 'finish') {
            $sql = "SELECT t.id AS id, cmp.name AS name, cmp.timestamp, t.name AS team, t.rt AS time, t.stat AS status ".
-                  "FROM mopTeamMember tm, mopCompetitor cmp, mopTeam t ".
+                  "FROM mopteammember tm, mopcompetitor cmp, mopteam t ".
                   "WHERE t.cls = '$cls' AND t.id = tm.id AND tm.rid = cmp.id AND tm.leg=1 ".
                   "AND t.cid = '$cmpId' AND tm.cid = '$cmpId' AND cmp.cid = '$cmpId' ".
                   "AND ((t.stat>0) OR ((t.stat=0) AND ((SELECT COUNT(*) FROM mopradio AS mr WHERE mr.cid='$cmpId' AND tm.rid=mr.id) > 0)))".
@@ -163,7 +163,7 @@
         {
             $rid = implode(', ', $arr_radio);
             $sql = "SELECT team.id AS id, cmp.name AS name, team.name AS team, radio.rt AS time, radio.timestamp, 1 AS status ".
-                 "FROM mopRadio AS radio, mopTeamMember AS m, mopTeam AS team, mopCompetitor AS cmp ".
+                 "FROM mopradio AS radio, mopteammember AS m, mopteam AS team, mopcompetitor AS cmp ".
                  "WHERE radio.ctrl IN(".$rid.") ".
                  "AND radio.id=cmp.id ".
                  "AND m.rid = radio.id ".

@@ -37,7 +37,10 @@
             {
                 defaultname="New conf "+rcid.toString();
                 name=prompt("New configuration name : ",defaultname);
-                location.replace("screenconfig.php?action=add&rcid="+rcid+"&name="+name);
+                if (name!="null")
+                {
+                  location.replace("screenconfig.php?action=add&rcid="+rcid+"&name="+name);
+                }
             }        
 
             function CloneConfig(oldrcid,newrcid,oldcid)
@@ -158,8 +161,6 @@
                 $res = mysql_query($sql);
             }
         }
-        mysql_query($sql);     //JM ???
-  
     }
 	
     if ($action==="delcompet")
@@ -213,7 +214,7 @@
         $active = $r['active'];
         print "<tr>\n";
         print "<td><a href='screen.php?rcid=$rcid'>$name</a></td>\n";
-        print "<td><img src='img/ecran.png' title='View' onclick='ViewConfig($rcid);'></img></td>\n";
+        print "<td><img src='img/edit.png' title='View' onclick='ViewConfig($rcid);'></img></td>\n";
         print "<td><img src='img/play.png' title='View' onclick='PlayConfig($rcid);'></img></td>\n";
         if ($active==1)
         {
@@ -223,7 +224,7 @@
         {
           print "<td>&nbsp;</td>\n";
         }
-        print "<td><img src='img/edit.png' title='edit' onclick='EditConfig($rcid);'></img></td>\n";
+        print "<td><img src='img/rename.png' title='edit' onclick='EditConfig($rcid);'></img></td>\n";
         print "<td><img src='img/clone.png' title='clone' onclick='CloneConfig($rcid,$nextrcid);'></img></td>\n";
         print "<td><img src='img/suppr.png' title='delete' onclick='DelConfig($rcid,\"$rcname\");'></img></td>\n";
         print "</tr>\n";

@@ -54,7 +54,7 @@
   }
   
   $numlegs = 3;
-  $sql = "SELECT COUNT(leg) AS nblegs FROM mopTeamMember tm, mopTeam t ".
+  $sql = "SELECT COUNT(leg) AS nblegs FROM mopteammember tm, mopteam t ".
             "WHERE t.cls = '$cls' ".
             "AND t.cid = '$cmpId' ".
             "AND tm.cid = '$cmpId' ".
@@ -73,7 +73,7 @@
         $results = array();
         $arr_tempsrelais = array('radio0' => '', 'radio1' => '', 'radio2' => '', 'finish' => '', 'cumul' => '', 'place' => '', 'stat' => '', 'tstat' => '');
         $sql = "SELECT id AS team_id, cls, name AS team_name, stat AS team_stat ".
-               "FROM mopTeam ".
+               "FROM mopteam ".
                "WHERE cls = '$cls' ".
                "AND cid = '$cmpId' ".
                "ORDER BY id ASC";
@@ -89,7 +89,7 @@
             }
             
             $sql = "SELECT tm.id AS team_id, tm.leg, r.rt AS radio_time, r.timestamp AS radio_timestamp, cc.ord, c.timestamp, c.stat, c.rt, c.it, c.tstat ".
-                        "FROM mopTeamMember AS tm, mopradio AS r, mopclasscontrol AS cc, mopcompetitor AS c ".
+                        "FROM mopteammember AS tm, mopradio AS r, mopclasscontrol AS cc, mopcompetitor AS c ".
                         "WHERE tm.cid='$cmpId' ".
                         "AND tm.id IN (".implode(', ', array_keys($relais_out)).") ".
                         "AND r.cid='$cmpId' ".

@@ -226,31 +226,31 @@ function addRadioResult($res, $results)
           {
             if($key_radio > $arr_radiomax[$key])
             {
-                $arr_radiomax[$key] = $key_radio;
+              $arr_radiomax[$key] = $key_radio;
             }
           }
         }
         if($out[$key]['timestamp'] < $r['timestamp'])
         {
-            $out[$key]['timestamp'] = $r['timestamp'];
+          $out[$key]['timestamp'] = $r['timestamp'];
         }
       }
       else
       {
-      	if(isset($out[$key]['radio'.$key_radio]))
-      	{
+       	if(isset($out[$key]['radio'.$key_radio]))
+        {
           $t = $r['time']/10;
           $out[$key]['radio'.$key_radio] = $t;
           if($out[$key]['timestamp'] < $r['timestamp'])
           {
-              $out[$key]['timestamp'] = $r['timestamp'];
+            $out[$key]['timestamp'] = $r['timestamp'];
           }
-          }
-      }
+        }
+	  }
     }
   }
   $out = ordonnertableau($out, $arr_radiomax);
-  
+
   return $out;
 }
 
@@ -266,7 +266,7 @@ function ordonnertableau($result, $arr_radiomax)
   $arr_keyRunning = array();
   $arr_timeRunning = array();
   $temp_tab = array();
-  
+
   foreach($arr_radiomax as $k => $v)
   {
     if($arr_keyFinished != null)
@@ -283,10 +283,10 @@ function ordonnertableau($result, $arr_radiomax)
       $arr_timeRunning[$k] = $result[$k]['radio'.$v];
     }
   }
-  
+
   foreach($arr_keyFinished as $mykey)
   {
-      $temp_tab[] = $mykey;
+    $temp_tab[] = $mykey;
   }
   
   for($i=(count($arr_radio) - 1);$i>=0;$i--)
@@ -333,11 +333,11 @@ function ordonnertableau($result, $arr_radiomax)
       $last_res = array($result[$v]['radio0'], $result[$v]['radio1'], $result[$v]['radio2'], $result[$v]['radio3'], $global_out4[$v]);
       if($result[$v]['st'] == 1)
       {
-          $last_radio = $finish_radio;
+        $last_radio = $finish_radio;
       }
       else
       {
-          $last_radio = $arr_radiomax[$v];
+        $last_radio = $arr_radiomax[$v];
       }
     }
     else
@@ -363,18 +363,20 @@ function ordonnertableau($result, $arr_radiomax)
         }
       }
       else
-      if($last_radio != $arr_radiomax[$v])
-      {
-        $last_radio = $arr_radiomax[$v];
-        $last_res[$arr_radiomax[$v]] = $arr_timeRunning[$v];
-        $place_affichee = $place;
-      }
-      else
-      {
-        if($arr_timeRunning[$v] != $last_res[$arr_radiomax[$v]])
+	  {
+        if($last_radio != $arr_radiomax[$v])
         {
+          $last_radio = $arr_radiomax[$v];
           $last_res[$arr_radiomax[$v]] = $arr_timeRunning[$v];
           $place_affichee = $place;
+        }
+        else
+        {
+          if($arr_timeRunning[$v] != $last_res[$arr_radiomax[$v]])
+          {
+            $last_res[$arr_radiomax[$v]] = $arr_timeRunning[$v];
+            $place_affichee = $place;
+          }
         }
       }
     }
@@ -382,12 +384,12 @@ function ordonnertableau($result, $arr_radiomax)
     $result[$v]['place'] = $place_affichee;
     for($i=0;$i<4;$i++)
     {
-        $t = $result[$v]['radio'.$i];
-        if ($t >= 3600)
-            $result[$v]['radio'.$i] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
-        else
-          if ($t > 0)
-            $result[$v]['radio'.$i] = sprintf("%02d:%02d", ($t/60), $t%60);
+      $t = $result[$v]['radio'.$i];
+      if ($t >= 3600)
+        $result[$v]['radio'.$i] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
+      else
+        if ($t > 0)
+          $result[$v]['radio'.$i] = sprintf("%02d:%02d", ($t/60), $t%60);
     }
     $out[] = $result[$v];
   }
@@ -489,96 +491,97 @@ function formatResultOriginal($result) {
 
 function ordonner_relais($arr, $numlegs)
 {
-	$out = array();
+  $out = array();
 	
-	foreach ($arr as $key => $val)
-	{
-		$rel3_tstat[$key]  = $val['relais3']['tstat'];
-		$rel2_tstat[$key]  = $val['relais2']['tstat'];
-		$rel1_tstat[$key]  = $val['relais1']['tstat'];
+  foreach ($arr as $key => $val)
+  {
+    $rel3_tstat[$key]  = $val['relais3']['tstat'];
+	$rel2_tstat[$key]  = $val['relais2']['tstat'];
+	$rel1_tstat[$key]  = $val['relais1']['tstat'];
         
     $rel3_stat[$key]  = $val['relais3']['stat'];
-		$rel2_stat[$key]  = $val['relais2']['stat'];
-		$rel1_stat[$key]  = $val['relais1']['stat'];
+	$rel2_stat[$key]  = $val['relais2']['stat'];
+	$rel1_stat[$key]  = $val['relais1']['stat'];
         
     $sta[$key] = $val['team_stat'];
 		
     if($sta[$key] <= 1)
     {
       if($val['relais3']['radio0'] > 0)
-          $rel3_radio0[$key]  = $val['relais2']['cumul'] + $val['relais3']['radio0'];
+        $rel3_radio0[$key]  = $val['relais2']['cumul'] + $val['relais3']['radio0'];
       if($val['relais3']['radio1'] > 0)
-          $rel3_radio1[$key] = $val['relais2']['cumul'] + $val['relais3']['radio1'];
+        $rel3_radio1[$key] = $val['relais2']['cumul'] + $val['relais3']['radio1'];
       if($val['relais3']['radio2'] > 0)
-          $rel3_radio2[$key] = $val['relais2']['cumul'] + $val['relais3']['radio2'];
+        $rel3_radio2[$key] = $val['relais2']['cumul'] + $val['relais3']['radio2'];
       if($val['relais3']['cumul'] > 0)
-          $rel3_cumul[$key]  = $val['relais3']['cumul'];
+        $rel3_cumul[$key]  = $val['relais3']['cumul'];
     }
-    
+
     if($sta[$key] <= 1)
     {
       if($val['relais2']['radio0'] > 0)
-          $rel2_radio0[$key]  = $val['relais1']['cumul'] + $val['relais2']['radio0'];
+        $rel2_radio0[$key]  = $val['relais1']['cumul'] + $val['relais2']['radio0'];
       if($val['relais2']['radio1'] > 0)
-          $rel2_radio1[$key] = $val['relais1']['cumul'] + $val['relais2']['radio1'];
+        $rel2_radio1[$key] = $val['relais1']['cumul'] + $val['relais2']['radio1'];
       if($val['relais2']['radio2'] > 0)
-          $rel2_radio2[$key] = $val['relais1']['cumul'] + $val['relais2']['radio2'];
+        $rel2_radio2[$key] = $val['relais1']['cumul'] + $val['relais2']['radio2'];
       if($val['relais2']['cumul'] > 0)
-          $rel2_cumul[$key]  = $val['relais2']['cumul'];
+        $rel2_cumul[$key]  = $val['relais2']['cumul'];
     }
 
     if($sta[$key] <= 1)
     {
       if($val['relais1']['radio0'] > 0)
-          $rel1_radio0[$key]  = $val['relais1']['radio0'];
+        $rel1_radio0[$key]  = $val['relais1']['radio0'];
       if($val['relais1']['radio1'] > 0)
-          $rel1_radio1[$key] = $val['relais1']['radio1'];
+        $rel1_radio1[$key] = $val['relais1']['radio1'];
       if($val['relais1']['radio2'] > 0)
-          $rel1_radio2[$key] = $val['relais1']['radio2'];
+        $rel1_radio2[$key] = $val['relais1']['radio2'];
       if($val['relais1']['cumul'] > 0)
-          $rel1_cumul[$key]  = $val['relais1']['cumul'];
+        $rel1_cumul[$key]  = $val['relais1']['cumul'];
     }
   }
 	
-	// Ajoute $arr en tant que dernier parametre
-	//array_multisort($rel3_cumul, SORT_ASC, $rel3_radio2, SORT_ASC, $rel3_radio1, SORT_ASC, $rel3_radio0, SORT_ASC, $rel2_cumul, SORT_ASC, $rel2_radio2, SORT_ASC, $rel2_radio1, SORT_ASC, $rel2_radio0, SORT_ASC, $rel1_cumul, SORT_ASC, $rel1_radio2, SORT_ASC, $rel1_radio1, SORT_ASC, $rel1_radio0, SORT_ASC, $sta, SORT_ASC, $arr);
+  // Ajoute $arr en tant que dernier parametre
+  //array_multisort($rel3_cumul, SORT_ASC, $rel3_radio2, SORT_ASC, $rel3_radio1, SORT_ASC, $rel3_radio0, SORT_ASC, $rel2_cumul, SORT_ASC, $rel2_radio2, SORT_ASC, $rel2_radio1, SORT_ASC, $rel2_radio0, SORT_ASC, $rel1_cumul, SORT_ASC, $rel1_radio2, SORT_ASC, $rel1_radio1, SORT_ASC, $rel1_radio0, SORT_ASC, $sta, SORT_ASC, $arr);
     
-    if($rel3_cumul != null) natcasesort($rel3_cumul);
-    if($rel2_cumul != null) natcasesort($rel2_cumul);
-    if($rel1_cumul != null) natcasesort($rel1_cumul);
-    if($rel3_radio0 != null) natcasesort($rel3_radio0);
-    if($rel3_radio1 != null) natcasesort($rel3_radio1);
-    if($rel3_radio2 != null) natcasesort($rel3_radio2);
-    if($rel2_radio0 != null) natcasesort($rel2_radio0);
-    if($rel2_radio1 != null) natcasesort($rel2_radio1);
-    if($rel2_radio2 != null) natcasesort($rel2_radio2);
-    if($rel1_radio0 != null) natcasesort($rel1_radio0);
-    if($rel1_radio1 != null) natcasesort($rel1_radio1);
-    if($rel1_radio2 != null) natcasesort($rel1_radio2);
+  if($rel3_cumul != null) natcasesort($rel3_cumul);
+  if($rel2_cumul != null) natcasesort($rel2_cumul);
+  if($rel1_cumul != null) natcasesort($rel1_cumul);
+  if($rel3_radio0 != null) natcasesort($rel3_radio0);
+  if($rel3_radio1 != null) natcasesort($rel3_radio1);
+  if($rel3_radio2 != null) natcasesort($rel3_radio2);
+  if($rel2_radio0 != null) natcasesort($rel2_radio0);
+  if($rel2_radio1 != null) natcasesort($rel2_radio1);
+  if($rel2_radio2 != null) natcasesort($rel2_radio2);
+  if($rel1_radio0 != null) natcasesort($rel1_radio0);
+  if($rel1_radio1 != null) natcasesort($rel1_radio1);
+  if($rel1_radio2 != null) natcasesort($rel1_radio2);
+
+  $place_affichee = 0;
     
-    $place_affichee = 0;
-    
-    if($rel3_cumul != null)
-        foreach($rel3_cumul as $k => $v)
-        {
-            $place_affichee++;
-            $relais1_affichee = '';
-            $relais2_affichee = '';
-            $relais3_affichee = '';
-            if(array_key_exists($k, $rel1_cumul))
-                $relais1_affichee = array_search($k, array_keys($rel1_cumul)) + 1;
-            if(array_key_exists($k, $rel2_cumul))
-                $relais2_affichee = array_search($k, array_keys($rel2_cumul)) + 1;
-            if(array_key_exists($k, $rel3_cumul))
-                $relais3_affichee = array_search($k, array_keys($rel3_cumul)) + 1;
-            $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                    $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                    $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                    $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul']
-            );
-        }
+  if($rel3_cumul != null)
+    foreach($rel3_cumul as $k => $v)
+    {
+      $place_affichee++;
+      $relais1_affichee = '';
+      $relais2_affichee = '';
+      $relais3_affichee = '';
+      if(array_key_exists($k, $rel1_cumul))
+        $relais1_affichee = array_search($k, array_keys($rel1_cumul)) + 1;
+      if(array_key_exists($k, $rel2_cumul))
+        $relais2_affichee = array_search($k, array_keys($rel2_cumul)) + 1;
+      if(array_key_exists($k, $rel3_cumul))
+        $relais3_affichee = array_search($k, array_keys($rel3_cumul)) + 1;
+  
+      $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
+                       $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
+                       $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
+                       $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul']
+                      );
+    }
     if($rel3_radio2 != null)
-        foreach($rel3_radio2 as $k => $v)
+      foreach($rel3_radio2 as $k => $v)
         {
             if(!isset($out[$k]))
             {

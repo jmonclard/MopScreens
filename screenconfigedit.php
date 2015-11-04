@@ -30,7 +30,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr" dir="ltr">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>CFCO 2014 Config Edit</title>
+        <title>Config Rename</title>
         <script type="text/javascript">
             function GoBack()
             {
@@ -49,12 +49,12 @@
     {
       $sql = "SELECT rc.name rcname, c.name cname FROM mopcompetition c, resultconfig rc WHERE rc.rcid=$rcid";
       $res = mysql_query($sql);
-      
+
       if (mysql_num_rows($res) > 0)
       {
         $r = mysql_fetch_array($res);
         $rcname=$r['rcname'];
-        
+
         print "<form method=GET action='screenconfig.php'>";
         print "<input type='hidden' name='action' value='update'>";
         print "<input type='hidden' name='rcid' value='$rcid'>";

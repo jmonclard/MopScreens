@@ -6,7 +6,7 @@ define("MYSQL_USERNAME", "root");
 define("MYSQL_DBNAME", "cfcobases");
 define("MYSQL_PASSWORD", "");
 
-define("MEOS_PASSWORD", "resultcfco");
+define("MEOS_PASSWORD", "");
 
 //Localization. NOTE: UTF-8 encoding required for non-latin characters
 $lang = array();
