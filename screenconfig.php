@@ -18,44 +18,70 @@
     $ip=$_SERVER['REMOTE_ADDR'];
     $ipnb=explode('.',$ip);
     session_start();
-    
+
     if (($ipnb[0]!='192')||($ipnb[1]!='168')||($ipnb[2]!='0')||($ipnb[3]=='20'))
     {
         header("Location: http://192.168.0.10");
         die();
     }
+    
+    /**
+     * Détection automatique de la langue du navigateur
+     * Les codes langues du tableau $aLanguages doivent obligatoirement être sur 2 caractères
+     * Utilisation : $langue = autoSelectLanguage(array('fr','en','es','it','de','cn'), 'en')
+     * @param array $aLanguages Tableau 1D des langues du site disponibles (ex: array('fr','en','es','it','de','cn')).
+     * @param string $sDefault Langue à choisir par défaut si aucune n'est trouvée
+     * @return string La langue du navigateur ou bien la langue par défaut
+     * @author Hugo Hamon
+     * @version 0.1
+     */
+    function autoSelectLanguage($aLanguages, $sDefault = 'fr') {
+      if(!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        $aBrowserLanguages = explode(',',$_SERVER['HTTP_ACCEPT_LANGUAGE']);
+        foreach($aBrowserLanguages as $sBrowserLanguage) {
+          $sLang = strtolower(substr($sBrowserLanguage,0,2));
+          if(in_array($sLang, $aLanguages)) {
+            return $sLang;
+          }
+        }
+      }
+      return $sDefault;
+    }
+    
+    $_SESSION['CurrentLanguage'] = isset($_SESSION['CurrentLanguage']) ? $_SESSION['CurrentLanguage'] : autoSelectLanguage(array('fr','en','sv'),'en');
+    
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr" dir="ltr">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>CFCO 2014 Screen Configs</title>
+        <title>Screen Configs</title>
         <link rel="stylesheet" type="text/css" href="styles/screen.css" />
         
         <script type="text/javascript">
-            function AddConfig(rcid)
+            function AddConfig(prompt_text,rcid)
             {
                 defaultname="New conf "+rcid.toString();
-                name=prompt("New configuration name : ",defaultname);
+                name=prompt(prompt_text,defaultname);
                 if (name!="null")
                 {
                   location.replace("screenconfig.php?action=add&rcid="+rcid+"&name="+name);
                 }
             }        
 
-            function CloneConfig(oldrcid,newrcid,oldcid)
+            function CloneConfig(prompt_text,oldrcid,newrcid,oldcid)
             {
                 defaultname="New conf "+newrcid.toString();
-                name=prompt("New configuration name : ",defaultname);
+                name=prompt(prompt_text,defaultname);
                 if (name!='null')
                 {
                     location.replace("screenconfig.php?action=clone&oldrcid="+oldrcid+"&newrcid="+newrcid+"&name="+name);
                 }
             }        
 
-            function DelConfig(rcid,configname)
+            function DelConfig(prompt_text,rcid,configname)
             {
-                if(confirm("Do you really want to delete "+configname+" ?"))
+                if(confirm(prompt_text+configname+" ?"))
                 {
                     location.replace("screenconfig.php?action=del&rcid="+rcid);
                 }
@@ -76,14 +102,19 @@
                 location.replace("screenconfig.php?action=play&rcid="+rcid);
             }
 
-            function DelCompetition(cid,competname)
+            function DelCompetition(prompt_text,cid,competname)
             {
-                if(confirm("Do you really want to delete "+competname+" ?"))
+                if(confirm(prompt_text+competname+" ?"))
                 {
                     location.replace("screenconfig.php?action=delcompet&cid="+cid);
                 }
             }
-			
+
+            function SetLanguage()
+            {
+              lng = document.getElementById("lang").value;
+              location.replace("screenconfig.php?action=setlang&lng="+lng);
+            }
 			
         </script>
     </head>
@@ -91,12 +122,19 @@
 <?php
     include_once('functions.php');
     include_once('screenfunctions.php');
+    include_once('lang.php');
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
     ConnectToDB();
 
     
     $action = isset($_GET['action']) ? strval($_GET['action']) : "";
+
+    if ($action==="setlang")
+    {
+        $lng = isset($_GET['lng']) ? strval($_GET['lng']) : "en";
+        $_SESSION['CurrentLanguage']=$lng;
+    }
         
     if ($action==="add")
     {
@@ -165,21 +203,40 @@
 	
     if ($action==="delcompet")
     {
-        $cid = isset($_GET['cid']) ? intval($_GET['cid']) : 0;
-		if ($cid>0)
-		{
-			$tables = array(0=>"mopcontrol", "mopclass", "moporganization", "mopcompetitor", "mopcompetition",
+      $cid = isset($_GET['cid']) ? intval($_GET['cid']) : 0;
+      if ($cid>0)
+      {
+        $tables = array(0=>"mopcontrol", "mopclass", "moporganization", "mopcompetitor", "mopcompetition",
 						  "mopteam", "mopteammember", "mopclasscontrol", "mopradio", "resultclass");
 						  
-			foreach($tables as $table)
-			{
-				$sql = "DELETE FROM $table WHERE cid=$cid";
-				mysql_query($sql);
-			} 
-		}
+        foreach($tables as $table)
+        {
+          $sql = "DELETE FROM $table WHERE cid=$cid";
+          mysql_query($sql);
+        } 
+      }
     }
 	
-    
+  
+    print MyGetText(36)." : ";
+    print "<select name='lang' id='lang' size=1 onchange='SetLanguage();'>";
+    foreach (GetLanguages() as $lng)
+    {
+        $code=$lng[0];
+        $name=$lng[1];
+        if ($code===$_SESSION['CurrentLanguage'])
+        {
+            print "<option value=$code selected>$name</option>";
+        }
+        else
+        {
+            print "<option value=$code>$name</option>";
+        }
+    }
+    print "</select>\n";
+    print "<br/>\n";
+	  print "<br/>\n";
+
     //-- Determine next available rcid for add or clone operations
     
     $sql = "SELECT rcid FROM resultconfig";
@@ -196,10 +253,9 @@
             }
         }
     }
-
     print "<table border>\n";
     print "<tr>";
-    print "<th colspan=4>Configuration</th>";
+    print "<th colspan=4>".MyGetText(0)."</th>";
     print "<th colspan=3>&nbsp;</th>";
     print "</tr>";
 	
@@ -214,33 +270,33 @@
         $active = $r['active'];
         print "<tr>\n";
         print "<td><a href='screen.php?rcid=$rcid'>$name</a></td>\n";
-        print "<td><img src='img/edit.png' title='View' onclick='ViewConfig($rcid);'></img></td>\n";
-        print "<td><img src='img/play.png' title='View' onclick='PlayConfig($rcid);'></img></td>\n";
+        print "<td><img src='img/edit.png' title='".MyGetText(1)."' onclick='ViewConfig($rcid);'></img></td>\n";
+        print "<td><img src='img/play.png' title='".MyGetText(2)."' onclick='PlayConfig($rcid);'></img></td>\n";
         if ($active==1)
         {
-          print "<td><img src='img/run.png' title='View'></img></td>\n";
+          print "<td><img src='img/run.png' title='".MyGetText(3)."'></img></td>\n";
         }
         else
         {
           print "<td>&nbsp;</td>\n";
         }
-        print "<td><img src='img/rename.png' title='edit' onclick='EditConfig($rcid);'></img></td>\n";
-        print "<td><img src='img/clone.png' title='clone' onclick='CloneConfig($rcid,$nextrcid);'></img></td>\n";
-        print "<td><img src='img/suppr.png' title='delete' onclick='DelConfig($rcid,\"$rcname\");'></img></td>\n";
+        print "<td><img src='img/rename.png' title='".MyGetText(4)."' onclick='EditConfig($rcid);'></img></td>\n";
+        print "<td><img src='img/clone.png' title='".MyGetText(5)."' onclick='CloneConfig(\"".MyGetText(13)."\",$rcid,$nextrcid);'></img></td>\n";
+        print "<td><img src='img/suppr.png' title='".MyGetText(6)."' onclick='DelConfig(\"".MyGetText(14)."\",$rcid,\"$rcname\");'></img></td>\n";
         print "</tr>\n";
       } 
     }
     print "</table>\n";
-    print "<input type='button' value='Add' onclick='AddConfig($nextrcid);'>";
+    print "<input type='button' value='".MyGetText(7)."' onclick='AddConfig(\"".MyGetText(13)."\",$nextrcid);'>"; // New button
 
 	
     //------------------- display competitions -------------
     print "<br/><br/><table border>\n";
     print "<tr>\n";
-    print "<th>Id</th>\n";
-    print "<th>Competitions</th>\n";
-    print "<th>Date</th>\n";
-    print "<th>Organizer</th>\n";
+    print "<th>".MyGetText(8)."</th>\n";  // Id
+    print "<th>".MyGetText(9)."</th>\n";  // Competitions
+    print "<th>".MyGetText(10)."</th>\n"; // Date
+    print "<th>".MyGetText(11)."</th>\n"; // Organizers
     print "<th>&nbsp;</th>\n";
     print "</tr>\n";
 	
@@ -259,12 +315,23 @@
         print "<td>$name</td>\n";
         print "<td>$date</td>\n";
         print "<td>$organizer</td>\n";
-        print "<td><img src='img/suppr.png' title='delete' onclick='DelCompetition($cid,\"$name\");'></img></td>\n";
+        print "<td><img src='img/suppr.png' title='".MyGetText(6)."' onclick='DelCompetition(\"".MyGetText(14)."\",$cid,\"$name\");'></img></td>\n"; // Delete
         print "</tr>\n";
       } 
     }
     print "</table>\n";
-	
+	  print "<br/>\n";
+    print "<hr/>\n";
+    print "<img src='img/pict.png' title='Picture'/>\n";
+    print "&nbsp;\n";
+    print "<img src='img/htm.png' title='Picture'/>\n";
+    print "&nbsp;\n";
+    print "<a href=screenfiles.php>".MyGetText(12)."</a>";
+    print "<hr/>\n";
+	  print "<br/>\n";
+	  print "<br/>\n";
+	  print "<br/>\n";
+  
 ?>        
-    </body>
+  </body>
 </html>

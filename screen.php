@@ -119,6 +119,7 @@
 <?php
     include_once('functions.php');
     include_once('screenfunctions.php');
+    include_once('lang.php');
     
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
@@ -132,34 +133,33 @@
         $configname = GetConfigurationName($rcid);
         print "<h1>$configname</h1>\n";
     }
-?>
 
-    <table border>
-            <tr>
-                <th rowspan=2 colspan=4>Screen</th>
-                <th rowspan=2>Competition</th>
-                <th rowspan=2>Title</th>
-                <th rowspan=2>SubTitle</th>
-                <th colspan=2>Pictures</th>
-                <th rowspan=2>Mode</th>
-                <th colspan=2>Full screen</th>
-                <th colspan=2>Left pane</th>
-                <th colspan=2>Right pane</th>
-            </tr>
-            <tr>
-                <th>Left</th>
-                <th>Right</th>
+    print "<table border>\n";
+    print "  <tr>\n";
+    print "    <th rowspan=2 colspan=4>".MyGetText(24)."</th>\n"; //screen
+    print "    <th rowspan=2>".MyGetText(9)."</th>\n"; // competition
+    print "    <th rowspan=2>".MyGetText(25)."</th>\n"; // Title
+    print "    <th rowspan=2>".MyGetText(26)."</th>\n"; // Subtitle
+    print "    <th colspan=2>".MyGetText(27)."</th>\n"; // Picture
+    print "    <th rowspan=2>".MyGetText(30)."</th>\n"; // Mode
+    print "    <th colspan=2>".MyGetText(31)."</th>\n"; // Full screen
+    print "    <th colspan=2>".MyGetText(34)."</th>\n"; // Left pane
+    print "    <th colspan=2>".MyGetText(35)."</th>\n"; // Right pane
+    print "  </tr>\n";
+    print "  <tr>\n";
+    print "    <th>".MyGetText(28)."</th>\n"; // left
+    print "    <th>".MyGetText(29)."</th>\n"; // Right
 
-                <th>Type</th>
-                <th>Content</th>
+    print "    <th>".MyGetText(32)."</th>\n"; // Type
+    print "    <th>".MyGetText(33)."</th>\n"; // Content
 
-                <th>Type</th>
-                <th>Content</th>
+    print "    <th>".MyGetText(32)."</th>\n"; // Type
+    print "    <th>".MyGetText(33)."</th>\n"; // Content
 
-                <th>Type</th>
-                <th>Content</th>
-            </tr>
-<?php
+    print "    <th>".MyGetText(32)."</th>\n"; // Type
+    print "    <th>".MyGetText(33)."</th>\n"; // Content
+    print "  </tr>\n";
+
     include_once('screenfunctions.php');
     
     $action = isset($_GET['action']) ? strval($_GET['action']) : "none";
@@ -476,11 +476,9 @@
 
             print "<tr>\n";
             print "<td>$sid</td>\n";
-            print "<td><img src='img/ecran.png' title='View' onclick='ViewScreen($sid);'></img>";
-            print "</td>\n";
-            print "<td id=\"idtimestamp$sid\" class=\"\">";
-            print "</td>\n";
-            print "<td><img src='img/edit.png' title='Edit' onclick='EditScreen($rcid,$sid);'></img></td>\n";
+            print "<td><img src='img/ecran.png' title='".MyGetText(18)."' onclick='ViewScreen($sid);'></img></td>\n";
+            print "<td id=\"idtimestamp$sid\" class=\"\"></td>\n";
+            print "<td><img src='img/edit.png' title='".MyGetText(1)."' onclick='EditScreen($rcid,$sid);'></img></td>\n";
 
             $sqlcname = "SELECT name FROM mopcompetition WHERE cid=$cid";
             $rescname = mysql_query($sqlcname);
@@ -498,12 +496,12 @@
             
             switch ($screenmode) {
                 case 1:
-                    print "<td class='screen_screenmode'><img src='img/ecranlarge.png' title='Full screen'/></td>\n";
+                    print "<td class='screen_screenmode'><img src='img/ecranlarge.png' title='".MyGetText(31)."'/></td>\n";
                     $bgcolfull="";
                     $bgcoldbl=" bgcolor=LightGrey";
                     break;
                 case 2:
-                    print "<td class='screen_screenmode'><img src='img/ecran.png' title='2 panels'/><img src='img/ecran.png' title='2 panels'/></td>\n";
+                    print "<td class='screen_screenmode'><img src='img/ecran.png' title='".MyGetText(37)."'/><img src='img/ecran.png' title='".MyGetText(37)."'/></td>\n";
                     $bgcolfull=" bgcolor=LightGrey";
                     $bgcoldbl="";
                     break;
@@ -511,65 +509,65 @@
             
             switch ($fullcontent) {
                 case 1:
-                    print "<td class='screen_fullcontent' $bgcolfull><img src='img/pict.png' title='Picture'/></td>\n";
+                    print "<td class='screen_fullcontent' $bgcolfull><img src='img/pict.png' title='".MyGetText(38)."'/></td>\n"; // picture
                     print "<td $bgcolfull>$fullpict</td>\n";
                     break;
                 case 2:
-                    print "<td class='screen_fullcontent' $bgcolfull><img src='img/txt.png' title='Text'/></td>\n";
+                    print "<td class='screen_fullcontent' $bgcolfull><img src='img/txt.png' title='".MyGetText(39)."'/></td>\n"; // text
                     print "<td $bgcolfull>$fulltxt</td>\n";
                     break;
                 case 3:
-                    print "<td class='screen_fullcontent' $bgcolfull><img src='img/htm.png' title='HTML'/></td>\n";
+                    print "<td class='screen_fullcontent' $bgcolfull><img src='img/htm.png' title='".MyGetText(40)."'/></td>\n"; // html
                     print "<td $bgcolfull>$fullhtml</td>\n";
                     break;
                 case 4:
-                    print "<td class='screen_fullcontent' $bgcolfull><a href=screenclasses.php?rcid=$rcid&cid=$cid&sid=$sid&panel=1&ret=1><img src='img/podium.png' title='Relay Results'/></a></td>\n";
+                    print "<td class='screen_fullcontent' $bgcolfull><a href=screenclasses.php?rcid=$rcid&cid=$cid&sid=$sid&panel=1&ret=1><img src='img/podium.png' title='".MyGetText(41)."'/></a></td>\n"; // Relay result
                     print "<td $bgcolfull>$fullclasses</td>\n";
                     break;
             }
 
             switch ($leftcontent) {
                 case 1:
-                    print "<td class='screen_leftcontent' $bgcoldbl><img src='img/pict.png' title='Picture'/></td>\n";
+                    print "<td class='screen_leftcontent' $bgcoldbl><img src='img/pict.png' title='".MyGetText(38)."'/></td>\n"; // picture
                     print "<td $bgcoldbl>$leftpict</td>\n";
                     break;
                 case 2:
-                    print "<td class='screen_leftcontent' $bgcoldbl><img src='img/txt.png' title='Text'/></td>\n";
+                    print "<td class='screen_leftcontent' $bgcoldbl><img src='img/txt.png' title='".MyGetText(39)."'/></td>\n"; // text
                     print "<td $bgcoldbl>$lefttxt</td>\n";
                     break;
                 case 3:
-                    print "<td class='screen_leftcontent' $bgcoldbl><img src='img/htm.png' title='HTML'/></td>\n";
+                    print "<td class='screen_leftcontent' $bgcoldbl><img src='img/htm.png' title='".MyGetText(40)."'/></td>\n"; // html
                     print "<td $bgcoldbl>$lefthtml</td>\n";
                     break;
                 case 4:
-                    print "<td class='screen_leftcontent' $bgcoldbl><a href=screenclasses.php?rcid=$rcid&cid=$cid&sid=$sid&panel=1&ret=1><img src='img/start.png' title='Start'/></a></td>\n";
+                    print "<td class='screen_leftcontent' $bgcoldbl><a href=screenclasses.php?rcid=$rcid&cid=$cid&sid=$sid&panel=1&ret=1><img src='img/start.png' title='".MyGetText(42)."'/></a></td>\n"; // start list
                     print "<td $bgcoldbl>$leftclasses</td>\n";
                     break;
                 case 5:
-                    print "<td class='screen_leftcontent' $bgcoldbl><a href=screenclasses.php?rcid=$rcid&cid=$cid&sid=$sid&panel=1&ret=1><img src='img/podium.png' title='Results'/></a></td>\n";
+                    print "<td class='screen_leftcontent' $bgcoldbl><a href=screenclasses.php?rcid=$rcid&cid=$cid&sid=$sid&panel=1&ret=1><img src='img/podium.png' title='".MyGetText(43)."'/></a></td>\n"; // Results
                     print "<td $bgcoldbl>$leftclasses</td>\n";
                     break;
             }
 
             switch ($rightcontent) {
                 case 1:
-                    print "<td class='screen_rightcontent' $bgcoldbl><img src='img/pict.png' title='Picture'/></td>\n";
+                    print "<td class='screen_rightcontent' $bgcoldbl><img src='img/pict.png' title='".MyGetText(38)."'/></td>\n";
                     print "<td $bgcoldbl>$rightpict</td>\n";
                     break;
                 case 2:
-                    print "<td class='screen_rightcontent' $bgcoldbl><img src='img/txt.png' title='Text'/></td>\n";
+                    print "<td class='screen_rightcontent' $bgcoldbl><img src='img/txt.png' title='".MyGetText(39)."'/></td>\n";
                     print "<td $bgcoldbl>$righttxt</td>\n";
                     break;
                 case 3:
-                    print "<td class='screen_rightcontent' $bgcoldbl><img src='img/htm.png' title='HTML'/></td>\n";
+                    print "<td class='screen_rightcontent' $bgcoldbl><img src='img/htm.png' title='".MyGetText(40)."'/></td>\n";
                     print "<td $bgcoldbl>$righthtml</td>\n";
                     break;
                 case 4:
-                    print "<td class='screen_rightcontent' $bgcoldbl><a href=screenclasses.php?rcid=$rcid&cid=$cid&sid=$sid&panel=2&ret=1><img src='img/start.png' title='Start'/></a></td>\n";
+                    print "<td class='screen_rightcontent' $bgcoldbl><a href=screenclasses.php?rcid=$rcid&cid=$cid&sid=$sid&panel=2&ret=1><img src='img/start.png' title='".MyGetText(42)."'/></a></td>\n";
                     print "<td $bgcoldbl>$rightclasses</td>\n";
                     break;
                 case 5:
-                    print "<td class='screen_rightcontent' $bgcoldbl><a href=screenclasses.php?rcid=$rcid&cid=$cid&sid=$sid&panel=2&ret=1><img src='img/podium.png' title='Results'/></a></td>\n";
+                    print "<td class='screen_rightcontent' $bgcoldbl><a href=screenclasses.php?rcid=$rcid&cid=$cid&sid=$sid&panel=2&ret=1><img src='img/podium.png' title='".MyGetText(43)."'/></a></td>\n";
                     print "<td $bgcoldbl>$rightclasses</td>\n";
                     break;
             }
@@ -581,22 +579,24 @@
    //================================== display classes statistics ================================================
         
         print "<br/>\n";
-        print "<a href='screenconfig.php'>Back to main page</a>&nbsp;&nbsp;&nbsp;";
+        print "<a href='screenconfig.php'>".MyGetText(19)."</a>&nbsp;&nbsp;&nbsp;";
         print "<br/>\n";
         foreach ($tablecid as $cid => $cname)
         {
-			// determines number of entries
-			$sql3 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid";
-			$res3 = mysql_query($sql3);
-			if (mysql_num_rows($res3) > 0)
-			{
-				if ($r3 = mysql_fetch_array($res3))
-				{
-				  $totalentry=$r3[0];
-				}
-			}
-				
-            print "<h2>$cname ($totalentry)</h2>\n";
+            // determines number of entries
+            $sql3 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid";
+            $res3 = mysql_query($sql3);
+            if (mysql_num_rows($res3) > 0)
+            {
+              if ($r3 = mysql_fetch_array($res3))
+              {
+                $totalentry=$r3[0];
+              }
+            }
+            if ($cid!=0)
+            {
+              print "<h2>$cname ($totalentry)</h2>\n";
+            }
             print "<table border>\n";
 
             $sql = "SELECT name,id FROM mopclass WHERE mopclass.cid=$cid ORDER BY name";
@@ -604,12 +604,12 @@
             if (mysql_num_rows($res) > 0)
             {
                 print "<tr>\n";
-                print "<th>Class</th>\n";
-                print "<th>Start List</th>\n";
-                print "<th>Results</th>\n";
-                print "<th colspan=2>Starts</th>\n";
-                print "<th colspan=2>Entries</th>\n";
-                print "<th>Done</th>\n";
+                print "<th>".MyGetText(44)."</th>\n"; // Classes
+                print "<th>".MyGetText(42)."</th>\n"; // Start list
+                print "<th>".MyGetText(43)."</th>\n"; // Results
+                print "<th colspan=2>".MyGetText(45)."</th>\n"; // Start
+                print "<th colspan=2>".MyGetText(46)."</th>\n"; // Entries
+                print "<th>".MyGetText(47)."</th>\n";
                 print "<th>&nbsp;</th>\n";
                 print "</tr>\n";
                 
@@ -645,11 +645,11 @@
                           {
                               if (strlen($displaySL)>0)
                               {
-                                $displaySL=$displaySL." ".$screen2.$panel2;
+                                $displaySL=$displaySL." ".$screen2.MyGetText(48);
                               }
                               else
                               {
-                                $displaySL=$screen2.$panel2;
+                                $displaySL=$screen2.MyGetText(48);
                               }
                           }
                           //-- Start List panel R
@@ -657,11 +657,11 @@
                           {
                               if (strlen($displaySL)>0)
                               {
-                                $displaySL=$displaySL." ".$screen2.$panel2;
+                                $displaySL=$displaySL." ".$screen2.MyGetText(49);
                               }
                               else
                               {
-                                $displaySL=$screen2.$panel2;
+                                $displaySL=$screen2.MyGetText(49);
                               }
                           }
 
@@ -670,11 +670,11 @@
                           {
                               if (strlen($displayR)>0)
                               {
-                                $displayR=$displayR." ".$screen2.$panel2;
+                                $displayR=$displayR." ".$screen2.MyGetText(48);
                               }
                               else
                               {
-                                $displayR=$screen2.$panel2;
+                                $displayR=$screen2.MyGetText(48);
                               }
                           }
                           //-- Start List panel R
@@ -682,11 +682,11 @@
                           {
                               if (strlen($displayR)>0)
                               {
-                                $displayR=$displayR." ".$screen2.$panel2;
+                                $displayR=$displayR." ".$screen2.MyGetText(49);
                               }
                               else
                               {
-                                $displayR=$screen2.$panel2;
+                                $displayR=$screen2.MyGetText(49);
                               }
                           }
 
@@ -767,7 +767,7 @@
         }
 
     }
-    print "<a href=screen.php?rcid=$rcid>Refresh</a>";
+    print "<a href=screen.php?rcid=$rcid>".MyGetText(23)."</a>";
 ?>
     </body>
 </html>

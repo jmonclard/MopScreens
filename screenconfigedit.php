@@ -24,6 +24,7 @@
       die();
   }
   include_once('functions.php');
+  include_once('lang.php');
 
   session_start();
 ?>
@@ -58,9 +59,9 @@
         print "<form method=GET action='screenconfig.php'>";
         print "<input type='hidden' name='action' value='update'>";
         print "<input type='hidden' name='rcid' value='$rcid'>";
-        print "Name : <input type='text' name='configname' value='$rcname' size=64 maxlength=64><br/>";
-        print "<br/><input type='submit' value='OK'>&nbsp;";
-        print "<input type='button' value='Cancel' onclick='GoBack();'>";
+        print MyGetText(54)." : <input type='text' name='configname' value='$rcname' size=64 maxlength=64><br/>"; // New name
+        print "<br/><input type='submit' value='".MyGetText(52)."'>&nbsp;"; // OK
+        print "<input type='button' value='".MyGetText(53)."' onclick='GoBack();'>"; // cancel
         print "</form>";
       }
     }

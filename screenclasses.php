@@ -150,6 +150,7 @@
 
   include_once('functions.php');
   include_once('screenfunctions.php');
+  include_once('lang.php');
 
   
   $PHP_SELF = $_SERVER['PHP_SELF'];
@@ -190,9 +191,9 @@
 
       print "<table>\n";
       print "<tr>\n";
-      print "<th>Taken</th>\n";    
+      print "<th>".MyGetText(50)."</th>\n"; // Displayed
       print "<th>&nbsp;</th>\n";
-      print "<th>Available</th>\n";    
+      print "<th>".MyGetText(51)."</th>\n"; // Available   
       print "</tr>\n";
 
       print "<tr>\n";
@@ -219,10 +220,10 @@
       print "</tr>\n";
       print "</table>\n";
       
-      print "<input type='button' value='OK' onclick='Validate($rcid,$cid,$sid,$panel,$ret);'>";
+      print "<input type='button' value='".MyGetText(52)."' onclick='Validate($rcid,$cid,$sid,$panel,$ret);'>"; // OK
     }
   }
-  print "<input type='button' value='Cancel' onclick='GoBack($rcid,$sid,$ret);'>";
+  print "<input type='button' value='".MyGetText(53)."' onclick='GoBack($rcid,$sid,$ret);'>"; // cancel
     
 ?>
     </body>
