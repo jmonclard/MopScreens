@@ -7,11 +7,11 @@
   <script type="text/javascript">
     function gotoailleurs()
     {
-        window.location = "http://192.168.0.10/index.php";
+        window.location = "http://ToBeDefined/screenconfig.php";
     }
   </script>
   </head>
   <body onload="gotoailleurs();">
-  		<a href="http://192.168.0.10/index.php">Lien</a>
+  		<a href="http://ToBeDefined/screenconfig.php">Lien</a>
   </body>
 </html>

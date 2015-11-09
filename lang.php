@@ -304,17 +304,17 @@
       $text[66]['en']="Color";
       $text[66]['sv']="Färg";
       
-      $text[67]['fr']="";
-      $text[67]['en']="";
-      $text[67]['sv']="";
+      $text[67]['fr']="Manuel utilisateur";
+      $text[67]['en']="User manual";
+      $text[67]['sv']="User manual";
       
-      $text[68]['fr']="";
-      $text[68]['en']="";
-      $text[68]['sv']="";
+      $text[68]['fr']="Documentation";
+      $text[68]['en']="Documentation";
+      $text[68]['sv']="Documentation";
       
-      $text[69]['fr']="";
-      $text[69]['en']="";
-      $text[69]['sv']="";
+      $text[69]['fr']="Fichiers ressource";
+      $text[69]['en']="Resource files";
+      $text[69]['sv']="Resource files";
       
       $text[70]['fr']="";
       $text[70]['en']="";

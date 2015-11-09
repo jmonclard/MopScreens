@@ -37,7 +37,7 @@
 			while($current = mysql_fetch_assoc($res))
 			{
 				$out[] = $current['fulllastrefresh'];
-				$out[] = $current['fulllastredraw']; //JM ???
+				$out[] = $current['fulllastredraw'];
 			}
 		}
 		

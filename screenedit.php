@@ -698,7 +698,7 @@
             print "<tr>\n";
             print "<td><input type='checkbox' name='chkall[]' value='rightfixedlines'></input></td>\n";
             $str=NumericIntList("rightfixedlines",0,20,$rightfixedlines);
-            print "<td>F".MyGetText(59)."</td>\n"; // Fixed lines
+            print "<td>".MyGetText(59)."</td>\n"; // Fixed lines
             print "<td>$str</td>\n";
             print "</tr>\n";
 

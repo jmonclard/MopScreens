@@ -322,12 +322,17 @@
     print "</table>\n";
 	  print "<br/>\n";
     print "<hr/>\n";
+    print "<b>".MyGetText(69)."</b><br/>\n";// Resource files
     print "<img src='img/pict.png' title='Picture'/>\n";
     print "&nbsp;\n";
     print "<img src='img/htm.png' title='Picture'/>\n";
     print "&nbsp;\n";
     print "<a href=screenfiles.php>".MyGetText(12)."</a>";
     print "<hr/>\n";
+    print "<b>".MyGetText(68)."</b><br/>\n";// documentation
+    print "<img src='img/htm.png'></img>&nbsp;<a href=readme.html target='_blank'>README (english)</a><br/>\n";
+    $docfilename= file_exists("MopScreens-".$_SESSION['CurrentLanguage'].".pdf") ? "MopScreens-".$_SESSION['CurrentLanguage'].".pdf" : "MopScreens-en.pdf";
+    print "<img src='img/pdf.png'></img>&nbsp;<a href=".$docfilename.">".MyGetText(67)."</a><br/>\n";
 	  print "<br/>\n";
 	  print "<br/>\n";
 	  print "<br/>\n";
