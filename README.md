@@ -10,9 +10,9 @@ Large event results display for MeOS
 ####What's New ?
 [x] It's now possible from screenconfig.php to upload pictures and html files to their respective directories and to manage them.
 
-[x] Fixed an issue relative to picture and html file allowing configuration even if these file do not exist on the PC used for configuration.
+[x] Fixed an issue relative to picture and html file allowing configuration even if these files do not exist on the PC used for configuration.
 
-[x] Added French and Swedish support. Lnaguage can be chosen from screenconfig.php. Default language is determined based on browser configuration.
+[x] Added French and Swedish support. Language can be chosen from screenconfig.php. Default language is determined based on browser configuration. Thanks to Jens Kastensson for the Swedish translation.
 
 ####Known bugs
 		
