@@ -114,7 +114,7 @@
 
     //---------- files lists creation ----
     $picturefilelist= array();
-    $tmp_picturefilelist=array_diff(scandir("./pictures"), array('..', '.','index.php','index.html'));
+    $tmp_picturefilelist=array_diff(scandir("./pictures"), array('..', '.','index.php','index.html','serverip.txt','radiolog.txt'));
     foreach ($tmp_picturefilelist as $name)
     {
       $picturefilelist[$name]=$name;

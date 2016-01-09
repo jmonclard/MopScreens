@@ -420,7 +420,7 @@ function ordonnertableau($result, $arr_radiomax)
 }
 
 /** Format a result array as a table.*/
-function formatResultOriginal($result) {
+function formatResult($result) {
   global $lang;
   $head = false;
   print "<table>";
@@ -442,7 +442,7 @@ function formatResultOriginal($result) {
   print "</table>";
 }
 
-  function formatResult($result,$tag) {
+  function formatResultScreen($result) {
   global $pos;
   global $lang;
   $head = true;

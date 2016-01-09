@@ -5,6 +5,18 @@ Large event results display for MeOS
 
 **Ligue PACA branch holds the new created one to be used.**
 
+###2016-01-09 Warning fix and simultaneous support of both original MeOS display and new "screen" display
+####What's New ?
+[x] Fiw a warning issue in formatResult() function in functions.php
+
+[x] It's now possible to simultaneousely use show.php (original MeOS result online display) and pages.php ("Screen" O'Ringen like one).
+
+####Known bugs
+No bug fixed. Please see below for known bugs.
+
+####Missing features
+No missing features added. See below for a list of expected features.
+
 ###2015-11-08 Picture files management and internationalisation
 
 ####What's New ?

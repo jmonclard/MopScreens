@@ -102,7 +102,7 @@
             $res = mysql_query($sql);
             $results = addRadioResult($res, $results);
       }
-      formatResult($results);
+      formatResultScreen($results);
     }      
   }
   else {
@@ -139,7 +139,7 @@
             $res = mysql_query($sql);
             $results = addRadioResult($res, $results);
         }
-        formatResult($results); 
+        formatResultScreen($results); 
       }
     }
     else {
@@ -176,7 +176,7 @@
             $results = addRadioResult($res, $results);
        }
        
-       formatResult($results);
+       formatResultScreen($results);
       }
     }
   }

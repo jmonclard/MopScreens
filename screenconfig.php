@@ -130,6 +130,20 @@
     
     $action = isset($_GET['action']) ? strval($_GET['action']) : "";
 
+    
+    if ($action==="serverip")
+    {
+        $ip1 = isset($_GET['ip1']) ? intval($_GET['ip1']) : 192;
+        $ip2 = isset($_GET['ip2']) ? intval($_GET['ip2']) : 168;
+        $ip3 = isset($_GET['ip3']) ? intval($_GET['ip3']) : 0;
+        $ip4 = isset($_GET['ip4']) ? intval($_GET['ip4']) : 56;
+        $serverip = $ip1.".".$ip2.".".$ip3.".".$ip4."\n";
+        $severipfile = fopen('pictures/serverip.txt', 'w');
+        fputs($severipfile, $serverip);
+        fclose($severipfile);
+    }
+        
+
     if ($action==="setlang")
     {
         $lng = isset($_GET['lng']) ? strval($_GET['lng']) : "en";
@@ -218,24 +232,6 @@
     }
 	
   
-    print MyGetText(36)." : ";
-    print "<select name='lang' id='lang' size=1 onchange='SetLanguage();'>";
-    foreach (GetLanguages() as $lng)
-    {
-        $code=$lng[0];
-        $name=$lng[1];
-        if ($code===$_SESSION['CurrentLanguage'])
-        {
-            print "<option value=$code selected>$name</option>";
-        }
-        else
-        {
-            print "<option value=$code>$name</option>";
-        }
-    }
-    print "</select>\n";
-    print "<br/>\n";
-	  print "<br/>\n";
 
     //-- Determine next available rcid for add or clone operations
     
@@ -333,7 +329,33 @@
     print "<img src='img/htm.png'></img>&nbsp;<a href=readme.html target='_blank'>README (english)</a><br/>\n";
     $docfilename= file_exists("MopScreens-".$_SESSION['CurrentLanguage'].".pdf") ? "MopScreens-".$_SESSION['CurrentLanguage'].".pdf" : "MopScreens-en.pdf";
     print "<img src='img/pdf.png'></img>&nbsp;<a href=".$docfilename.">".MyGetText(67)."</a><br/>\n";
-	  print "<br/>\n";
+
+	  print "<hr/>\n";
+    print "<b>".MyGetText(71)."</b><br>\n";     // Settings
+    print MyGetText(36)." : ";
+    print "<select name='lang' id='lang' size=1 onchange='SetLanguage();'>";
+    foreach (GetLanguages() as $lng)
+    {
+        $code=$lng[0];
+        $name=$lng[1];
+        if ($code===$_SESSION['CurrentLanguage'])
+        {
+            print "<option value=$code selected>$name</option>";
+        }
+        else
+        {
+            print "<option value=$code>$name</option>";
+        }
+    }
+    print "</select>\n";
+    print "<br/>\n";
+    print "<a href=screenserverip.php>".MyGetText(70)."</a><br/>\n" ;
+    if (file_exists("pictures/radiolog.txt"))
+    {
+      print "<a href='pictures/radiolog.txt' target='_blank'>".MyGetText(72)."</a><br/>\n" ;
+    }
+	  print "<hr/>\n";
+
 	  print "<br/>\n";
 	  print "<br/>\n";
   

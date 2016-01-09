@@ -316,9 +316,17 @@
       $text[69]['en']="Resource files";
       $text[69]['sv']="Resource files";
       
-      $text[70]['fr']="";
-      $text[70]['en']="";
-      $text[70]['sv']="";
+      $text[70]['fr']="Adresse IP du poste MeOS";
+      $text[70]['en']="IP address of MeOS computer";
+      $text[70]['sv']="IP address of MeOS computer";
+      
+      $text[71]['fr']="Configuration";
+      $text[71]['en']="Settings";
+      $text[71]['sv']="Settings";
+      
+      $text[72]['fr']="Log de la communication radio";
+      $text[72]['en']="Radio log file";
+      $text[72]['sv']="Radio log file";
       
       
       

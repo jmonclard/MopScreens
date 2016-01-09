@@ -102,7 +102,7 @@
         {
             $results3[] = array($results[$i]['start_time'], $results[$i]['name'], $results[$i]['team'], $results2[$i]['name'], $results2[$i]['team'], $results2[$i]['start_time']);
         }
-        formatResult($results3);
+        formatResultScreen($results3);
     }      
   }
   else {
@@ -155,7 +155,7 @@
         {
             $results3[] = array($results[$i]['start_time'], $results[$i]['name'], $results[$i]['team'], $results2[$i]['name'], $results2[$i]['team'], $results2[$i]['start_time']);
         }
-        formatResult($results3);
+        formatResultScreen($results3);
       }
     }
     else {
@@ -212,7 +212,7 @@
         {
             $results3[] = array($results[$i]['start_time'], $results[$i]['name'], $results[$i]['team'], $results2[$i]['name'], $results2[$i]['team'], $results2[$i]['start_time']);
         }
-        formatResult($results3);
+        formatResultScreen($results3);
       }
     }
   }
