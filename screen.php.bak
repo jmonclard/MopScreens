@@ -204,10 +204,6 @@
                     $res = mysql_query($sql);
                 }
             }
-	    $now = time();
-	    $str = "refresh=$now";
-	    $sql = "UPDATE resultscreen SET $str WHERE rcid=$rcid AND sid=$sid";
-	    $res = mysql_query($sql);
         }
 
     }

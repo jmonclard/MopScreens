@@ -87,15 +87,8 @@
                 $relais_out[$d['team_id']] = array("team_id" => $d['team_id'], "team_name" => $d['team_name'], "team_stat" => $d['team_stat'], "team_place" => '', "timestamp" => 0, 
                     "relais1" => $arr_tempsrelais, "relais2" => $arr_tempsrelais, "relais3" => $arr_tempsrelais);
             }
-	    
-	    $sql = "SELECT 1 ".
-                        "FROM mopclasscontrol AS cc ".
-                        "WHERE cc.cid='$cmpId' ".
-                        "AND cc.id='$cls' ";
-            $resexist = mysql_query($sql);
-            if(mysql_num_rows($resexist))
-	    {
-		$sql = "SELECT tm.id AS team_id, tm.leg, r.rt AS radio_time, r.timestamp AS radio_timestamp, cc.ord, c.timestamp, c.stat, c.rt, c.it, c.tstat, c.name ".
+            
+            $sql = "SELECT tm.id AS team_id, tm.leg, r.rt AS radio_time, r.timestamp AS radio_timestamp, cc.ord, c.timestamp, c.stat, c.rt, c.it, c.tstat ".
                         "FROM mopteammember AS tm, mopradio AS r, mopclasscontrol AS cc, mopcompetitor AS c ".
                         "WHERE tm.cid='$cmpId' ".
                         "AND tm.id IN (".implode(', ', array_keys($relais_out)).") ".
@@ -109,54 +102,22 @@
                         "AND c.id=tm.rid ".
                         "AND c.cls='$cls' ".
                         "ORDER BY tm.leg ASC";
-		    $res = mysql_query($sql);
-		    if(mysql_num_rows($res))
-		    {
-			while($d = mysql_fetch_array($res))
-			{
-			    $relais_out[$d['team_id']]['relais'.$d['leg']]['radio'.$d['ord']] = $d['radio_time'];
-			    $relais_out[$d['team_id']]['relais'.$d['leg']]['finish'] = $d['rt'];
-			    $relais_out[$d['team_id']]['relais'.$d['leg']]['cumul'] = $d['rt'] + $d['it'];
-			    $relais_out[$d['team_id']]['relais'.$d['leg']]['stat'] = $d['stat'];
-			    $relais_out[$d['team_id']]['relais'.$d['leg']]['tstat'] = $d['tstat'];
-			    $relais_out[$d['team_id']]['relais'.$d['leg']]['name'] = addslashes($d['name']);
-			    $relais_out[$d['team_id']]['timestamp'] = max($relais_out[$d['team_id']]['timestamp'], $d['timestamp'], $d['radio_timestamp']);
-			}
-			
-			$relais_out = ordonner_relais($relais_out, $numlegs);
-			formatRelaisResult($relais_out);
-		    }
-	    }
-	    else
-	    {
-		$sql = "SELECT tm.id AS team_id, tm.leg, c.timestamp, c.stat, c.rt, c.it, c.tstat, c.name ".
-                        "FROM mopteammember AS tm, mopcompetitor AS c ".
-                        "WHERE tm.cid='$cmpId' ".
-                        "AND tm.id IN (".implode(', ', array_keys($relais_out)).") ".
-                        "AND c.cid='$cmpId' ".
-                        "AND c.id=tm.rid ".
-                        "AND c.cls='$cls' ".
-                        "ORDER BY tm.leg ASC";
-		    $res = mysql_query($sql);
-		    if(mysql_num_rows($res))
-		    {
-			while($d = mysql_fetch_array($res))
-			{
-			    //$relais_out[$d['team_id']]['relais'.$d['leg']]['radio'.$d['ord']] = $d['radio_time'];
-			    $relais_out[$d['team_id']]['relais'.$d['leg']]['finish'] = $d['rt'];
-			    $relais_out[$d['team_id']]['relais'.$d['leg']]['cumul'] = $d['rt'] + $d['it'];
-			    $relais_out[$d['team_id']]['relais'.$d['leg']]['stat'] = $d['stat'];
-			    $relais_out[$d['team_id']]['relais'.$d['leg']]['tstat'] = $d['tstat'];
-			    $relais_out[$d['team_id']]['relais'.$d['leg']]['name'] = addslashes($d['name']);
-			    $relais_out[$d['team_id']]['timestamp'] = max($relais_out[$d['team_id']]['timestamp'], $d['timestamp']);
-			}
-			
-			$relais_out = ordonner_relais($relais_out, $numlegs);
-			formatRelaisResult($relais_out);
-		    }
-	    }
-            
-            
+            $res = mysql_query($sql);
+            if(mysql_num_rows($res))
+            {
+                while($d = mysql_fetch_array($res))
+                {
+                    $relais_out[$d['team_id']]['relais'.$d['leg']]['radio'.$d['ord']] = $d['radio_time'];
+                    $relais_out[$d['team_id']]['relais'.$d['leg']]['finish'] = $d['rt'];
+                    $relais_out[$d['team_id']]['relais'.$d['leg']]['cumul'] = $d['rt'] + $d['it'];
+                    $relais_out[$d['team_id']]['relais'.$d['leg']]['stat'] = $d['stat'];
+                    $relais_out[$d['team_id']]['relais'.$d['leg']]['tstat'] = $d['tstat'];
+                    $relais_out[$d['team_id']]['timestamp'] = max($relais_out[$d['team_id']]['timestamp'], $d['timestamp'], $d['radio_timestamp']);
+                }
+                
+                $relais_out = ordonner_relais($relais_out, $numlegs);
+                formatRelaisResult($relais_out);
+            }
         }
       }
     }      

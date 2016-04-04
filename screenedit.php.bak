@@ -454,24 +454,8 @@
             
             print "</table>\n";
 
-            
-            
-            
-            
-
-            
-
-            //--------------------------------------
-             ?>
-	     <hr />
-	     <a href="#" onclick="return devPanel(1);">Panel 1</a>
-	<a href="#" onclick="return devPanel(2);">Panel 2</a>
-	<a href="#" onclick="return devPanel(3);">Panel 3</a>
-	<a href="#" onclick="return devPanel(4);">Panel 4</a>
-	
-	<div id="pan1div">
-	<?php
-	//----------------- full screen ---------------------- 
+            //----------------- full screen ---------------------- 
+            print "<hr>\n";
             print "<h4>".MyGetText(31)."</h4>\n";
 
             print "<table>\n";
@@ -517,14 +501,14 @@
 
             print "<tr>\n";
             print "<td><input type='checkbox' name='chkall[]' value='fullfixedlines'></input></td>\n";
-            $str=NumericIntList("fullfixedlines",0,30,$fullfixedlines);
+            $str=NumericIntList("fullfixedlines",0,20,$fullfixedlines);
             print "<td>".MyGetText(59)."</td>\n"; // Fixed line
             print "<td>$str</td>\n";
             print "</tr>\n";
 
             print "<tr>\n";
             print "<td><input type='checkbox' name='chkall[]' value='fullscrolledlines'></input></td>\n";
-            $str=NumericIntList("fullscrolledlines",0,30,$fullscrolledlines);
+            $str=NumericIntList("fullscrolledlines",0,20,$fullscrolledlines);
             print "<td>".MyGetText(60)."</td>\n"; // Scrolling lines
             print "<td>$str</td>\n";
             print "</tr>\n";
@@ -560,11 +544,10 @@
 
 
             print "</table>\n";
-	?>
-	</div>
-	<div id="pan2div">
-	<?php
-	//----------------- left panel ---------------------- 
+            
+            
+            //----------------- left panel ---------------------- 
+            print "<hr>\n";
             print "<h4>".MyGetText(34)."</h4>\n"; // Left panel
 
             print "<table>\n";
@@ -617,14 +600,14 @@
 
             print "<tr>\n";
             print "<td><input type='checkbox' name='chkall[]' value='leftfixedlines'></input></td>\n";
-            $str=NumericIntList("leftfixedlines",0,30,$leftfixedlines);
+            $str=NumericIntList("leftfixedlines",0,20,$leftfixedlines);
             print "<td>".MyGetText(59)."</td>\n"; // Fixed lines
             print "<td>$str</td>\n";
             print "</tr>\n";
 
             print "<tr>\n";
             print "<td><input type='checkbox' name='chkall[]' value='leftscrolledlines'></input></td>\n";
-            $str=NumericIntList("leftscrolledlines",0,30,$leftscrolledlines);
+            $str=NumericIntList("leftscrolledlines",0,20,$leftscrolledlines);
             print "<td>".MyGetText(60)."</td>\n"; // Scrolling lines
             print "<td>$str</td>\n";
             print "</tr>\n";
@@ -658,11 +641,9 @@
             print "</tr>\n";
 
             print "</table>\n";
-	?>
-	</div>
-	<div id="pan3div">
-	<?php
-	//----------------- right panel ---------------------- 
+
+            //----------------- right panel ---------------------- 
+            print "<hr>\n";
             print "<h4>".MyGetText(35)."</h4>\n"; // Right panel
 
             print "<table>\n";
@@ -716,14 +697,14 @@
 
             print "<tr>\n";
             print "<td><input type='checkbox' name='chkall[]' value='rightfixedlines'></input></td>\n";
-            $str=NumericIntList("rightfixedlines",0,30,$rightfixedlines);
+            $str=NumericIntList("rightfixedlines",0,20,$rightfixedlines);
             print "<td>".MyGetText(59)."</td>\n"; // Fixed lines
             print "<td>$str</td>\n";
             print "</tr>\n";
 
             print "<tr>\n";
             print "<td><input type='checkbox' name='chkall[]' value='rightscrolledlines'></input></td>\n";
-            $str=NumericIntList("rightscrolledlines",0,30,$rightscrolledlines);
+            $str=NumericIntList("rightscrolledlines",0,20,$rightscrolledlines);
             print "<td>".MyGetText(60)."</td>\n"; // Scrolling lines
             print "<td>$str</td>\n";
             print "</tr>\n";
@@ -757,10 +738,9 @@
             print "</tr>\n";
 
             print "</table>\n";
-	?>
-	</div>
-	<div id="pan4div">4</div>
-	     <?php
+
+            //--------------------------------------
+             
             print "<hr>\n";
             print "<div align=center>\n";
             print MyGetText(65);
@@ -819,21 +799,6 @@
             }
 
         </script>
-	
-	<script type="text/javascript">
-		function devPanel(num)
-		{
-			document.getElementById("pan1div").style.display = "none";
-			document.getElementById("pan2div").style.display = "none";
-			document.getElementById("pan3div").style.display = "none";
-			document.getElementById("pan4div").style.display = "none";
-			if(num)
-				document.getElementById("pan"+num+"div").style.display = "block";
-			return false;
-		}
-		devPanel(1);
-	</script>
-	
     </body>
 </html>
 

@@ -24,7 +24,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
         <title>CO (page <?php print $screenIndex; ?>)</title>
-        <link rel="stylesheet" type="text/css" href="styles/co2015-10-30i.css" />
+        <link rel="stylesheet" type="text/css" href="styles/co2015-10-30a.css" />
        
         <script type="text/javascript">
             <!--
@@ -548,7 +548,7 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                 count = 26;//20;
             }
             
-            r += '<table class="fixedTable" cellspacing="0" cellpadding="0">\r\n';
+            r += '<table class="fixedTable">\r\n';
             // affichage du header
             r += '<thead id="fixedHeader' + panelIndex + '" class="fixedHeader">\r\n';
             r += '<tr class="normalRow">\r\n';
@@ -567,12 +567,9 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                 if(categorieIndex[panelIndex] == c)
                 {
                     //if((identifiant === 'result') && (length > 0))
-			if(identifiant === 'result')
+					if(identifiant === 'result')
                     {
-			if (typeof (phpnumbercls[phpcls[panelIndex][c]]) !== 'undefined')
-				txt_nb = length + ' / ' + phpnumbercls[phpcls[panelIndex][c]];
-			else
-				txt_nb = length;
+                        txt_nb = length + ' / ' + phpnumbercls[phpcls[panelIndex][c]];
                     }
                     r += '<th class="activeOnglet">' + phpTitle[panelIndex][c] + ' <span class="number_class">' + txt_nb + '</span></th>\r\n';
                 }
@@ -613,43 +610,21 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                 if(identifiant === 'relais')
                 {
                     r += '<tr>\r\n';
-                    r += '<th class="entete_relais" rowspan="2">&nbsp;</th>\r\n';
-                    r += '<th class="entete_relais" rowspan="2">&nbsp;</th>\r\n';
+                    r += '<th class="entete_relais">&nbsp;</th>\r\n';
+                    r += '<th class="entete_relais">&nbsp;</th>\r\n';
                     r += '<th class="entete_relais" colspan="4">Relayeur 1</th>\r\n';
-		    
-                    r += '<th class="entete_relais" colspan="2" rowspan="2">Après R1</th>\r\n';
+                    r += '<th class="entete_relais" colspan="2">Après R1</th>\r\n';
                     if(line[5] > 1)
                     {
                         r += '<th class="entete_relais" colspan="4">Relayeur 2</th>\r\n';
-                        r += '<th class="entete_relais" colspan="2" rowspan="2">Après R2</th>\r\n';
+                        r += '<th class="entete_relais" colspan="2">Après R2</th>\r\n';
                     }
                     if(line[5] > 2)
                     {
                         r += '<th class="entete_relais" colspan="4">Relayeur 3</th>\r\n';
-                        r += '<th class="entete_relais" colspan="2" rowspan="2">Après R3</th>\r\n';
+                        r += '<th class="entete_relais" colspan="2">Après R3</th>\r\n';
                     }
                     r += '</tr>\r\n';
-		    r += '<tr>\r\n';
-		    r += '<th class="entete_relais_radio">Radio1</th>\r\n';
-		    r += '<th class="entete_relais_radio">Radio2</th>\r\n';
-		    r += '<th class="entete_relais_radio">Radio3</th>\r\n';
-		    r += '<th class="entete_relais_radio">Finish</th>\r\n';
-		    if(line[5] > 1)
-		    {
-			r += '<th class="entete_relais_radio">Radio1</th>\r\n';
-			r += '<th class="entete_relais_radio">Radio2</th>\r\n';
-			r += '<th class="entete_relais_radio">Radio3</th>\r\n';
-			r += '<th class="entete_relais_radio">Finish</th>\r\n';
-		    }
-		    if(line[5] > 2)
-		    {
-			r += '<th class="entete_relais_radio">Radio1</th>\r\n';
-			r += '<th class="entete_relais_radio">Radio2</th>\r\n';
-			r += '<th class="entete_relais_radio">Radio3</th>\r\n';
-			r += '<th class="entete_relais_radio">Finish</th>\r\n';
-		    }
-		    
-		    r += '</tr>\r\n';
                 }
                 
                 while((position < endPosition) && (position < length))
@@ -677,18 +652,6 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                         }
                         
                         var cl = ((position % 2) ? 'alternateRow' : 'normalRow');
-			if(identifiant === 'relais')
-			{
-				r += '<tr class="' + cl + nf + '">\r\n';
-				r += '<td rowspan="2" class="'+ prefix_class + '0' +'">' + line[6] + '</td>\r\n';
-				r += '<td rowspan="2" class="'+ prefix_class + '1' +'">' + line[7] + '</td>\r\n';
-				r += '<td colspan="6" class="relay_tm_name">' + line[26] + ((line[12].length) ? ' (' + line[12]+ ')' : '') + '</td>\r\n';
-				if(line[5] > 1)
-					r += '<td colspan="6" class="relay_tm_name">' + line[27] + ((line[18].length) ? ' (' + line[18]+ ')' : '') + '</td>\r\n';
-				if(line[5] > 2)
-					r += '<td colspan="6" class="relay_tm_name">' + line[28] + ((line[24].length) ? ' (' + line[24]+ ')' : '') + '</td>\r\n';
-				r += '</tr>\r\n';
-			}
                         r += '<tr class="' + cl + nf + '">\r\n';
                         for(var e in line)
                         {
@@ -714,17 +677,12 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                             else
                             if(identifiant === 'relais')
                             {
-                                if(e > 7)
+                                if(e > 5)
                                 {
                                     if(((line[5] > 1) && (e < 20)) || ((line[5] > 2) && (e < 26)) || e < 13)
                                     {
-					r += '<td class="'+ prefix_class + (e-6) +'">' + line[e] + '</td>\r\n';
+                                        r += '<td class="'+ prefix_class + (e-6) +'">' + line[e] + '</td>\r\n';
                                     }
-				    if(line[5] < 3)
-					count = 20;
-					else
-					if(line[5] < 2)
-					count = 14;
                                 }
                             }
                             else
@@ -745,7 +703,7 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                         r += '</table>\r\n';
                     
                         r += '<hr />';
-                        r += '<table class="scrollTable" cellspacing="0" cellpadding="0">\r\n';
+                        r += '<table class="scrollTable">\r\n';
                         r +='<tbody class="scrollContent">';
                     }
                     
@@ -778,18 +736,6 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                                         nf += ' updated';
                                     }
                                 }
-				if(identifiant === 'relais')
-				{
-					r += '<tr class="' + cl + nf + '">\r\n';
-					r += '<td rowspan="2" class="'+ prefix_class + '0' +'">' + line[6] + '</td>\r\n';
-					r += '<td rowspan="2" class="'+ prefix_class + '1' +'">' + line[7] + '</td>\r\n';
-					r += '<td colspan="6" class="relay_tm_name">' + line[26] + ((line[12].length) ? ' (' + line[12]+ ')' : '') + '</td>\r\n';
-					if(line[5] > 1)
-						r += '<td colspan="6" class="relay_tm_name">' + line[27] + ((line[18].length) ? ' (' + line[18]+ ')' : '') + '</td>\r\n';
-					if(line[5] > 2)
-						r += '<td colspan="6" class="relay_tm_name">' + line[28] + ((line[24].length) ? ' (' + line[24]+ ')' : '') + '</td>\r\n';
-					r += '</tr>\r\n';
-				}
                                 r += '<tr class="' + cl + nf + '">\r\n';
                                 for(var e in line)
                                 {
@@ -815,11 +761,11 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                                     else
                                     if(identifiant === 'relais')
                                     {
-                                        if(e > 7)
+                                        if(e > 5)
                                         {
                                             if(((line[5] > 1) && (e < 20)) || ((line[5] > 2) && (e < 26)) || e < 13)
                                             {
-						r += '<td class="'+ prefix_class + (e-6) +'">' + line[e] + '</td>\r\n';
+                                                r += '<td class="'+ prefix_class + (e-6) +'">' + line[e] + '</td>\r\n';
                                             }
                                         }
                                     }
@@ -900,7 +846,6 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                     }
                     while(position < (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
                     {
-			position++;
                         var cl = ((position % 2) ? 'alternateRow' : 'normalRow');
                         r += '<tr class="' + cl + nf + '">\r\n';
                         for(var e=0;e<count;e++)
@@ -920,7 +865,7 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                             }
                         }
                         r += '</tr>\r\n';
-                        
+                        position++;
                     }
                     r += "</tbody>\r\n";
                     r += '</table>\r\n';
@@ -942,7 +887,6 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                 }
                 while(position < (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
                 {
-                    position++;
                     var cl = ((position % 2) ? 'alternateRow' : 'normalRow');
                     r += '<tr class="' + cl + nf + '">\r\n';
                     for(var e=0;e<count;e++)
@@ -962,6 +906,7 @@ if(($screenmode == CST_SCREENMODE_FULL) && ($fullcontent == CST_CONTENT_RELAIS))
                         }
                     }
                     r += '</tr>\r\n';
+                    position++;
                 }
                 r += "</tbody>\r\n";
                 r += '</table>\r\n';

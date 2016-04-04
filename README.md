@@ -4,10 +4,42 @@ Large event results display for MeOS
 **Master branch holds the original MeOS version.**
 
 **Ligue PACA branch holds the new created one to be used.**
+###2016-03-25 Fixes and relay enhancement
+####What's New ?
+[x] Empty panels refresh issue fixed
+
+[x] Radio control is no more mandatory for relays
+
+[x] Rows height has be decreased in order to stack more lines on the screen
+
+[x] Team members names added above radio times on relays
+
+[x] No wrap on team name
+
+[x] Added support for experimental radio transmitted punches. Ask for details if interested.
+
+[x] Documentation can be accessed right from the interface
+
+####Known bugs
+[ ] If pressing classes edit button while editing a screen configuration, all changes already made in the form fields are lost. Workaround : use podium icon in screen.php
+
+[ ] Relay display order may be incorrect if a runner lost time after radio control until he completes the course (he can appears ahead of already arrived competitors in the list).
+
+####Missing features
+[ ] Relay must be extended up to 10 team members (work in progress)
+
+[ ] Screens should be dividable in three and four panels (work in progress)
+
+[ ] Add multilines scrolling
+
+[ ] Allow course based instead of class based display (may require some changes in MeOS)
+
+[ ] Add MP, DNF etc... translation (work in progress)
+
 
 ###2016-01-09 Warning fix and simultaneous support of both original MeOS display and new "screen" display
 ####What's New ?
-[x] Fiw a warning issue in formatResult() function in functions.php
+[x] Fixes a warning issue in formatResult() function in functions.php
 
 [x] It's now possible to simultaneousely use show.php (original MeOS result online display) and pages.php ("Screen" O'Ringen like one).
 
@@ -70,4 +102,4 @@ Currently it can handle 12 screens, but can be extended to more screens very eas
 
 To get a better idea of what it looks like, have a look to the english documentation MeOSScreensEn.pdf
 
-It is provided "as is" as open source code and can be freely used, modified, enhenced and distributed. It is licensed in the same condition as MeOS.
+It is provided "as is" as open source code and can be freely used, modified, enhenced and distributed. It is licensed in the same conditions as MeOS.
