@@ -1,0 +1,56 @@
+td.screen_titlesize {
+    text-align:right;
+}
+td.screen_subtitlesize {
+    text-align:right;
+}
+td.screen_titlecolor {
+    text-align:center;
+}
+td.screen_subtitlecolor{
+    text-align:center;
+}
+td.screen_screenmode{
+    text-align:center; vertical-align:middle;
+}
+td.screen_fullcontent{
+    text-align:center; vertical-align:middle;
+}
+td.screen_leftcontent{
+    text-align:center; vertical-align:middle;
+}
+td.screen_rightcontent{
+    text-align:center; vertical-align:middle;
+}
+
+td.class_class{
+    text-align:center;
+}
+td.class_entries{
+    text-align:right;
+}
+td.class_done{
+    text-align:right;
+}
+td.class_pct{
+    text-align:right;
+}
+td.class_pct_ok{
+    text-align:right; color:green;
+}
+
+td.class_competid{
+    text-align:right;
+}
+
+td.norefresh
+{
+    text-align:right;
+    background-color:red;
+    font-size:0.75em;
+}
+td.refresh
+{
+    text-align:right;
+    font-size:0.75em;
+}

@@ -1,6 +1,7 @@
 <?php
   /*
   Copyright 2013 Melin Software HB
+  Copyright 2014-2015 Metraware
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -34,7 +35,7 @@ function setupBaseCompetitor() {
 }
 
 function setup() {  
- $sql = "CREATE TABLE IF NOT EXISTS mopCompetition (".
+ $sql = "CREATE TABLE IF NOT EXISTS mopcompetition (".
    			setupIddBase().
    			" name VARCHAR(64) NOT NULL DEFAULT '',".
    			" date DATE NOT NULL DEFAULT '2013-11-04',".
@@ -45,14 +46,14 @@ function setup() {
   query($sql);
  
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopControl (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopcontrol (".
    			setupIddBase().
    			" name VARCHAR(64) NOT NULL DEFAULT ''".
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
  
   query($sql);
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopClass (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopclass (".
    			setupIddBase().
    			" name VARCHAR(64) NOT NULL DEFAULT '',".
    			" ord INT NOT NULL DEFAULT 0, INDEX(ord)".
@@ -60,30 +61,31 @@ function setup() {
    			
   query($sql);
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopOrganization (".
+  $sql = "CREATE TABLE IF NOT EXISTS moporganization (".
    			 setupIddBase().
    			" name VARCHAR(64) NOT NULL DEFAULT ''".
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
    			
   query($sql);
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopCompetitor (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopcompetitor (".
    			 setupIddBase().
    			 setupBaseCompetitor().
          ", tstat TINYINT NOT NULL DEFAULT 0,". // Total status
-         " it INT NOT NULL DEFAULT 0". // Input time
+         " it INT NOT NULL DEFAULT 0,". // Input time
+         " timestamp INT NOT NULL DEFAULT 0". // Last refresh
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   			
   query($sql);
  
-  $sql = "CREATE TABLE IF NOT EXISTS mopTeam (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopteam (".
    			 setupIddBase().
    			 setupBaseCompetitor().
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
 
   query($sql);
    
-  $sql = "CREATE TABLE IF NOT EXISTS mopTeamMember (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopteammember (".
          " cid INT NOT NULL, id INT NOT NULL,".
          " leg TINYINT NOT NULL, ord TINYINT NOT NULL,".
          " PRIMARY KEY(cid, id, leg, ord), ".
@@ -92,7 +94,7 @@ function setup() {
 
   query($sql);
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopClassControl (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopclasscontrol (".
          " cid INT NOT NULL, id INT NOT NULL,".
          " leg TINYINT NOT NULL, ord TINYINT NOT NULL,".
          " PRIMARY KEY(cid, id, leg, ord), ".
@@ -101,12 +103,102 @@ function setup() {
 
   query($sql);
   
-  $sql = "CREATE TABLE IF NOT EXISTS mopRadio (".
+  $sql = "CREATE TABLE IF NOT EXISTS mopradio (".
          " cid INT NOT NULL, id INT NOT NULL,".
          " ctrl INT NOT NULL,".
          " PRIMARY KEY(cid, id, ctrl), ".
-         " rt INT NOT NULL DEFAULT 0".
+         " rt INT NOT NULL DEFAULT 0,".
+         " timestamp INT NOT NULL DEFAULT 0".
          ") ENGINE = MyISAM";
+
+  query($sql);
+  
+  
+  $sql = "CREATE TABLE `resultclass` (
+  `rcid` int(11) NOT NULL,
+  `cid` int(11) NOT NULL default '0',
+  `id` int(11) NOT NULL,
+  `sid` int(11) NOT NULL,
+  `panel` tinyint(2) NOT NULL default '1' COMMENT '1=left, 2=right',
+  KEY `rcid` (`rcid`),
+  KEY `cid` (`cid`),
+  KEY `id` (`id`),
+  KEY `sid` (`sid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+
+  query($sql);
+
+$sql = "CREATE TABLE `resultconfig` (
+  `rcid` int(11) NOT NULL,
+  `name` varchar(64) character set utf8 NOT NULL,
+  `active` tinyint(1) NOT NULL default '0' COMMENT '1=actif',
+  PRIMARY KEY  (`rcid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Configuration d''écrans';";
+
+  query($sql);
+
+$sql = "CREATE TABLE `resultscreen` (
+  `rcid` int(11) NOT NULL,
+  `sid` int(11) NOT NULL,
+  `cid` int(11) NOT NULL default '0',
+  `title` varchar(128) default 'Title',
+  `titlesize` tinyint(4) default '24',
+  `titlecolor` varchar(6) default '000000',
+  `subtitle` varchar(128) default NULL,
+  `subtitlesize` tinyint(4) default '16',
+  `subtitlecolor` varchar(6) default '000000',
+  `titleleftpict` varchar(128) default NULL,
+  `titlerightpict` varchar(128) default NULL,
+  `screenmode` tinyint(2) default '2' COMMENT '1=full 2=2panels',
+  `fullcontent` tinyint(4) default '2' COMMENT '1=picture, 2=text, 3=html, 4=result relais',
+  `fullpict` varchar(128) default NULL,
+  `fulltxt` varchar(512) default NULL,
+  `fulltxtsize` tinyint(4) default '12',
+  `fulltxtcolor` varchar(6) default '000000',
+  `fullhtml` varchar(128) default NULL,
+  `fullfirstline` tinyint(4) NOT NULL default '1',
+  `fullfixedlines` tinyint(4) NOT NULL default '3',
+  `fullscrolledlines` tinyint(4) NOT NULL default '17',
+  `fullscrolltime` tinyint(4) NOT NULL default '3',
+  `fullscrollbeforetime` tinyint(4) NOT NULL default '50',
+  `fullscrollaftertime` tinyint(4) NOT NULL default '50',
+  `fullupdateduration` int(11) NOT NULL default '10',
+  `fulllastrefresh` int(11) NOT NULL default '0',
+  `fulllastredraw` int(11) NOT NULL default '0',
+  `leftcontent` tinyint(2) default '5' COMMENT '1=picture, 2=text,  3=html, 4=start, 5=result',
+  `leftpict` varchar(128) default NULL,
+  `lefttxt` varchar(512) default NULL,
+  `lefttxtsize` tinyint(4) default '12',
+  `lefttxtcolor` varchar(6) default '000000',
+  `lefthtml` varchar(128) default NULL,
+  `leftfirstline` tinyint(4) NOT NULL default '1',
+  `leftfixedlines` tinyint(4) NOT NULL default '3',
+  `leftscrolledlines` tinyint(4) NOT NULL default '17',
+  `leftscrolltime` tinyint(4) NOT NULL default '3' COMMENT 'en 1/10s',
+  `leftscrollbeforetime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
+  `leftscrollaftertime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
+  `leftupdateduration` int(11) NOT NULL default '10',
+  `leftlastrefresh` int(11) NOT NULL default '0',
+  `leftlastredraw` int(11) NOT NULL default '0',
+  `rightcontent` tinyint(2) default '5' COMMENT '1=picture, 2=text,  3=html, 4=start, 5=result',
+  `rightpict` varchar(128) default NULL,
+  `righttxt` varchar(512) default NULL,
+  `righttxtsize` tinyint(4) default '12',
+  `righttxtcolor` varchar(6) default '000000',
+  `righthtml` varchar(128) default NULL,
+  `rightfirstline` tinyint(4) NOT NULL default '1',
+  `rightfixedlines` tinyint(4) NOT NULL default '3',
+  `rightscrolledlines` tinyint(4) NOT NULL default '17',
+  `rightscrolltime` tinyint(4) NOT NULL default '3' COMMENT 'en 1/10s',
+  `rightscrollbeforetime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
+  `rightscrollaftertime` tinyint(4) NOT NULL default '50' COMMENT 'en 0.1s',
+  `rightupdateduration` int(11) NOT NULL default '10',
+  `rightlastrefresh` int(11) NOT NULL default '0',
+  `rightlastredraw` int(11) NOT NULL default '0',
+  `refresh` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`rcid`,`sid`),
+  KEY `cid` (`cid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 
   query($sql);
 

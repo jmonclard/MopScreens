@@ -31,13 +31,16 @@ foreach ($_SERVER as $header => $value) {
 if (!($cmpId > 0)) {
   returnStatus('BADCMP');
 }
+/*$cmpId = 1;*/
 
 if ($password != MEOS_PASSWORD) {
   returnStatus('BADPWD');
 }
 
 $data = file_get_contents("php://input"); 
+//$data = file_get_contents("tutu_0001.xml");
 
+//echo $data;
 if ($data[0] == 'P') { //Zip starts with 'PK'
   returnStatus('NOZIP'); // Zip not supported
 }

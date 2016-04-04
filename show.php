@@ -62,7 +62,7 @@ td {padding-right:1em;}
 <?php
   if ($_GET['select'] == 1 || $cmpId == 0) {
     print "<h1>$lang[selectcmp]</h1>";
-    $sql = "SELECT name, date, cid FROM mopCompetition ORDER BY date DESC";     
+    $sql = "SELECT name, date, cid FROM mopcompetition ORDER BY date DESC";     
     $res = mysql_query($sql);
     
     while ($r = mysql_fetch_array($res)) {
@@ -71,7 +71,7 @@ td {padding-right:1em;}
     die('</body></html>');    
   }
 
-  $sql = "SELECT * FROM mopCompetition WHERE cid = '$cmpId'"; 
+  $sql = "SELECT * FROM mopcompetition WHERE cid = '$cmpId'"; 
   $res = mysql_query($sql);
 
   if ($r = mysql_fetch_array($res)) {
@@ -88,7 +88,7 @@ td {padding-right:1em;}
   print '<br><div style="clear:both;"><a href="'.$PHP_SELF.'?select=1" class="button">'.$lang['selectcmp'].'</a></div>';
 
   print '<div style="float:left;margin:2em;">';  
-  $sql = "SELECT name, id FROM mopClass WHERE cid = '$cmpId' ORDER BY ord";     
+  $sql = "SELECT name, id FROM mopclass WHERE cid = '$cmpId' ORDER BY ord";     
   $res = mysql_query($sql);
   
   while ($r = mysql_fetch_array($res)) {
@@ -99,12 +99,12 @@ td {padding-right:1em;}
   
   if (isset($_GET['cls'])) {
     $cls = (int)$_GET['cls']; 
-    $sql = "SELECT name FROM mopClass WHERE cid='$cmpId' AND id='$cls'";
+    $sql = "SELECT name FROM mopclass WHERE cid='$cmpId' AND id='$cls'";
     $res = mysql_query($sql);
     $cinfo = mysql_fetch_array($res);
     $cname = $cinfo['name'];
     
-    $sql = "SELECT max(leg) FROM mopTeamMember tm, mopTeam t WHERE tm.cid = '$cmpId' AND t.cid = '$cmpId' AND tm.id = t.id AND t.cls = $cls";
+    $sql = "SELECT max(leg) FROM mopteammember tm, mopteam t WHERE tm.cid = '$cmpId' AND t.cid = '$cmpId' AND tm.id = t.id AND t.cls = $cls";
     $res = mysql_query($sql);
     $r = mysql_fetch_array($res);
     $numlegs = $r[0];
@@ -122,7 +122,7 @@ td {padding-right:1em;}
         $radio = $_GET['radio'];
       }
       for ($k = 1; $k <= $numlegs; $k++) {
-        $sql = "SELECT max(ord) FROM mopTeamMember tm, mopTeam t WHERE t.cls = '$cls' AND tm.leg=$k AND ".
+        $sql = "SELECT max(ord) FROM mopteammember tm, mopteam t WHERE t.cls = '$cls' AND tm.leg=$k AND ".
                 "tm.cid = '$cmpId' AND t.cid = '$cmpId' AND tm.id = t.id";
         $res = mysql_query($sql);
         $r = mysql_fetch_array($res);
@@ -138,7 +138,7 @@ td {padding-right:1em;}
         if ($radio == 'finish') {
           $sql = "SELECT t.id AS id, cmp.name AS name, t.name AS team, cmp.rt AS time, cmp.stat AS status, ".
                  "cmp.it+cmp.rt AS tottime, cmp.tstat AS totstat ".
-                 "FROM mopTeamMember tm, mopCompetitor cmp, mopTeam t ".
+                 "FROM mopteammember tm, mopcompetitor cmp, mopteam t ".
                  "WHERE t.cls = '$cls' AND t.id = tm.id AND tm.rid = cmp.id ".
                  "AND t.cid = '$cmpId' AND tm.cid = '$cmpId' AND cmp.cid = '$cmpId' AND t.stat>0 ".
                  "AND tm.leg='$leg' AND tm.ord='$ord' ORDER BY cmp.stat, cmp.rt ASC, t.id";
@@ -146,14 +146,14 @@ td {padding-right:1em;}
         }
         else {
           $rid = (int)$radio;
-          $sql = "SELECT name FROM mopControl WHERE cid='$cmpId' AND id='$rid'";
+          $sql = "SELECT name FROM mopcontrol WHERE cid='$cmpId' AND id='$rid'";
           $res = mysql_query($sql);
           $rinfo = mysql_fetch_array($res);
           $rname = $rinfo['name'];
      
           $sql = "SELECT team.id AS id, cmp.name AS name, team.name AS team, radio.rt AS time, 1 AS status, ".
                    "cmp.it+radio.rt AS tottime, cmp.tstat AS totstat ".
-                   "FROM mopRadio AS radio, mopTeamMember AS m, mopTeam AS team, mopCompetitor AS cmp ".
+                   "FROM mopradio AS radio, mopteammember AS m, mopteam AS team, mopcompetitor AS cmp ".
                    "WHERE radio.ctrl='$rid' ".
                    "AND radio.id=cmp.id ".
                    "AND m.rid = radio.id ".
@@ -179,21 +179,21 @@ td {padding-right:1em;}
         if ($radio!='') {
           if ($radio == 'finish') {
             $sql = "SELECT cmp.id AS id, cmp.name AS name, org.name AS team, cmp.rt AS time, cmp.stat AS status ".
-                   "FROM mopCompetitor cmp LEFT JOIN mopOrganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
+                   "FROM mopcompetitor cmp LEFT JOIN moporganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
                    "WHERE cmp.cls = '$cls' ".
                    "AND cmp.cid = '$cmpId' AND cmp.stat>0 ORDER BY cmp.stat, cmp.rt ASC, cmp.id";
             $rname = $lang["finish"];
           }
           else {
             $rid = (int)$radio;
-            $sql = "SELECT name FROM mopControl WHERE cid='$cmpId' AND id='$rid'";
+            $sql = "SELECT name FROM mopcontrol WHERE cid='$cmpId' AND id='$rid'";
             $res = mysql_query($sql);
             $rinfo = mysql_fetch_array($res);
             $rname = $rinfo['name'];
                       
             $sql = "SELECT cmp.id AS id, cmp.name AS name, org.name AS team, radio.rt AS time, 1 AS status ".
-                   "FROM mopRadio AS radio, mopCompetitor AS cmp ".
-                   "LEFT JOIN mopOrganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
+                   "FROM mopradio AS radio, mopcompetitor AS cmp ".
+                   "LEFT JOIN moporganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
                    "WHERE radio.ctrl='$rid' ".
                    "AND radio.id=cmp.id ".
                    "AND cmp.stat<=1 ".
@@ -214,20 +214,20 @@ td {padding-right:1em;}
        if ($radio!='') {
          if ($radio == 'finish') {
              $sql = "SELECT t.id AS id, cmp.name AS name, t.name AS team, t.rt AS time, t.stat AS status ".
-                    "FROM mopTeamMember tm, mopCompetitor cmp, mopTeam t ".
+                    "FROM mopteammember tm, mopcompetitor cmp, mopteam t ".
                     "WHERE t.cls = '$cls' AND t.id = tm.id AND tm.rid = cmp.id AND tm.leg=1 ".
                     "AND t.cid = '$cmpId' AND tm.cid = '$cmpId' AND cmp.cid = '$cmpId' AND t.stat>0 ORDER BY t.stat, t.rt ASC, t.id";
              $rname = $lang["finish"];
            }
          else {
            $rid = (int)$radio;
-           $sql = "SELECT name FROM mopControl WHERE cid='$cmpId' AND id='$rid'";
+           $sql = "SELECT name FROM mopcontrol WHERE cid='$cmpId' AND id='$rid'";
            $res = mysql_query($sql);
            $rinfo = mysql_fetch_array($res);
            $rname = $rinfo['name'];
                       
            $sql = "SELECT team.id AS id, cmp.name AS name, team.name AS team, radio.rt AS time, 1 AS status ".
-                   "FROM mopRadio AS radio, mopTeamMember AS m, mopTeam AS team, mopCompetitor AS cmp ".
+                   "FROM mopradio AS radio, mopteammember AS m, mopteam AS team, mopcompetitor AS cmp ".
                    "WHERE radio.ctrl='$rid' ".
                    "AND radio.id=cmp.id ".
                    "AND m.rid = radio.id ".

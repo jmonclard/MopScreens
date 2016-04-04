@@ -1,23 +1,35 @@
 <?php
 
 // MySQL server configuration
-define("MYSQL_HOSTNAME", "");
-define("MYSQL_USERNAME", "");
-define("MYSQL_DBNAME", "");
-define("MYSQL_PASSWORD", "");
+define("MYSQL_HOSTNAME", "localhost");
+define("MYSQL_USERNAME", "ToBeDefined");
+define("MYSQL_DBNAME", "ToBeDefined");
+define("MYSQL_PASSWORD", "ToBeDefined");
 
-define("MEOS_PASSWORD", "meos");
+define("MEOS_PASSWORD", "ToBeDefined");
 
-  //Localization. NOTE: UTF-8 encoding required for non-latin characters
-  $lang = array();
-  $lang['selectcmp'] = "Select Competition";
-  $lang['place'] = "Place";
-  $lang['team'] = "Team";
-  $lang['name'] = "Name";
-  $lang['after'] = "&nbsp;";
-  $lang['time'] = "Time";
-  $lang['finish'] = "Finish";
-  $lang['tottime'] = "Total Time";
-  $lang['totafter'] = "&nbsp;";
+//Localization. NOTE: UTF-8 encoding required for non-latin characters
+$lang = array();
+$lang['selectcmp'] = "Select Competition";
+$lang['place'] = "Place";
+$lang['team'] = "Team";
+$lang['name'] = "Name";
+$lang['after'] = "&nbsp;";
+$lang['time'] = "Time";
+$lang['finish'] = "Finish";
+$lang['tottime'] = "Total Time";
+$lang['totafter'] = "&nbsp;";
 
+
+
+define("CST_SCREENMODE_FULL", 1);
+define("CST_SCREENMODE_DIVISE", 2);
+
+define("CST_CONTENT_PICTURE", 1);
+define("CST_CONTENT_TEXT", 2);
+define("CST_CONTENT_HTML", 3);
+define("CST_CONTENT_START", 4);
+define("CST_CONTENT_RESULT", 5);
+
+define("CST_CONTENT_RELAIS", 4);
 ?>
