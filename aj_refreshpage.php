@@ -16,7 +16,11 @@
   */
 
     include_once('functions.php');
-    session_start();
+    include_once('lang.php');
+	session_start();
+  
+	$_SESSION['CurrentLanguage'] = isset($_SESSION['CurrentLanguage']) ? $_SESSION['CurrentLanguage'] : autoSelectLanguage(array('fr','en','sv'),'en');
+	
     header('Content-type: text/html;charset=utf-8');
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
@@ -26,7 +30,7 @@
     $sid = ((isset($_GET['sid'])) ? $_GET['sid'] : "");
     $rcid = ((isset($_GET['rcid'])) ? $_GET['rcid'] : "");
     
-    $sql = 'UPDATE resultscreen SET fulllastredraw='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
+    $sql = 'UPDATE resultscreen SET panel1lastredraw='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
     mysql_query($sql);
 
     $sql = "SELECT refresh FROM resultscreen WHERE rcid='$rcid' AND sid='$sid'";

@@ -1,0 +1,5 @@
+#lines with # at the beginning are comments and are ignored
+#blank lines are also ignored
+#this file contains ip address that will be used to send data
+
+192.168.0.56

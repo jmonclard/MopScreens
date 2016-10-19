@@ -14,39 +14,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   */
-  
-    $ip=$_SERVER['REMOTE_ADDR'];
-    $ipnb=explode('.',$ip);
-    session_start();
-
-    if (($ipnb[0]!='192')||($ipnb[1]!='168')||($ipnb[2]!='0')||($ipnb[3]=='20'))
-    {
-        header("Location: http://192.168.0.10");
-        die();
-    }
     
-    /**
-     * Détection automatique de la langue du navigateur
-     * Les codes langues du tableau $aLanguages doivent obligatoirement être sur 2 caractères
-     * Utilisation : $langue = autoSelectLanguage(array('fr','en','es','it','de','cn'), 'en')
-     * @param array $aLanguages Tableau 1D des langues du site disponibles (ex: array('fr','en','es','it','de','cn')).
-     * @param string $sDefault Langue à choisir par défaut si aucune n'est trouvée
-     * @return string La langue du navigateur ou bien la langue par défaut
-     * @author Hugo Hamon
-     * @version 0.1
-     */
-    function autoSelectLanguage($aLanguages, $sDefault = 'fr') {
-      if(!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-        $aBrowserLanguages = explode(',',$_SERVER['HTTP_ACCEPT_LANGUAGE']);
-        foreach($aBrowserLanguages as $sBrowserLanguage) {
-          $sLang = strtolower(substr($sBrowserLanguage,0,2));
-          if(in_array($sLang, $aLanguages)) {
-            return $sLang;
-          }
-        }
-      }
-      return $sDefault;
-    }
+  session_start();
+  date_default_timezone_set('UTC');
+  include_once('functions.php');
+  redirectSwitchUsers();
+
+	include_once('lang.php');
+  include_once('screenfunctions.php');
     
     $_SESSION['CurrentLanguage'] = isset($_SESSION['CurrentLanguage']) ? $_SESSION['CurrentLanguage'] : autoSelectLanguage(array('fr','en','sv'),'en');
     
@@ -119,10 +94,10 @@
         </script>
     </head>
     <body>
+    
 <?php
-    include_once('functions.php');
-    include_once('screenfunctions.php');
-    include_once('lang.php');
+    
+    
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
     ConnectToDB();
@@ -349,11 +324,11 @@
     }
     print "</select>\n";
     print "<br/>\n";
-    print "<a href=screenserverip.php>".MyGetText(70)."</a><br/>\n" ;
-    if (file_exists("pictures/radiolog.txt"))
-    {
-      print "<a href='pictures/radiolog.txt' target='_blank'>".MyGetText(72)."</a><br/>\n" ;
-    }
+    print "<a href=\"screenserverip.php\">".MyGetText(70)."</a><br/>\n" ;
+    
+    print "<a href=\"screenradioconfig.php\">".MyGetText(86)."</a><br/>\n" ;
+    print "<br/>\n";
+    print "<a href=\"screenblog.php\">".MyGetText(108)."</a><br/>\n" ;
 	  print "<hr/>\n";
 
 	  print "<br/>\n";

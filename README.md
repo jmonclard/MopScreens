@@ -1,7 +1,39 @@
 # MopScreens
 Large event results display for MeOS
 
-<<<<<<< HEAD
+###2016-05-04 Version used for French Clubs Championship
+####What's New ?
+[x] Rows height have been decreased in order to stack more lines on the screen<br/>
+[x] Support for slideshow
+[x] Support for micro blogging (not connected to standard blogging software)
+[x] Suport for homemade radio system (based on LoRa technology) with real time radio quality and battery level display superimposed on map. Ask for details.
+[x] Allows CSS selection on a screen by screen basis to match caracteristics of screens (ex adapt rows height)
+[x] Partial support of GECO software.
+####Known bugs
+[ ] Multistages competition are not correctly handled (no cumulative time)
+[ ] Documentation is no more up to date, but still help.
+####Missing features
+See below.
+
+###2016-04-04 Relay extended to 10
+####What's New ?
+NOTE : Database tables structure have been altered. If you are updating an existing version, please ask for support.
+
+[X] Relay extended up to 10 team members
+
+[X] Screens can now be divided in two, three or four panels for non relay competitions
+
+[X] MP, DNF etc... translation
+
+[x] Support for experimental radio transmitted punches improved. Ask for details if interested.
+
+####Known bugs
+[ ] Documentation is no more up to date, but still help.
+
+####Missing features
+[ ] Add multilines scrolling
+
+[ ] Allow course based instead of class based display (may require some changes in MeOS)
 
 ###2016-03-25 Fixes
 ####What's New ?
@@ -36,7 +68,7 @@ Large event results display for MeOS
 [ ] Add MP, DNF etc... translation (work in progress)
 
 
-###2016-01-09 Warning fix and simultaneous support of both original MeOS display and new "screen" display
+###2016-01-09 Warning fix and simultaneous support of both original MeOS display and new "MopScreens" display
 ####What's New ?
 [x] Fixes a warning issue in formatResult() function in functions.php
 
@@ -105,4 +137,3 @@ To get a better idea of what it looks like, have a look to the english documenta
 
 It is provided "as is" as open source code and can be freely used, modified, enhenced and distributed. It is licensed in the same conditions as MeOS.
 
->>>>>>> master

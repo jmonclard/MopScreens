@@ -1,6 +1,6 @@
 <?php
   /*
-  Copyright 2014-2015 Metraware
+  Copyright 2014-2016 Metraware
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,13 +15,9 @@
   limitations under the License.
   */
   
-  $ip=$_SERVER['REMOTE_ADDR'];
-  $ipnb=explode('.',$ip);
-  if (($ipnb[0]!='192')||($ipnb[1]!='168')||($ipnb[2]!='0')||($ipnb[3]=='20'))
-  {
-      header("Location: http://192.168.0.10");
-      die();
-  }
+  include_once('functions.php');
+  redirectSwitchUsers();
+
 
 	function ECRIRE_LOG($errtxt)
 	{
@@ -103,7 +99,7 @@
   function AddNewScreen($rcid,$sid)
   {
     $title="Screen #$sid";
-    $sql = "INSERT INTO resultscreen SET rcid=$rcid, sid=$sid, title='$title', fullscrolltime=10, leftscrolltime=10, rightscrolltime=10"; 
+    $sql = "INSERT INTO resultscreen SET rcid=$rcid, sid=$sid, title='$title'"; 
     $ret=mysql_query($sql);
   }
 
@@ -124,9 +120,6 @@
 
         $cid=$r['cid'];
         $str = $str."cid=$cid, ";
-
-        $screenmode=$r['screenmode'];
-        $str = $str."screenmode=$screenmode, ";
 
         //-------------------
         
@@ -155,131 +148,62 @@
         $str = $str."titlerightpict='$titlerightpict', ";
 
         //-------------------
+        
+        for ($i=1; $i<=NB_PANEL; $i++)
+        {
+          $prefix='panel'.$i;
 
-        $fullcontent=$r['fullcontent'];
-        $str = $str."fullcontent=$fullcontent, ";
+          $content=$r[$prefix.'content'];
+          $str = $str.$prefix.'content='.$content.', ';
 
-        $fullpict=$r['fullpict'];
-        $str = $str."fullpict='$fullpict', ";
+          $pict=$r[$prefix.'pict'];
+          $str = $str.$prefix.'pict="'.addSlashes($pict).'", ';
 
-        $fulltxt=stripSlashes($r['fulltxt']);
-        $str = $str."fulltxt='".addSlashes($fulltxt)."', ";
+          $txt=stripSlashes($r[$prefix.'txt']);
+          $str = $str.$prefix.'txt="'.addSlashes($txt).'", ';
 
-        $fulltxtsize=$r['fulltxtsize'];
-        $str = $str."fulltxtsize='".addSlashes($fulltxtsize)."', ";
+          $txtsize=$r[$prefix.'txtsize'];
+          $str = $str.$prefix.'txtsize="'.addSlashes($txtsize).'", ';
 
-        $fulltxtcolor=$r['fulltxtcolor'];
-        $str = $str."fulltxtcolor='".addSlashes($fulltxtcolor)."', ";
+          $txtcolor=$r[$prefix.'txtcolor'];
+          $str = $str.$prefix.'txtcolor="'.addSlashes($txtcolor).'", ';
 
-        $fullhtml=$r['fullhtml'];
-        $str = $str."fullhtml='$fullhtml', ";
+          $html=$r[$prefix.'html'];
+          $str = $str.$prefix.'html="'.addSlashes($html).'", ';
 
-        $fullfirstline=$r['fullfirstline'];
-        $str = $str."fullfirstline='$fullfirstline', ";
+          $firstline=$r[$prefix.'firstline'];
+          $str = $str.$prefix.'firstline='.$firstline.', ';
 
-        $fullfixedlines=$r['fullfixedlines'];
-        $str = $str."fullfixedlines='$fullfixedlines', ";
+          $fixedlines=$r[$prefix.'fixedlines'];
+          $str = $str.$prefix.'fixedlines='.$fixedlines.', ';
 
-        $fullscrolledlines=$r['fullscrolledlines'];
-        $str = $str."fullscrolledlines='$fullscrolledlines', ";
+          $scrolledlines=$r[$prefix.'scrolledlines'];
+          $str = $str.$prefix.'scrolledlines='.$scrolledlines.', ';
 
-        $fullscrolltime=$r['fullscrolltime'];
-        $str = $str."fullscrolltime='$fullscrolltime', ";
+          $scrolltime=$r[$prefix.'scrolltime'];
+          $str = $str.$prefix.'scrolltime='.$scrolltime.', ';
 
-        $fullscrollbeforetime=$r['fullscrollbeforetime'];
-        $str = $str."fullscrollbeforetime='$fullscrollbeforetime', ";
+          $scrollbeforetime=$r[$prefix.'scrollbeforetime'];
+          $str = $str.$prefix.'scrollbeforetime='.$scrollbeforetime.', ';
 
-        $fullscrollaftertime=$r['fullscrollaftertime'];
-        $str = $str."fullscrollaftertime='$fullscrollaftertime', ";
+          $scrollaftertime=$r[$prefix.'scrollaftertime'];
+          $str = $str.$prefix.'scrollaftertime='.$scrollaftertime.', ';
 
-        $fullupdateduration=$r['fullupdateduration'];
-        $str = $str."fullupdateduration='$fullupdateduration', ";
-
+          $updateduration=$r[$prefix.'updateduration'];
+          $str = $str.$prefix.'updateduration='.$updateduration.', ';
+        }
         //-------------------
 
-        $leftcontent=$r['leftcontent'];
-        $str = $str."leftcontent=$leftcontent, ";
-
-        $leftpict=$r['leftpict'];
-        $str = $str."leftpict='$leftpict', ";
-
-        $lefttxt=stripSlashes($r['lefttxt']);
-        $str = $str."lefttxt='".addSlashes($lefttxt)."', ";
-
-        $lefttxtsize=$r['lefttxtsize'];
-        $str = $str."lefttxtsize='$lefttxtsize', ";
-
-        $lefttxtcolor=$r['lefttxtcolor'];
-        $str = $str."lefttxtcolor='$lefttxtcolor', ";
-
-        $lefthtml=$r['lefthtml'];
-        $str = $str."lefthtml='$lefthtml', ";
-
-        $leftfirstline=$r['leftfirstline'];
-        $str = $str."leftfirstline='$leftfirstline', ";
-
-        $leftfixedlines=$r['leftfixedlines'];
-        $str = $str."leftfixedlines='$leftfixedlines', ";
-
-        $leftscrolledlines=$r['leftscrolledlines'];
-        $str = $str."leftscrolledlines='$leftscrolledlines', ";
-
-        $leftscrolltime=$r['leftscrolltime'];
-        $str = $str."leftscrolltime='$leftscrolltime', ";
-
-        $leftscrollbeforetime=$r['leftscrollbeforetime'];
-        $str = $str."leftscrollbeforetime='$leftscrollbeforetime', ";
-
-        $leftscrollaftertime=$r['leftscrollaftertime'];
-        $str = $str."leftscrollaftertime='$leftscrollaftertime', ";
-
-        $leftupdateduration=$r['leftupdateduration'];
-        $str = $str."leftupdateduration='$leftupdateduration', ";
-
-        //-------------------
-
-        $rightcontent=$r['rightcontent'];
-        $str = $str."rightcontent=$rightcontent, ";
-
-        $rightpict=$r['rightpict'];
-        $str = $str."rightpict='$rightpict', ";
-
-        $righttxt=stripSlashes($r['righttxt']);
-        $str = $str."righttxt='".addSlashes($righttxt)."', ";
-
-        $righttxtsize=$r['righttxtsize'];
-        $str = $str."righttxtsize='$righttxtsize', ";
-
-        $righttxtcolor=$r['righttxtcolor'];
-        $str = $str."righttxtcolor='$righttxtcolor', ";
-
-        $righthtml=$r['righthtml'];
-        $str = $str."righthtml='$righthtml', ";
-
-        $rightfirstline=$r['rightfirstline'];
-        $str = $str."rightfirstline='$rightfirstline', ";
-
-        $rightfixedlines=$r['rightfixedlines'];
-        $str = $str."rightfixedlines='$rightfixedlines', ";
-
-        $rightscrolledlines=$r['rightscrolledlines'];
-        $str = $str."rightscrolledlines='$rightscrolledlines', ";
-
-        $rightscrolltime=$r['rightscrolltime'];
-        $str = $str."rightscrolltime='$rightscrolltime', ";
-
-        $rightscrollbeforetime=$r['rightscrollbeforetime'];
-        $str = $str."rightscrollbeforetime='$rightscrollbeforetime', ";
-
-        $rightscrollaftertime=$r['rightscrollaftertime'];
-        $str = $str."rightscrollaftertime='$rightscrollaftertime', ";
-
-        $rightupdateduration=$r['rightupdateduration'];
-        $str = $str."rightupdateduration='$rightupdateduration' ";
+        $panelscount=$r['panelscount'];
+        $str = $str.'panelscount='.$panelscount.', ';
+        
+        $tmcount=$r['tm_count'];
+        $str = $str.'tm_count='.$tmcount.' ';
 
         //-------------------
 
         $sql = "INSERT INTO resultscreen SET $str";
+        
 
         $ret=mysql_query($sql);
       }
@@ -309,17 +233,40 @@
     }
     return $panelclasses;            
   }
+  
+    function GetFirstClass($rcid, $cid, $sid, $panel)
+  {
+    $sqltmp = "SELECT mopclass.id AS classid, name, ord FROM resultclass, mopclass WHERE ";
+    $sqltmp = $sqltmp."mopclass.cid=resultclass.cid AND ";
+    $sqltmp = $sqltmp."mopclass.id=resultclass.id AND ";
+    $sqltmp = $sqltmp."mopclass.cid=$cid AND ";
+    $sqltmp = $sqltmp."resultclass.rcid=$rcid AND ";
+    $sqltmp = $sqltmp."resultclass.panel=$panel AND ";
+    $sqltmp = $sqltmp."resultclass.sid=$sid ";
+    $sqltmp = $sqltmp."ORDER BY ord LIMIT 1";
+    $restmp = mysql_query($sqltmp);
+
+    $nentry=0;
+    if (mysql_num_rows($restmp) > 0)
+    {
+      $panelclasses="";
+      $rtmp = mysql_fetch_array($restmp);
+      $panelclasses=$rtmp['name'];
+    }
+    return $panelclasses;            
+  }
 	
+    
   function GetClassesAndEntries($rcid, $cid, $sid, $panel)
   {
     $sqltmp = "SELECT mopclass.id AS classid, name, ord FROM resultclass, mopclass WHERE ";
     $sqltmp = $sqltmp."mopclass.cid=resultclass.cid AND ";
-	$sqltmp = $sqltmp."mopclass.id=resultclass.id AND ";
-	$sqltmp = $sqltmp."mopclass.cid=$cid AND ";
-	$sqltmp = $sqltmp."resultclass.rcid=$rcid AND ";
-	$sqltmp = $sqltmp."resultclass.panel=$panel AND ";
-	$sqltmp = $sqltmp."resultclass.sid=$sid ";
-	$sqltmp = $sqltmp."ORDER BY ord";
+    $sqltmp = $sqltmp."mopclass.id=resultclass.id AND ";
+    $sqltmp = $sqltmp."mopclass.cid=$cid AND ";
+    $sqltmp = $sqltmp."resultclass.rcid=$rcid AND ";
+    $sqltmp = $sqltmp."resultclass.panel=$panel AND ";
+    $sqltmp = $sqltmp."resultclass.sid=$sid ";
+    $sqltmp = $sqltmp."ORDER BY ord";
     $restmp = mysql_query($sqltmp);
 
     $nentry=0;
@@ -337,17 +284,18 @@
         {
           $panelclasses=$nametmp;
         }
-		// determines number of entries
-		$classid = intval($rtmp['classid']);
-		$sql2 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid AND cls=$classid";
-		$res2 = mysql_query($sql2);
-		if (mysql_num_rows($res2) > 0)
-		{
+
+        // determines number of entries
+        $classid = intval($rtmp['classid']);
+        $sql2 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid AND cls=$classid";
+        $res2 = mysql_query($sql2);
+        if (mysql_num_rows($res2) > 0)
+        {
           if ($r2 = mysql_fetch_array($res2))
-		  {
-		    $nentry=$nentry+$r2[0];
-		  }
-		}
+          {
+            $nentry=$nentry+$r2[0];
+          }
+        }
       }
 	  $panelclasses = "<b>$nentry : </b>".$panelclasses;
     }

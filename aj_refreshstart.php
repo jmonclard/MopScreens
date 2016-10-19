@@ -14,8 +14,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   */
-  include_once('functions.php');
-    session_start();
+	include_once('functions.php');
+  include_once('lang.php');
+	session_start();
+  
+	$_SESSION['CurrentLanguage'] = isset($_SESSION['CurrentLanguage']) ? $_SESSION['CurrentLanguage'] : autoSelectLanguage(array('fr','en','sv'),'en');
+	
     header('Content-type: text/html;charset=utf-8');
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
@@ -29,7 +33,7 @@
     
     $rcid = ((isset($_GET['rcid'])) ? $_GET['rcid'] : "0");
     $sid = ((isset($_GET['sid'])) ? $_GET['sid'] : "0");
-    $sql = 'UPDATE resultscreen SET fulllastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
+    $sql = 'UPDATE resultscreen SET panel1lastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
     mysql_query($sql);
   
   date_default_timezone_set('UTC');
@@ -60,7 +64,7 @@
                "WHERE t.cls = '$cls' AND t.id = tm.id AND tm.rid = cmp.id ".
                "AND t.cid = '$cmpId' AND tm.cid = '$cmpId' AND cmp.cid = '$cmpId' ".
                "AND tm.leg='$leg' AND tm.ord='$ord' ORDER BY cmp.name ASC, cmp.st ASC, cmp.stat, cmp.rt ASC, t.id";
-        $rname = $lang["finish"];
+        $rname = "Finish";
       }
       else {
         $rid = (int)$radio;
@@ -119,7 +123,7 @@
                  "FROM mopcompetitor cmp LEFT JOIN moporganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
                  "WHERE cmp.cls = '$cls' ".
                  "AND cmp.cid = '$cmpId' ORDER BY cmp.name ASC, cmp.st ASC, cmp.id";
-          $rname = $lang["finish"];
+          $rname = "Finish";
         }
         else {
           $rid = (int)$radio;
@@ -172,7 +176,7 @@
                   "FROM mopteammember tm, mopcompetitor cmp, mopteam t ".
                   "WHERE t.cls = '$cls' AND t.id = tm.id AND tm.rid = cmp.id AND tm.leg=1 ".
                   "AND t.cid = '$cmpId' AND tm.cid = '$cmpId' AND cmp.cid = '$cmpId' ORDER BY cmp.name ASC, cmp.st ASC, t.stat, t.rt ASC, t.id";
-           $rname = $lang["finish"];
+           $rname = "Finish";
          }
        else {
          $rid = (int)$radio;

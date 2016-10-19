@@ -28,29 +28,17 @@
   ConnectToDB();
 	
 	$rcid = ((isset($_GET['rcid'])) ? intval($_GET['rcid']) : 0);
-	$out = array();
-	$now = time();
+  $sid = ((isset($_GET['sid'])) ? intval($_GET['sid']) : 0);
 	
-	if($rcid > 0)
+	if(($rcid > 0) && ($sid > 0))
 	{
-		$sql = 'SELECT panel1lastrefresh, panel1lastredraw, panel2lastrefresh, panel2lastredraw, panel3lastrefresh, panel3lastredraw, panel4lastrefresh, panel4lastredraw FROM resultscreen WHERE rcid='.$rcid.' ORDER BY sid ASC';
-		$res = mysql_query($sql) or exit;
-		$num = mysql_num_rows($res);
-		if($num)
-		{
-			while($current = mysql_fetch_assoc($res))
-			{
-				$out[] = $current['panel1lastrefresh']; // max($current['panel1lastrefresh'], $current['panel2lastrefresh'], $current['panel3lastrefresh'], $current['panel4lastrefresh']);
-				$out[] = $current['panel1lastredraw']; // max($current['panel1lastredraw'], $current['panel2lastredraw'], $current['panel3lastredraw'], $current['panel4lastredraw']);
-			}
-		}
-		
+    $now = time();
+    $str = "refresh=$now";
+    $sql = "UPDATE resultscreen SET $str WHERE rcid=$rcid AND sid=$sid";
+    $res = mysql_query($sql);
+    echo 'OK';
 	}
-	if($out != null)
-	{
-		print '['.$now.','.implode(', ', $out).'];';
-	}
-	else
-	{
-		print '['.$now.'];';
-	}
+  else
+  {
+    echo 'KO';
+  }

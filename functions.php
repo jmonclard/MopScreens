@@ -1,21 +1,23 @@
 <?php
   /*
   Copyright 2013 Melin Software HB
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
       http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
   */
-  
+
 include_once("config.php");
+//include_once('lang.php');
+
 
 /** Connecto to MySQL */
 function ConnectToDB() {
@@ -27,63 +29,82 @@ function ConnectToDB() {
   $db_selected = mysql_select_db(MYSQL_DBNAME, $link);
   if (!$db_selected) {
     die ("Can't use ". MYSQL_HOSTNAME. ' : ' . mysql_error());
-  }    
+  }
   return $link;
 }
 
+function redirectSwitchUsers()
+{
+  $ip=$_SERVER['REMOTE_ADDR'];
+  $ipnb=explode('.',$ip);
+  if (($ipnb[0]!='192')||($ipnb[1]!='168')||($ipnb[2]!='0')||($ipnb[3]=='20'))
+  {
+      header("Location: http://192.168.0.10/cfco/show.php");
+      exit;//die();
+  }
+}
 
 function query($sql) {
  $result = mysql_query($sql);
  if (!$result) {
    die('Invalid query: ' . mysql_error());
- } 
+ }
  return $result;
 }
 
-function getStatusString($status, $origin = false) {
-	if($origin)
-	{
-		  switch($status) {
-		    case 0: 
-		      return "&ndash;"; //Unknown, running?
-		    case 1:
-		      return "OK";
-		    case 20:
-		      return "DNS"; // Did not start;
-		    case 3:
-		      return "MP"; // Missing punch
-		    case 4:
-		      return "DNF"; //Did not finish
-		    case 5:
-		      return "DQ"; // Disqualified
-		    case 6:      
-		      return "OT"; // Overtime
-		    case 99:
-		      return "NP"; //Not participating;
-		  }
+/**
+ * Détection automatique de la langue du navigateur
+ * Les codes langues du tableau $aLanguages doivent obligatoirement être sur 2 caractères
+ * Utilisation : $langue = autoSelectLanguage(array('fr','en','es','it','de','cn'), 'en')
+ * @param array $aLanguages Tableau 1D des langues du site disponibles (ex: array('fr','en','es','it','de','cn')).
+ * @param string $sDefault Langue à choisir par défaut si aucune n'est trouvée
+ * @return string La langue du navigateur ou bien la langue par défaut
+ * @author Hugo Hamon
+ * @version 0.1
+ */
+function autoSelectLanguage($aLanguages, $sDefault = 'fr') {
+  if(!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+	$aBrowserLanguages = explode(',',$_SERVER['HTTP_ACCEPT_LANGUAGE']);
+	foreach($aBrowserLanguages as $sBrowserLanguage) {
+	  $sLang = strtolower(substr($sBrowserLanguage,0,2));
+	  if(in_array($sLang, $aLanguages)) {
+		return $sLang;
+	  }
+	}
   }
-  else
-  {
-		  switch($status) {
-		    case 0: 
-		      return "&ndash;"; //Unknown, running?
-		    case 1:
-		      return "OK";
-		    case 20:
-		      return "Non par"; // Did not start;
-		    case 3:
-		      return "P.M."; // Missing punch
-		    case 4:
-		      return "Aband."; //Did not finish
-		    case 5:
-		      return "Disq."; // Disqualified
-		    case 6:      
-		      return "Hors D."; // Overtime
-		    case 99:
-		      return "Absent"; //Not participating;
-		  }
+  return $sDefault;
+}
 
-  }
+
+function getStatusString($status) {
+	$text = '?';
+		  switch($status) {
+		    case 0:
+		      $text = MyGetText(73); //Unknown, running?
+		      break;
+		    case 1:
+		      $text = MyGetText(74); // OK
+		      break;
+		    case 3:
+		      $text = MyGetText(75); // Missing punch
+		      break;
+		    case 4:
+		      $text = MyGetText(76); //Did not finish
+		      break;
+		    case 5:
+		      $text = MyGetText(77); // Disqualified
+		      break;
+		    case 6:
+		      $text = MyGetText(78); // Overtime
+		      break;
+		    case 20:
+		      $text = MyGetText(79); // Did not start;
+		      break;
+		    case 99:
+		      $text = MyGetText(80); //Not participating;
+		      break;
+		  }
+	return $text;
 }
 
 $global_out = array();
@@ -98,14 +119,14 @@ function calculateResult($res, $nb_radio = 4)
   global $global_out2;
   global $global_out3;
   global $global_out4;
-    
-  $out = array();  
+
+  $out = array();
   $global_out = array();
   $global_out2 = array();
   $global_out3 = array();
   $global_out4 = array();
   $temp_out = array();
-  
+
   $place = 0;
   $count = 0;
   $lastTime = -1;
@@ -119,13 +140,13 @@ function calculateResult($res, $nb_radio = 4)
     if ($lastTeam == $r['id'])
     {
       $out[$count]['name'] .= " / " . $r['name'];
-      continue; 
+      continue;
     }
     else
     {
       $lastTeam = $r['id'];
     }
-      
+
     $count++;
     $t = $r['time']/10;
     if ($bestTime == -1)
@@ -134,20 +155,20 @@ function calculateResult($res, $nb_radio = 4)
     {
       $place = $count;
       $lastTime = $t;
-    }        
+    }
     $row = array();
-    
+
     if ($r['status'] == 1) {
       $row['st'] = $r['status'];
       $row['timestamp'] = $r['timestamp'];
       $row['place'] = $place;//.".";
-      $row['name'] = $r['name'];      
+      $row['name'] = $r['name'];
       $row['team'] = $r['team'];
       for($i=0;$i<$nb_radio;$i++)
       {
         $row['radio'.$i] = '';//sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
       }
-    
+
     if ($t >= 3600)
         $row['time'] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
     else
@@ -155,11 +176,11 @@ function calculateResult($res, $nb_radio = 4)
         $row['time'] = sprintf("%02d:%02d", ($t/60), $t%60);
       else
         $row['time'] = "OK"; // No timing
-        
+
       $after = $t - $bestTime;
-      
+
       if ($after > 0)
-        $row['after'] = sprintf("+%d:%02d", ($after/60), $after%60);        
+        $row['after'] = sprintf("+%d:%02d", ($after/60), $after%60);
       else
         $row['after'] = "";
     }
@@ -168,24 +189,24 @@ function calculateResult($res, $nb_radio = 4)
       $row['st'] = $r['status'];
       $row['timestamp'] = $r['timestamp'];
       $row['place'] = "";
-      $row['name'] = $r['name'];      
+      $row['name'] = $r['name'];
       $row['team'] = $r['team'];
-      
+
       for($i=0;$i<$nb_radio;$i++)
       {
         $row['radio'.$i] = '';//sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
       }
-    
+
       $row['time'] = getStatusString($r['status']);
       $row['after'] = "";
     }
-          
+
     if (isset($r['tottime']))
     {
       $hasTotal = true;
       if ($r['totstat'] == 1)
       {
-        $tt = $r['tottime']/10;          
+        $tt = $r['tottime']/10;
         if ($tt > 0)
           $row['tottime'] = sprintf("%d:%02d:%02d", $tt/3600, ($tt/60)%60, $tt%60);
         else
@@ -193,15 +214,15 @@ function calculateResult($res, $nb_radio = 4)
       }
       else
       {
-        $row['tottime'] = getStatusString($r['totstat']); 
+        $row['tottime'] = getStatusString($r['totstat']);
       }
-      
+
       if ($r['totstat'] > 0)
         $totalResult[$count] = ($r['totstat']-1) * 10000000 + $r['tottime'];
       else
         $totalResult[$count] = 10000000 * 100;
     }
-    
+
     $out[$count] = $row;
     $row['id'] = $r['id'];
     $row['status'] = $r['status'];
@@ -225,11 +246,11 @@ function addRadioResult($res, $results)
   global $global_out2;
   global $global_out3;
   global $global_out4;
-  
+
   $arr_radiomax = array();
-  
+
   $out = $results;
-  
+
   while ($r = mysql_fetch_array($res))
   {
     $key = array_search($r['id'], $global_out);
@@ -242,7 +263,7 @@ function addRadioResult($res, $results)
         {
           $t = $r['time']/10;
           $out[$key]['radio'.$key_radio] = $t;
-          
+
           if(!isset($arr_radiomax[$key]))
           {
               $arr_radiomax[$key] = $key_radio;
@@ -286,7 +307,7 @@ function ordonnertableau($result, $arr_radiomax)
   global $global_out2;
   global $global_out3;
   global $global_out4;
-  
+
   $arr_keyFinished = array_keys($global_out2, 1);
   $arr_keyRunning = array();
   $arr_timeRunning = array();
@@ -313,7 +334,7 @@ function ordonnertableau($result, $arr_radiomax)
   {
     $temp_tab[] = $mykey;
   }
-  
+
   for($i=(count($arr_radio) - 1);$i>=0;$i--)
   {
     if($arr_keyRunning[$i] != null)
@@ -449,50 +470,36 @@ function formatResult($result) {
   global $lang;
   $head = false;
   print "<table>";
-  foreach($result as $row) {            
+  foreach($result as $row) {
     if ($head == false) {
       print "<tr>";
       foreach($row as $key => $cell) {
-        print "<th>".$lang[$key]."</th>\n";  
+        print "<th>".$lang[$key]."</th>\n";
       }
       print "</tr>";
-      $head = true; 
-    }      
+      $head = true;
+    }
     print "<tr>";
     foreach($row as $cell) {
-      print "<td>$cell</td>";  
+      print "<td>$cell</td>";
     }
     print "</tr>";
   }
   print "</table>";
 }
 
-  function formatResultScreen($result) {
+function formatResultScreen($result, $limit = 9999)
+{
   global $pos;
   global $lang;
+  
   $head = true;
 
   print '[';
-  
   $i = 0;
-  
-  foreach($result as $row) 
-  {            
-  /*
-    if ($head == false) 
-    {
-      $first = true;
-      print '[';
-      foreach($row as $key => $cell) 
-      {
-        print $first ? "" : ",";
-        print '"'.$lang[$key].'"';
-        $first = false;
-      }
-      print ']';
-      $head = true; 
-    } 
-    */
+  foreach($result as $row)
+  {
+    $i++;
     if ($head)
     {
         print("[");
@@ -503,394 +510,351 @@ function formatResult($result) {
         print(",[");
     }
     $first = true;
-    foreach($row as $cell) 
+    foreach($row as $cell)
     {
         print $first ? "" : ",";
         print '"'.$cell.'"';
         $first = false;
     }
-      print ']';
+    print ']';
+    if($i >= $limit)
+      break;
   }
   print "];";
 }
 
-function ordonner_relais($arr, $numlegs)
+function reorder_relay($arr, $numlegs)
 {
-  $out = array();
-	
-  foreach ($arr as $key => $val)
-  {
-    $rel3_tstat[$key]  = $val['relais3']['tstat'];
-	$rel2_tstat[$key]  = $val['relais2']['tstat'];
-	$rel1_tstat[$key]  = $val['relais1']['tstat'];
-        
-    $rel3_stat[$key]  = $val['relais3']['stat'];
-	$rel2_stat[$key]  = $val['relais2']['stat'];
-	$rel1_stat[$key]  = $val['relais1']['stat'];
-        
-    $sta[$key] = $val['team_stat'];
-		
-    if($sta[$key] <= 1)
-    {
-      if($val['relais3']['radio0'] > 0)
-        $rel3_radio0[$key]  = $val['relais2']['cumul'] + $val['relais3']['radio0'];
-      if($val['relais3']['radio1'] > 0)
-        $rel3_radio1[$key] = $val['relais2']['cumul'] + $val['relais3']['radio1'];
-      if($val['relais3']['radio2'] > 0)
-        $rel3_radio2[$key] = $val['relais2']['cumul'] + $val['relais3']['radio2'];
-      if($val['relais3']['cumul'] > 0)
-        $rel3_cumul[$key]  = $val['relais3']['cumul'];
-    }
+	$out = array();
 
-    if($sta[$key] <= 1)
-    {
-      if($val['relais2']['radio0'] > 0)
-        $rel2_radio0[$key]  = $val['relais1']['cumul'] + $val['relais2']['radio0'];
-      if($val['relais2']['radio1'] > 0)
-        $rel2_radio1[$key] = $val['relais1']['cumul'] + $val['relais2']['radio1'];
-      if($val['relais2']['radio2'] > 0)
-        $rel2_radio2[$key] = $val['relais1']['cumul'] + $val['relais2']['radio2'];
-      if($val['relais2']['cumul'] > 0)
-        $rel2_cumul[$key]  = $val['relais2']['cumul'];
-    }
+	$rel_tstat = array();
+	$rel_stat = array();
+	$rel_radio0 = array();
+	$rel_radio1 = array();
+	$rel_radio2 = array();
+	$sta = array();
+	$rel_cumul = array();
 
-    if($sta[$key] <= 1)
-    {
-      if($val['relais1']['radio0'] > 0)
-        $rel1_radio0[$key]  = $val['relais1']['radio0'];
-      if($val['relais1']['radio1'] > 0)
-        $rel1_radio1[$key] = $val['relais1']['radio1'];
-      if($val['relais1']['radio2'] > 0)
-        $rel1_radio2[$key] = $val['relais1']['radio2'];
-      if($val['relais1']['cumul'] > 0)
-        $rel1_cumul[$key]  = $val['relais1']['cumul'];
-    }
-  }
-	
-  // Ajoute $arr en tant que dernier parametre
-  //array_multisort($rel3_cumul, SORT_ASC, $rel3_radio2, SORT_ASC, $rel3_radio1, SORT_ASC, $rel3_radio0, SORT_ASC, $rel2_cumul, SORT_ASC, $rel2_radio2, SORT_ASC, $rel2_radio1, SORT_ASC, $rel2_radio0, SORT_ASC, $rel1_cumul, SORT_ASC, $rel1_radio2, SORT_ASC, $rel1_radio1, SORT_ASC, $rel1_radio0, SORT_ASC, $sta, SORT_ASC, $arr);
-    
-  if($rel3_cumul != null) natcasesort($rel3_cumul);
-  if($rel2_cumul != null) natcasesort($rel2_cumul);
-  if($rel1_cumul != null) natcasesort($rel1_cumul);
-  if($rel3_radio0 != null) natcasesort($rel3_radio0);
-  if($rel3_radio1 != null) natcasesort($rel3_radio1);
-  if($rel3_radio2 != null) natcasesort($rel3_radio2);
-  if($rel2_radio0 != null) natcasesort($rel2_radio0);
-  if($rel2_radio1 != null) natcasesort($rel2_radio1);
-  if($rel2_radio2 != null) natcasesort($rel2_radio2);
-  if($rel1_radio0 != null) natcasesort($rel1_radio0);
-  if($rel1_radio1 != null) natcasesort($rel1_radio1);
-  if($rel1_radio2 != null) natcasesort($rel1_radio2);
-
-  $place_affichee = 0;
-  $place_stokee = 0;
-  $last_time = -1;
-    
-  if($rel3_cumul != null)
-    foreach($rel3_cumul as $k => $v)
-    {
-	$place_stockee++;
-	if($arr[$k]['relais3']['cumul'] != $last_time)
+	for($i=1;$i<=$numlegs;$i++)
 	{
-		$place_affichee = $place_stockee;
-		$last_time = $arr[$k]['relais3']['cumul'];
+		$rel_tstat[$i] = array();
+		$rel_stat[$i] = array();
+		$rel_radio0[$i] = array();
+		$rel_radio1[$i] = array();
+		$rel_radio2[$i] = array();
+		$rel_cumul[$i] = array();
 	}
-      $relais1_affichee = '';
-      $relais2_affichee = '';
-      $relais3_affichee = '';
-      if(array_key_exists($k, $rel1_cumul))
-        $relais1_affichee = array_search($k, array_keys($rel1_cumul)) + 1;
-      if(array_key_exists($k, $rel2_cumul))
-        $relais2_affichee = array_search($k, array_keys($rel2_cumul)) + 1;
-      if(array_key_exists($k, $rel3_cumul))
-        $relais3_affichee = array_search($k, array_keys($rel3_cumul)) + 1;
-  
-      $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                       $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                       $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                       $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                      );
-    }
+
+	foreach ($arr as $key => $val)
+	{
+		for($i=1;$i<=$numlegs;$i++)
+		{
+			$rel_tstat[$i][$key]  = $val['relay'.$i]['tstat'];
+			$rel_stat[$i][$key]  = $val['relay'.$i]['stat'];
+		}
+
+        $sta[$key] = $val['team_stat'];
+
+        if($sta[$key] <= 1)
+        {
+          for($i=1;$i<=$numlegs;$i++)
+          {
+            if($i == 1)
+            {
+              if($val['relay'.$i]['radio0'] > 0)
+                $rel_radio0[$i][$key]  = $val['relay'.$i]['radio0'];
+              if($val['relay'.$i]['radio1'] > 0)
+                $rel_radio1[$i][$key] = $val['relay'.$i]['radio1'];
+              if($val['relay'.$i]['radio2'] > 0)
+                $rel_radio2[$i][$key] = $val['relay'.$i]['radio2'];
+              if(($val['relay'.$i]['tstat'] <= 1) && ($val['relay'.$i]['stat'] <= 1) && ($val['relay'.$i]['cumul'] > 0))
+                $rel_cumul[$i][$key]  = $val['relay'.$i]['cumul'];
+            }
+            else
+            {
+              if($val['relay'.$i]['radio0'] > 0)
+              {
+                if($val['relay'.($i-1)]['cumul'] > 0)
+                {
+                  $rel_radio0[$i][$key]  = $val['relay'.($i-1)]['cumul'] + $val['relay'.$i]['radio0'];
+                }
+                else
+                {
+                }
+              }
+              if($val['relay'.$i]['radio1'] > 0)
+              {
+                if($val['relay'.($i-1)]['cumul'] > 0)
+                {
+                  $rel_radio1[$i][$key] = $val['relay'.($i-1)]['cumul'] + $val['relay'.$i]['radio1'];
+                }
+                else
+                {
+                }
+              }
+              if($val['relay'.$i]['radio2'] > 0)
+              {
+                if($val['relay'.($i-1)]['cumul'] > 0)
+                {
+                  $rel_radio2[$i][$key] = $val['relay'.($i-1)]['cumul'] + $val['relay'.$i]['radio2'];
+                }
+                else
+                {
+                }
+              }
+              if(($val['relay'.$i]['tstat'] <= 1) && ($val['relay'.$i]['stat'] <= 1) && ($val['relay'.$i]['cumul'] > 0))
+              {
+                if($val['relay'.($i-1)]['cumul'] > 0)
+                {
+                  $rel_cumul[$i][$key]  = $val['relay'.$i]['cumul'];
+                }
+                else
+                {
+                  $arr[$key]['relay'.$i]['cumul'] = 0;
+                }
+              }
+            }
+          }
+        }
+	}
+
+	// Ajoute $arr en tant que dernier parametre
+	//array_multisort($rel3_cumul, SORT_ASC, $rel3_radio2, SORT_ASC, $rel3_radio1, SORT_ASC, $rel3_radio0, SORT_ASC, $rel2_cumul, SORT_ASC, $rel2_radio2, SORT_ASC, $rel2_radio1, SORT_ASC, $rel2_radio0, SORT_ASC, $rel1_cumul, SORT_ASC, $rel1_radio2, SORT_ASC, $rel1_radio1, SORT_ASC, $rel1_radio0, SORT_ASC, $sta, SORT_ASC, $arr);
+
+	for($i=1;$i<=$numlegs;$i++)
+	{
+		if($rel_cumul[$i] != null) natcasesort($rel_cumul[$i]);
+		if($rel_radio0[$i] != null) natcasesort($rel_radio0[$i]);
+		if($rel_radio1[$i] != null) natcasesort($rel_radio1[$i]);
+		if($rel_radio2[$i] != null) natcasesort($rel_radio2[$i]);
+	}
+	/*
+	print_r($rel_cumul);
+	echo '<hr />';
+	print_r($rel_radio0);
+	echo '<hr />';
+	print_r($rel_tstat);
+	echo '<hr />';
+	print_r($rel_stat);
+	echo '<hr />';
+	print_r($sta);
+	echo '<hr />';*/
+
+    $place_affichee = 0;
+    $place_stockee = 0;
     $last_time = -1;
-    if($rel3_radio2 != null)
-      foreach($rel3_radio2 as $k => $v)
-        {
-            if(!isset($out[$k]))
-            {
-		$place_stockee++;
-		if(($arr[$k]['relais2']['cumul'] + $arr[$k]['relais3']['radio2']) != $last_time)
+
+	for($i=$numlegs;$i>=1;$i--)
+	{
+		if($rel_cumul[$i] != null)
 		{
-			$place_affichee = $place_stockee;
-			$last_time = ($arr[$k]['relais2']['cumul'] + $arr[$k]['relais3']['radio2']);
+			$last_time = -1;
+			foreach($rel_cumul[$i] as $k => $v)
+			{
+				if(!isset($out[$k]))
+				{
+					$place_stockee++;
+					if($arr[$k]['relay'.$i]['cumul'] != $last_time)
+					{
+					  $place_affichee = $place_stockee;
+					  $last_time = $arr[$k]['relay'.$i]['cumul'];
+					}
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$displayed_relay[$j] = '';
+					}
+					for($j=1;$j<=$i;$j++)
+					{
+						if(array_key_exists($k, $rel_cumul[$j]))
+							$displayed_relay[$j] = array_search($k, array_keys($rel_cumul[$j])) + 1;
+						else
+							$displayed_relay[$j] = '';
+					}
+					$out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp']);
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$out[$k][] = $arr[$k]['relay'.$j]['tstat'];
+					}
+					$out[$k] = array_merge($out[$k], array($numlegs, $place_affichee, $arr[$k]['team_name']));
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
+						$out[$k] = array_merge($out[$k], $temp_arr);
+					}
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$out[$k][] = $arr[$k]['relay'.$j]['name'];
+					}
+				}
+			}
 		}
-                $relais1_affichee = '';
-                $relais2_affichee = '';
-                $relais3_affichee = '';
-                if(array_key_exists($k, $rel1_cumul))
-                    $relais1_affichee = array_search($k, array_keys($rel1_cumul)) + 1;
-                if(array_key_exists($k, $rel2_cumul))
-                    $relais2_affichee = array_search($k, array_keys($rel2_cumul)) + 1;
-                $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                        $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                        $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                        $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                );
-            }
-        }
-	$last_time = -1;
-    if($rel3_radio1 != null)
-        foreach($rel3_radio1 as $k => $v)
-        {
-            if(!isset($out[$k]))
-            {
-                $place_stockee++;
-		if(($arr[$k]['relais2']['cumul'] + $arr[$k]['relais3']['radio1']) != $last_time)
+
+		if($rel_radio2[$i] != null)
 		{
-			$place_affichee = $place_stockee;
-			$last_time = ($arr[$k]['relais2']['cumul'] + $arr[$k]['relais3']['radio1']);
+			$last_time = -1;
+			foreach($rel_radio2[$i] as $k => $v)
+			{
+				if(!isset($out[$k]))
+				{
+					$place_stockee++;
+					if($i > 1)
+					{
+						if(($arr[$k]['relay'.($i-1)]['cumul'] + $arr[$k]['relay'.$i]['radio2']) != $last_time)
+						{
+						  $place_affichee = $place_stockee;
+						  $last_time = ($arr[$k]['relay'.($i-1)]['cumul'] + $arr[$k]['relay'.$i]['radio2']);
+						}
+					}
+					else
+					{
+						if($arr[$k]['relay'.$i]['radio2'] != $last_time)
+						{
+						  $place_affichee = $place_stockee;
+						  $last_time = $arr[$k]['relay'.$i]['radio2'];
+						}
+					}
+
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$displayed_relay[$j] = '';
+					}
+					for($j=1;$j<$i;$j++)
+					{
+						if(array_key_exists($k, $rel_cumul[$j]))
+							$displayed_relay[$j] = array_search($k, array_keys($rel_cumul[$j])) + 1;
+						else
+							$displayed_relay[$j] = '';
+					}
+					$out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp']);
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$out[$k][] = $arr[$k]['relay'.$j]['tstat'];
+					}
+					$out[$k] = array_merge($out[$k], array($numlegs, $place_affichee, $arr[$k]['team_name']));
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
+						$out[$k] = array_merge($out[$k], $temp_arr);
+					}
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$out[$k][] = $arr[$k]['relay'.$j]['name'];
+					}
+				}
+			}
 		}
-                $relais1_affichee = '';
-                $relais2_affichee = '';
-                $relais3_affichee = '';
-                if(array_key_exists($k, $rel1_cumul))
-                    $relais1_affichee = array_search($k, array_keys($rel1_cumul)) + 1;
-                if(array_key_exists($k, $rel2_cumul))
-                    $relais2_affichee = array_search($k, array_keys($rel2_cumul)) + 1;
-                $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                        $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                        $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                        $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                );
-            }
-        }
-	$last_time = -1;
-    if($rel3_radio0 != null)
-        foreach($rel3_radio0 as $k => $v)
-        {
-            if(!isset($out[$k]))
-            {
-                $place_stockee++;
-		if(($arr[$k]['relais2']['cumul'] + $arr[$k]['relais3']['radio0']) != $last_time)
+
+		if($rel_radio1[$i] != null)
 		{
-			$place_affichee = $place_stockee;
-			$last_time = ($arr[$k]['relais2']['cumul'] + $arr[$k]['relais3']['radio0']);
+			$last_time = -1;
+			foreach($rel_radio1[$i] as $k => $v)
+			{
+				if(!isset($out[$k]))
+				{
+					$place_stockee++;
+					if($i > 1)
+					{
+						if(($arr[$k]['relay'.($i-1)]['cumul'] + $arr[$k]['relay'.$i]['radio1']) != $last_time)
+						{
+						  $place_affichee = $place_stockee;
+						  $last_time = ($arr[$k]['relay'.($i-1)]['cumul'] + $arr[$k]['relay'.$i]['radio1']);
+						}
+					}
+					else
+					{
+						if($arr[$k]['relay'.$i]['radio1'] != $last_time)
+						{
+						  $place_affichee = $place_stockee;
+						  $last_time = $arr[$k]['relay'.$i]['radio1'];
+						}
+					}
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$displayed_relay[$j] = '';
+					}
+					for($j=1;$j<$i;$j++)
+					{
+						if(array_key_exists($k, $rel_cumul[$j]))
+							$displayed_relay[$j] = array_search($k, array_keys($rel_cumul[$j])) + 1;
+						else
+							$displayed_relay[$j] = '';
+					}
+					$out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp']);
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$out[$k][] = $arr[$k]['relay'.$j]['tstat'];
+					}
+					$out[$k] = array_merge($out[$k], array($numlegs, $place_affichee, $arr[$k]['team_name']));
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
+						$out[$k] = array_merge($out[$k], $temp_arr);
+					}
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$out[$k][] = $arr[$k]['relay'.$j]['name'];
+					}
+				}
+			}
 		}
-                $relais1_affichee = '';
-                $relais2_affichee = '';
-                $relais3_affichee = '';
-                if(array_key_exists($k, $rel1_cumul))
-                    $relais1_affichee = array_search($k, array_keys($rel1_cumul)) + 1;
-                if(array_key_exists($k, $rel2_cumul))
-                    $relais2_affichee = array_search($k, array_keys($rel2_cumul)) + 1;
-                $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                        $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                        $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                        $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                );
-            }
-        }
-	$last_time = -1;
-    if($rel2_cumul != null)
-        foreach($rel2_cumul as $k => $v)
-        {
-            if(!isset($out[$k]))
-            {
-		$place_stockee++;
-		if(($arr[$k]['relais2']['cumul']) != $last_time)
+
+		if($rel_radio0[$i] != null)
 		{
-			$place_affichee = $place_stockee;
-			$last_time = ($arr[$k]['relais2']['cumul']);
+			$last_time = -1;
+			foreach($rel_radio0[$i] as $k => $v)
+			{
+				if(!isset($out[$k]))
+				{
+					$place_stockee++;
+					if($i > 1)
+					{
+						if(($arr[$k]['relay'.($i-1)]['cumul'] + $arr[$k]['relay'.$i]['radio0']) != $last_time)
+						{
+						  $place_affichee = $place_stockee;
+						  $last_time = ($arr[$k]['relay'.($i-1)]['cumul'] + $arr[$k]['relay'.$i]['radio0']);
+						}
+					}
+					else
+					{
+						if($arr[$k]['relay'.$i]['radio0'] != $last_time)
+						{
+						  $place_affichee = $place_stockee;
+						  $last_time = $arr[$k]['relay'.$i]['radio0'];
+						}
+					}
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$displayed_relay[$j] = '';
+					}
+					for($j=1;$j<$i;$j++)
+					{
+						if(array_key_exists($k, $rel_cumul[$j]))
+							$displayed_relay[$j] = array_search($k, array_keys($rel_cumul[$j])) + 1;
+						else
+							$displayed_relay[$j] = '';
+					}
+					$out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp']);
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$out[$k][] = $arr[$k]['relay'.$j]['tstat'];
+					}
+					$out[$k] = array_merge($out[$k], array($numlegs, $place_affichee, $arr[$k]['team_name']));
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
+						$out[$k] = array_merge($out[$k], $temp_arr);
+					}
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$out[$k][] = $arr[$k]['relay'.$j]['name'];
+					}
+				}
+			}
 		}
-                $relais1_affichee = '';
-                $relais2_affichee = '';
-                $relais3_affichee = '';
-                if(array_key_exists($k, $rel1_cumul))
-                    $relais1_affichee = array_search($k, array_keys($rel1_cumul)) + 1;
-                if(array_key_exists($k, $rel2_cumul))
-                    $relais2_affichee = array_search($k, array_keys($rel2_cumul)) + 1;
-                $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                        $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                        $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                        $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                );
-            }
-        }
-	$last_time = -1;
-    if($rel2_radio2 != null)
-        foreach($rel2_radio2 as $k => $v)
-        {
-            if(!isset($out[$k]))
-            {
-                $place_stockee++;
-		if(($arr[$k]['relais1']['cumul'] + $arr[$k]['relais2']['radio2']) != $last_time)
-		{
-			$place_affichee = $place_stockee;
-			$last_time = ($arr[$k]['relais1']['cumul'] + $arr[$k]['relais2']['radio2']);
-		}
-                $relais1_affichee = '';
-                $relais2_affichee = '';
-                $relais3_affichee = '';
-                if(array_key_exists($k, $rel1_cumul))
-                    $relais1_affichee = array_search($k, array_keys($rel1_cumul)) + 1;
-                $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                        $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                        $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                        $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                );
-            }
-        }
-	$last_time = -1;
-    if($rel2_radio1 != null)
-        foreach($rel2_radio1 as $k => $v)
-        {
-            if(!isset($out[$k]))
-            {
-                $place_stockee++;
-		if(($arr[$k]['relais1']['cumul'] + $arr[$k]['relais2']['radio1']) != $last_time)
-		{
-			$place_affichee = $place_stockee;
-			$last_time = ($arr[$k]['relais1']['cumul'] + $arr[$k]['relais2']['radio1']);
-		}
-                $relais1_affichee = '';
-                $relais2_affichee = '';
-                $relais3_affichee = '';
-                if(array_key_exists($k, $rel1_cumul))
-                    $relais1_affichee = array_search($k, array_keys($rel1_cumul)) + 1;
-                $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                        $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                        $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                        $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                );
-            }
-        }
-	$last_time = -1;
-    if($rel2_radio0 != null)
-        foreach($rel2_radio0 as $k => $v)
-        {
-            if(!isset($out[$k]))
-            {
-                $place_stockee++;
-		if(($arr[$k]['relais1']['cumul'] + $arr[$k]['relais2']['radio0']) != $last_time)
-		{
-			$place_affichee = $place_stockee;
-			$last_time = ($arr[$k]['relais1']['cumul'] + $arr[$k]['relais2']['radio0']);
-		}
-                $relais1_affichee = '';
-                $relais2_affichee = '';
-                $relais3_affichee = '';
-                if(array_key_exists($k, $rel1_cumul))
-                    $relais1_affichee = array_search($k, array_keys($rel1_cumul)) + 1;
-                $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                        $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                        $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                        $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                );
-            }
-        }
-	$last_time = -1;
-    if($rel1_cumul != null)
-        foreach($rel1_cumul as $k => $v)
-        {
-            if(!isset($out[$k]))
-            {
-                $place_stockee++;
-		if(($arr[$k]['relais1']['cumul']) != $last_time)
-		{
-			$place_affichee = $place_stockee;
-			$last_time = ($arr[$k]['relais1']['cumul']);
-		}
-                $relais1_affichee = '';
-                $relais2_affichee = '';
-                $relais3_affichee = '';
-                if(array_key_exists($k, $rel1_cumul))
-                    $relais1_affichee = array_search($k, array_keys($rel1_cumul)) + 1;
-                $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                        $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                        $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                        $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                );
-            }
-        }
-	$last_time = -1;
-    if($rel1_radio2 != null)
-        foreach($rel1_radio2 as $k => $v)
-        {
-            if(!isset($out[$k]))
-            {
-                $place_stockee++;
-		if(($arr[$k]['relais1']['radio2']) != $last_time)
-		{
-			$place_affichee = $place_stockee;
-			$last_time = ($arr[$k]['relais1']['radio2']);
-		}
-                $relais1_affichee = '';
-                $relais2_affichee = '';
-                $relais3_affichee = '';
-                $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                        $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                        $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                        $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                );
-            }
-        }
-	$last_time = -1;
-    if($rel1_radio1 != null)
-        foreach($rel1_radio1 as $k => $v)
-        {
-            if(!isset($out[$k]))
-            {
-                $place_stockee++;
-		if(($arr[$k]['relais1']['radio1']) != $last_time)
-		{
-			$place_affichee = $place_stockee;
-			$last_time = ($arr[$k]['relais1']['radio1']);
-		}
-                $relais1_affichee = '';
-                $relais2_affichee = '';
-                $relais3_affichee = '';
-                $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                        $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                        $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                        $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                );
-            }
-        }
-	$last_time = -1;
-    if($rel1_radio0 != null)
-        foreach($rel1_radio0 as $k => $v)
-        {
-            if(!isset($out[$k]))
-            {
-                $place_stockee++;
-		if(($arr[$k]['relais1']['radio0']) != $last_time)
-		{
-			$place_affichee = $place_stockee;
-			$last_time = ($arr[$k]['relais1']['radio0']);
-		}
-                $relais1_affichee = '';
-                $relais2_affichee = '';
-                $relais3_affichee = '';
-                $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                        $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                        $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                        $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                );
-            }
-        }
+	}
+
     if($sta != null)
+	{
         foreach($sta as $k => $v)
         {
             if($v > 1)
@@ -898,118 +862,81 @@ function ordonner_relais($arr, $numlegs)
                 if(!isset($out[$k]))
                 {
                     $place_affichee = '';
-                    $relais1_affichee = '';
-                    $relais2_affichee = '';
-                    $relais3_affichee = '';
-                    $out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp'], $arr[$k]['relais1']['tstat'], $arr[$k]['relais2']['tstat'], $arr[$k]['relais3']['tstat'], $numlegs, $place_affichee, $arr[$k]['team_name'], 
-                            $arr[$k]['relais1']['radio0'], $arr[$k]['relais1']['radio1'], $arr[$k]['relais1']['radio2'], $arr[$k]['relais1']['finish'], $relais1_affichee, $arr[$k]['relais1']['cumul'],
-                            $arr[$k]['relais2']['radio0'], $arr[$k]['relais2']['radio1'], $arr[$k]['relais2']['radio2'], $arr[$k]['relais2']['finish'], $relais2_affichee, $arr[$k]['relais2']['cumul'],
-                            $arr[$k]['relais3']['radio0'], $arr[$k]['relais3']['radio1'], $arr[$k]['relais3']['radio2'], $arr[$k]['relais3']['finish'], $relais3_affichee, $arr[$k]['relais3']['cumul'],
-		       $arr[$k]['relais1']['name'], $arr[$k]['relais2']['name'], $arr[$k]['relais3']['name']
-                    );
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$displayed_relay[$j] = '';
+					}
+					$out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp']);
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$out[$k][] = $arr[$k]['relay'.$j]['tstat'];
+					}
+					$out[$k] = array_merge($out[$k], array($numlegs, $place_affichee, $arr[$k]['team_name']));
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
+						$out[$k] = array_merge($out[$k], $temp_arr);
+					}
+          for($j=1;$j<=$numlegs;$j++)
+					{
+						$out[$k][] = $arr[$k]['relay'.$j]['name'];
+					}
                 }
             }
         }
-    
-    foreach($out as $k => $v)
-    {
-	//$out[$k][6] = getStatusString($out[$k][0]);
-        $min = 8;
-        $max = 13;
-        for($i=$min;$i<=$max;$i++)
-        {
-            if(($i == $max) && ($rel1_tstat[$k] > 1))
-            {
-                $out[$k][$i] = getStatusString($rel1_tstat[$k]);
-            }
-            else
-            if(($i == ($max -2)) && ($rel1_stat[$k] > 1))
-            {
-                $out[$k][$i] = getStatusString($rel1_stat[$k]);
-            }
-            else
-            if($i != ($max-1))
-            {
-                $t = $v[$i] / 10;
-                if ($t >= 3600)
-                    $out[$k][$i] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
-                else
-                if ($t > 0)
-                    $out[$k][$i] = sprintf("%02d:%02d", ($t/60), $t%60);
-                else
-                    $out[$k][$i] = '';
-            }
-        }
-        $min = 14;
-        $max = 19;
-        for($i=$min;$i<=$max;$i++)
-        {
-            if(($i == $max) && ($rel2_tstat[$k] > 1))
-            {
-                $out[$k][$i] = getStatusString($rel2_tstat[$k]);
-            }
-            else
-            if(($i == ($max -2)) && ($rel2_stat[$k] > 1))
-            {
-                $out[$k][$i] = getStatusString($rel2_stat[$k]);
-            }
-            else
-            if($i != ($max-1))
-            {
-                $t = $v[$i] / 10;
-                if ($t >= 3600)
-                    $out[$k][$i] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
-                else
-                if ($t > 0)
-                    $out[$k][$i] = sprintf("%02d:%02d", ($t/60), $t%60);
-                else
-                    $out[$k][$i] = '';
-            }
-        }
-        $min = 20;
-        $max = 25;
-        for($i=$min;$i<=$max;$i++)
-        {
-            if(($i == $max) && ($rel3_tstat[$k] > 1))
-            {
-                $out[$k][$i] = getStatusString($rel3_tstat[$k]);
-            }
-            else
-            if(($i == ($max -2)) && ($rel3_stat[$k] > 1))
-            {
-                $out[$k][$i] = getStatusString($rel3_stat[$k]);
-            }
-            else
-            if($i != ($max-1))
-            {
-                $t = $v[$i] / 10;
-                if ($t >= 3600)
-                    $out[$k][$i] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
-                else
-                if ($t > 0)
-                    $out[$k][$i] = sprintf("%02d:%02d", ($t/60), $t%60);
-                else
-                    $out[$k][$i] = '';
-            }
-        }
-    }
-    
-	
+	}
+	for($j=1;$j<=$numlegs;$j++)
+	{
+		foreach($out as $k => $v)
+		{
+			$min = 5 + $numlegs + 6 * ($j-1);
+			$max = $min + 5;
+			for($i=$min;$i<=$max;$i++)
+			{
+				//echo '-'.$j.'/'.$i.'-';
+				if(($i == $max) && ($rel_tstat[$j][$k] > 1))
+				{
+					$out[$k][$i] = getStatusString($rel_tstat[$j][$k]);
+				}
+				else
+				if(($i == $max) && ($rel_stat[$j][$k] > 1))
+				{
+					$out[$k][$i] = getStatusString($rel_stat[$j][$k]);
+				}
+				else
+				if(($i == ($max -2)) && ($rel_stat[$j][$k] > 1))
+				{
+					$out[$k][$i] = getStatusString($rel_stat[$j][$k]);
+				}
+				else
+				if($i != ($max-1))
+				{
+					$t = $v[$i] / 10;
+					if ($t >= 3600)
+						$out[$k][$i] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
+					else
+					if ($t > 0)
+						$out[$k][$i] = sprintf("%02d:%02d", ($t/60), $t%60);
+					else
+						$out[$k][$i] = '';
+				}
+			}
+		}
+	}
 	return $out;
 }
 
-function formatRelaisResult($result)
+
+function formatRelayResults($result, $limit = 99999)
 {
   global $pos;
-  global $lang;
+  
   $head = true;
-
-    print '[';
-  
+  print '[';
   $i = 0;
-  
-  foreach($result as $row) 
-  {            
+  foreach($result as $row)
+  {
+    $i++;
     if ($head)
     {
         print("[");
@@ -1020,7 +947,7 @@ function formatRelaisResult($result)
         print(",[");
     }
     $first = true;
-    foreach($row as $cell) 
+    foreach($row as $cell)
     {
         if(is_array($cell))
         {
@@ -1037,7 +964,9 @@ function formatRelaisResult($result)
             $first = false;
         }
     }
-      print ']';
+    print ']';
+    if($i >= $limit)
+      break;
   }
   print "];";
 }
@@ -1049,26 +978,26 @@ function selectRadio($cls) {
   $sql = "SELECT leg, ctrl, mopcontrol.name FROM mopclasscontrol, mopcontrol ".
          "WHERE mopcontrol.cid='$cmpId' AND mopclasscontrol.cid='$cmpId' ".
          "AND mopclasscontrol.id='$cls' AND mopclasscontrol.ctrl=mopcontrol.id ORDER BY leg ASC, ord ASC";
-         
-  
+
+
   $res = mysql_query($sql);
   $radios = mysql_num_rows($res);
-  
+
   if ($radios > 0) {
     if (isset($_GET['radio'])) {
       $radio = $_GET['radio'];
     }
 
     while ($r = mysql_fetch_array($res)) {
-      print '<a href="'."$PHP_SELF?cls=$cls&radio=$r[ctrl]".'">'.$r['name']."</a><br/>\n";      
-    } 
-    print '<a href="'."$PHP_SELF?cls=$cls&radio=finish".'">'.'Finish'."</a><br/>\n";      
+      print '<a href="'."$PHP_SELF?cls=$cls&radio=$r[ctrl]".'">'.$r['name']."</a><br/>\n";
+    }
+    print '<a href="'."$PHP_SELF?cls=$cls&radio=finish".'">'.'Finish'."</a><br/>\n";
   }
   else {
-    // Only finish   
+    // Only finish
     $radio = 'finish';
   }
-  return $radio; 
+  return $radio;
 }
 
 function selectLegRadio($cls, $leg, $ord) {
@@ -1077,73 +1006,73 @@ function selectLegRadio($cls, $leg, $ord) {
   $sql = "SELECT ctrl, mopcontrol.name FROM mopclasscontrol, mopcontrol ".
          "WHERE mopcontrol.cid='$cmpId' AND mopclasscontrol.cid='$cmpId' ".
          "AND mopclasscontrol.id='$cls' AND mopclasscontrol.ctrl=mopcontrol.id AND leg='$leg' AND ord='$ord'";
-         
-  
+
+
   $res = mysql_query($sql);
   $radios = mysql_num_rows($res);
   //print $sql;
   if ($radios > 0) {
-    
+
     while ($r = mysql_fetch_array($res)) {
-      print '<a href="'."$PHP_SELF?cls=$cls&leg=$leg&ord=$ord&radio=$r[ctrl]".'">'.$r['name']."</a>; \n";      
-    } 
-     
+      print '<a href="'."$PHP_SELF?cls=$cls&leg=$leg&ord=$ord&radio=$r[ctrl]".'">'.$r['name']."</a>; \n";
+    }
+
   }
   else {
-    // Only finish   
+    // Only finish
     //$radio = 'finish';
   }
   print '<a href="'."$PHP_SELF?cls=$cls&leg=$leg&ord=$ord&radio=finish".'">'.'Finish'."</a><br/>\n";
-  return $radio; 
+  return $radio;
 }
 
 /** Update or add a record to a table. */
 function updateTable($table, $cid, $id, $sqlupdate) {
   $ifc = "cid='$cid' AND id='$id'";
   $res = mysql_query("SELECT id FROM `$table` WHERE $ifc");
-  
+
   if (mysql_num_rows($res) > 0) {
     $sql = "UPDATE `$table` SET $sqlupdate WHERE $ifc";
   }
   else {
-    $sql = "INSERT INTO `$table` SET cid='$cid', id='$id', $sqlupdate";  
+    $sql = "INSERT INTO `$table` SET cid='$cid', id='$id', $sqlupdate";
   }
-  
+
   //print "$sql\n";
   mysql_query($sql);
 }
 
 /** Update a link with outer level over legs and other level over fieldName (controls, team members etc)*/
 function updateLinkTable($table, $cid, $id, $fieldName, $encoded) {
-  $sql = "DELETE FROM $table WHERE cid='$cid' AND id='$id'";  
+  $sql = "DELETE FROM $table WHERE cid='$cid' AND id='$id'";
   mysql_query($sql);
-  $legNumber = 1;  
+  $legNumber = 1;
   $legs = explode(";", $encoded);
   foreach($legs as $leg) {
     $runners = explode(",", $leg);
     foreach($runners as $key => $runner) {
-      $sql = "INSERT INTO $table SET cid='$cid', id='$id', leg=$legNumber, ord=$key, $fieldName=$runner"; 
+      $sql = "INSERT INTO $table SET cid='$cid', id='$id', leg=$legNumber, ord=$key, $fieldName=$runner";
       //print "$sql \n";
       mysql_query($sql);
     }
     $legNumber++;
-  }  
+  }
 }
 
 /** Remove all data from a table related to an event. */
 function clearCompetition($cid) {
-   //$tables = array(0=>"mopcontrol", "mopclass", "moporganization", "mopcompetition", "mopcompetitor", 
+   //$tables = array(0=>"mopcontrol", "mopclass", "moporganization", "mopcompetition", "mopcompetitor",
    //                   "mopteam", "mopteammember", "mopclasscontrol", "mopradio", "resultclass");
    // The table "resultclass" has been removed by JM from the list on 2015-09-09 in order to keep the classes selection when the MeOS service is restarted
    // may have side effects if some changes are made in MeOS classes for the competition, or if the cid is reused.
    // Well, wait and see...
-   $tables = array(0=>"mopcontrol", "mopclass", "moporganization", "mopcompetition", "mopcompetitor", 
+   $tables = array(0=>"mopcontrol", "mopclass", "moporganization", "mopcompetition", "mopcompetitor",
                       "mopteam", "mopteammember", "mopclasscontrol", "mopradio");
-                      
+
    foreach($tables as $table) {
      $sql = "DELETE FROM $table WHERE cid=$cid";
      mysql_query($sql);
-   } 
+   }
 }
 
 /** Update control table */
@@ -1152,7 +1081,7 @@ function processCompetition($cid, $cmp) {
   $date = mysql_real_escape_string($cmp['date']);
   $organizer = mysql_real_escape_string($cmp['organizer']);
   $homepage = mysql_real_escape_string($cmp['homepage']);
-  
+
   $sqlupdate = "name='$name', date='$date', organizer='$organizer', homepage='$homepage'";
   updateTable("mopcompetition", $cid, 1, $sqlupdate);
 }
@@ -1172,10 +1101,10 @@ function processClass($cid, $cls) {
   $name = mysql_real_escape_string($cls);
   $sqlupdate = "name='$name', ord='$ord'";
   updateTable("mopclass", $cid, $id, $sqlupdate);
-    
+
   if (isset($cls['radio'])) {
     $radio = mysql_real_escape_string($cls['radio']);
-    updateLinkTable("mopclasscontrol", $cid, $id, "ctrl", $radio);    
+    updateLinkTable("mopclasscontrol", $cid, $id, "ctrl", $radio);
   }
 }
 
@@ -1191,7 +1120,7 @@ function processOrganization($cid, $org) {
 function processCompetitor($cid, $cmp) {
   $base = $cmp->base;
   $id = mysql_real_escape_string($cmp['id']);
-  
+
   $name = mysql_real_escape_string($base);
   $org = (int)$base['org'];
   $cls = (int)$base['cls'];
@@ -1199,8 +1128,8 @@ function processCompetitor($cid, $cmp) {
   $st = (int)$base['st'];
   $rt = (int)$base['rt'];
   $now = time();
-  
-  
+
+
   $sqlupdate = "name='$name', org=$org, cls=$cls, stat=$stat, st=$st, rt=$rt,timestamp=$now";
 
   if (isset($cmp->input)) {
@@ -1210,8 +1139,10 @@ function processCompetitor($cid, $cmp) {
     $sqlupdate.=", it=$it, tstat=$tstat";
   }
 
-  updateTable("mopcompetitor", $cid, $id, $sqlupdate);  
-  if (isset($cmp->radio)) {
+  updateTable("mopcompetitor", $cid, $id, $sqlupdate);
+/* 
+ // ORIGINAL
+ if (isset($cmp->radio)) {
     $sql = "DELETE FROM mopradio WHERE cid='$cid' AND id='$id'";
     mysql_query($sql);
     $radios = explode(";", $cmp->radio);
@@ -1222,24 +1153,47 @@ function processCompetitor($cid, $cmp) {
       $sql = "REPLACE INTO mopradio SET cid='$cid', id='$id', ctrl='$radioId', rt='$radioTime', timestamp=$now";
       mysql_query($sql);
     }
-  }  
+  }
+*/
+  if (isset($cmp->radio))
+  {
+    $radios = explode(";", $cmp->radio);
+    foreach($radios as $radio)
+    {
+      $tmp = explode(",", $radio);
+      $radioId = (int)$tmp[0];
+      $radioTime = (int)$tmp[1];
+      $sql = "SELECT 1 FROM mopradio WHERE cid='$cid' AND id='$id' AND ctrl='$radioId'";
+      $res = mysql_query($sql);
+      if(mysql_num_rows($res))
+      {
+        $sql = "UPDATE mopradio SET rt='$radioTime' WHERE cid='$cid' AND id='$id' AND ctrl='$radioId'";
+        mysql_query($sql);
+      }
+      else
+      {
+        $sql = "INSERT INTO mopradio SET cid='$cid', id='$id', ctrl='$radioId', rt='$radioTime', timestamp=$now";
+        mysql_query($sql);
+      }
+    }
+  }
 }
 
 /** Update team table */
 function processTeam($cid, $team) {
   $base = $team->base;
-  $id = mysql_real_escape_string($team['id']);  
-  
+  $id = mysql_real_escape_string($team['id']);
+
   $name = mysql_real_escape_string($base);
   $org = (int)$base['org'];
   $cls = (int)$base['cls'];
   $stat = (int)$base['stat'];
   $st = (int)$base['st'];
   $rt = (int)$base['rt'];
-  
+
   $sqlupdate = "name='$name', org=$org, cls=$cls, stat=$stat, st=$st, rt=$rt";
   updateTable("mopteam", $cid, $id, $sqlupdate);
-  
+
   if (isset($team->r)) {
     updateLinkTable("mopteammember", $cid, $id, "rid", $team->r);
   }
@@ -1257,8 +1211,14 @@ function defineVariable($variable, $value)
     print $variable." = eval('".$value."');";
 }
 
-function defineVariableArr($variable, $value1, $value2)
+function defineVariableArr($variable, $value1, $value2, $value3 = null, $value4 = null)
 {
+  if(($value3 !== null) && ($value4 !== null))
+    print $variable." = eval(['".$value1."', '".$value2."', '".$value3."', '".$value4."']);\r\n";
+  else
+  if($value3 !== null)
+    print $variable." = eval(['".$value1."', '".$value2."', '".$value3."']);\r\n";
+  else
     print $variable." = eval(['".$value1."', '".$value2."']);\r\n";
 }
 
@@ -1274,8 +1234,24 @@ function defineVariableArrFromArr($variable, $arr)
 function defineVariableArr2x($variable, $arr1, $arr2)
 {
     $em1 = '[\''.implode('\', \'', $arr1).'\']';
-    $em2 = '[\''.implode('\', \'', $arr2).'\']'; 
+    $em2 = '[\''.implode('\', \'', $arr2).'\']';
     print $variable." = eval([".$em1.", ".$em2."]);\r\n";
+}
+
+function defineVariableArrNx($variable, $arrMultiDimension, $nbVoulu)
+{
+  $em = array();
+  for($i=0;$i<$nbVoulu;$i++)
+  {
+    if(isset($arrMultiDimension[$i]))
+      $em[] = '[\''.implode('\', \'', $arrMultiDimension[$i]).'\']';
+    else
+    if(isset($arrMultiDimension[0]))
+      $em[] = '[\''.implode('\', \'', $arrMultiDimension[0]).'\']';
+    else
+      $em[] = '[\''.implode('\', \'', array(-1)).'\']';
+  }
+  print $variable." = eval([".implode(',',$em)."]);\r\n";
 }
 
 function displayContentHtml($filename)
@@ -1291,25 +1267,150 @@ function displayContentText($texte, $size, $color)
     $retour .= $texte;
     $retour .= '</div>';
     $retour .= '</div>';
-    
+
     return $retour;
 }
 
-function displayContentPicture($picture)
+function displayContentPicture($picture, $panel, $panelcount)
 {
+    $max_width = floor(980 / $panelcount);
+    $max_height = 470;
     $retour = '';
     $arr_img = getimagesize ('pictures/'.$picture);
-    if($arr_img[0] > $arr_img[1])
+    $or_width = $arr_img[0];
+    $or_height = $arr_img[1];
+    $ratio_h = $or_height / $max_height;
+    $ratio_w = $or_width / $max_width;
+    
+    //screen.width screen.height
+    
+
+  $retour .= '<div id="imgpan'.$panel.'" style="display:table;overflow:hidden;margin:auto;">';    
+  $retour .= '<div id="imgp'.$panel.'" style="padding:2px;display:table-cell;vertical-align:middle;text-align:center;"><img id="imgs'.$panel.'" src="pictures/'.$picture.'" alt="L" title="L" /></div>';
+  $retour .= '</div>';
+
+  $retour .= '<script type="text/javascript">';
+  $retour .= 'function computeSize'.$panel.'()';
+  $retour .= '{';
+  $retour .= 'ratio_device = 1.25;';  
+  $retour .= 'screenw = (screen.height - 70) / '.$panelcount.' / ratio_device;';
+  $retour .= 'screenh = (screen.width - 140) / ratio_device;';
+  $retour .= 'imgw = '.$or_width.';';
+  $retour .= 'imgh = '.$or_height.';';
+  $retour .= 'ratio_h = imgh / screenh;';
+  $retour .= 'ratio_w = imgw / screenw;';
+  $retour .= 'ratio = Math.max(ratio_h, ratio_w);';
+  $retour .= 'h = imgh / ratio;';
+  $retour .= 'w = imgw / ratio;';
+  $retour .= 'return {h:h, w:w};'; 
+  $retour .= '}'."\n";
+  $retour .= 'var mysize'.$panel.' = computeSize'.$panel.'();'."\n";
+  $retour .= 'document.getElementById("imgpan'.$panel.'").style.height = mysize'.$panel.'.h;'."\n";
+  $retour .= 'document.getElementById("imgpan'.$panel.'").style.width = mysize'.$panel.'.w;'."\n";
+  
+  $retour .= 'document.getElementById("imgp'.$panel.'").style.height = mysize'.$panel.'.h;'."\n";
+  $retour .= 'document.getElementById("imgp'.$panel.'").style.width = mysize'.$panel.'.w;'."\n";
+  
+  $retour .= 'document.getElementById("imgs'.$panel.'").height = mysize'.$panel.'.h;'."\n";
+  $retour .= 'document.getElementById("imgs'.$panel.'").width = mysize'.$panel.'.w;'."\n";
+           /* 
+  $retour .= 'document.write("*" + imgh + "*" + imgw + "*<br />");';
+  $retour .= 'document.write("/" + ratio_h + "/" + ratio_w + "/<br />");';
+  $retour .= 'document.write("+" + screenh + "+" + screenw + "+" + screen.width + "x" + screen.availWidth + "x" + screen.availHeight + "+<br />");';
+  $retour .= 'document.write("*" + mysize'.$panel.'.h + "*" + mysize'.$panel.'.w + "*");';
+        */
+  $retour .= '</script>';
+
+    /*
+    if($or_width >= $or_height)
     {
-        $retour .= '<div style="display:table;height:470px;overflow:hidden;width:100%;">';
-        $retour .= '<div style="padding:2px;display:table-cell;vertical-align:middle;width:100%;text-align:center;"><img src="pictures/'.$picture.'" alt="" max-width="100%" width="100%" /></div>';
+        $retour .= '<div style="display:table;height:470px;overflow:hidden;width:'.$max_width.'px;">';
+        $retour .= '<div style="padding:2px;display:table-cell;vertical-align:middle;width:100%;text-align:center;"><img src="pictures/'.$picture.'" alt="H" title="H" max-width="100%" width="100%" /></div>';
         $retour .= '</div>';
+//        $retour .= '<div style="padding:2px;text-align:center;"><img src="pictures/'.$picture.'" alt="H" title="H" max-height="470px" height="470px"/></div>';
     }
     else
     {
-        $retour .= '<div style="padding:2px;text-align:center;"><img src="pictures/'.$picture.'" alt="" max-height="470px" height="470px" /></div>';
+      
+//        $retour .= '<div style="padding:2px;text-align:center;"><img src="pictures/'.$picture.'" alt="L" title="L" max-height="470px"; vertical-align:middle;/></div>';
+//        $retour .= '<div style="padding:2px;text-align:center;"><img src="pictures/'.$picture.'" alt="" max-height="470px" height="470px" /></div>';
     }
+    */
     return $retour;
+}
+
+function displayContentBlog($rcid, $nlines, $highlight, $panel)
+{
+  $content = '';
+  $highlight_s = $highlight * 60; 
+  $sql = 'SELECT * FROM resultblog WHERE rcid='.$rcid.' ORDER BY timestamp DESC LIMIT '.$nlines;
+  $res = mysql_query($sql);
+  $content .= '<ul class="blogview" id="bloglist'.$panel.'">';
+  if(mysql_num_rows($res))
+  {
+    $now = time();
+    $arr_data = array();
+    while($r = mysql_fetch_assoc($res))
+    {
+      $mytimestamp = strtotime($r['timestamp']);
+      $mytext = '';
+      if($highlight_s > ($now - $mytimestamp))
+      {
+        $mytext .= '<li class="blogrecent">';
+      }
+      else
+      {
+        $mytext .= '<li>';
+      }
+      $mytext .= '<span class="blogtime">'.date('H:i:s', $mytimestamp).'</span>';//date('d-m-Y H:i:s', $mytimestamp);
+      
+      $mytext .= htmlspecialchars($r['text']);
+      $arr_data[] = $mytext;
+    }
+    if($arr_data != null)
+    {
+      $content .= implode('</li>', $arr_data).'</li>';
+    }
+  }
+  $content .= '</ul>';
+  return $content;
+}
+
+function displayContentRadio($rcid, $nlines, $highlight, $panel)
+{
+  $content = '';
+  $highlight_s = $highlight * 60; 
+  //$sql = 'SELECT * FROM resultblog WHERE rcid='.$rcid.' ORDER BY timestamp DESC LIMIT '.$nlines;
+  //$res = mysql_query($sql);
+  $content .= '<table class="radioview" cellspacing="0" cellpadding="0" id="radiolist'.$panel.'">';
+  /*if(mysql_num_rows($res))
+  {
+    $now = time();
+    $arr_data = array();
+    while($r = mysql_fetch_assoc($res))
+    {
+      $mytimestamp = strtotime($r['timestamp']);
+      $mytext = '';
+      if($highlight_s > ($now - $mytimestamp))
+      {
+        $mytext .= '<li class="radiorecent">';
+      }
+      else
+      {
+        $mytext .= '<li>';
+      }
+      $mytext .= '<span class="radiotime">'.date('H:i:s', $mytimestamp).'</span>';//date('d-m-Y H:i:s', $mytimestamp);
+      
+      $mytext .= htmlspecialchars($r['text']);
+      $arr_data[] = $mytext;
+    }
+    if($arr_data != null)
+    {
+      $content .= implode('</li>', $arr_data).'</li>';
+    }
+  }*/
+  $content .= '</table>';
+  return $content;
 }
 
 function displayTopPicture($picture, $hauteur)
@@ -1339,8 +1440,8 @@ function displayTopPicture($picture, $hauteur)
 }
 
 function calculeStart($res) {
-  $out = array();  
-  
+  $out = array();
+
   $place = 0;
   $count = 0;
   $lastTime = -1;
@@ -1351,38 +1452,38 @@ function calculeStart($res) {
   while ($r = mysql_fetch_array($res)) {
     if ($lastTeam == $r['id']) {
       $out[$count]['name'] .= " / " . $r['name'];
-      continue; 
+      continue;
     }
     else
       $lastTeam = $r['id'];
-      
+
     $count++;
     $start_time_s = $r['st'] / 10.0;
     $start_time = date("H:i",$start_time_s);
-    
-    
+
+
     $t = $r['time']/10;
     if ($bestTime == -1)
       $bestTime = $t;
     if ($lastTime != $t) {
       $place = $count;
       $lastTime = $t;
-    }        
+    }
     $row = array();
-    
+
     $row['start_time'] = $start_time;
     if ($r['status'] == 1) {
-      $row['name'] = $r['name'];      
+      $row['name'] = $r['name'];
       $row['team'] = $r['team'];
     }
     else {
-      $row['name'] = $r['name'];      
+      $row['name'] = $r['name'];
       $row['team'] = $r['team'];
     }
-    
+
     $out[$count] = $row;
   }
-  
+
   return $out;
 }
 

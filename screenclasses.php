@@ -15,14 +15,15 @@
   limitations under the License.
   */
 
-  $ip=$_SERVER['REMOTE_ADDR'];
-  $ipnb=explode('.',$ip);
+  
   session_start();
-  if (($ipnb[0]!='192')||($ipnb[1]!='168')||($ipnb[2]!='0')||($ipnb[3]=='20'))
-  {
-    header("Location: http://192.168.0.10");
-    die();
-  }
+  date_default_timezone_set('UTC');
+  include_once('functions.php');
+  redirectSwitchUsers();
+  
+  include_once('lang.php');
+  $_SESSION['CurrentLanguage'] = isset($_SESSION['CurrentLanguage']) ? $_SESSION['CurrentLanguage'] : autoSelectLanguage(array('fr','en','sv'),'en');
+  
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr" dir="ltr">
     <head>
@@ -148,9 +149,7 @@
     <body>
 <?php
 
-  include_once('functions.php');
   include_once('screenfunctions.php');
-  include_once('lang.php');
 
   
   $PHP_SELF = $_SERVER['PHP_SELF'];

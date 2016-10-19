@@ -1,6 +1,6 @@
 <?php
   /*
-  Copyright 2014-2015 Metraware
+  Copyright 2014-2016 Metraware
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,41 +15,66 @@
   limitations under the License.
   */
 
-    $ip=$_SERVER['REMOTE_ADDR'];
-    $ipnb=explode('.',$ip);
-    if (($ipnb[0]!='192')||($ipnb[1]!='168')||($ipnb[2]!='0')||($ipnb[3]=='20'))
-    {
-        header("Location: http://192.168.0.10");
-        die();
-    }
-    include_once('functions.php');
-    include_once('screenfunctions.php');
-    include_once('lang.php');
+  session_start();
+  date_default_timezone_set('UTC');
+  include_once('functions.php');
+  redirectSwitchUsers();
+  
+  include_once('lang.php');
+  $_SESSION['CurrentLanguage'] = isset($_SESSION['CurrentLanguage']) ? $_SESSION['CurrentLanguage'] : autoSelectLanguage(array('fr','en','sv'),'en');
+  
+  include_once('screenfunctions.php');
+  include_once('config.php');
+  
 
-    function InsertFileList($list, $listname,$current_value,$listid)
-    {
-        print "<td><select name='".$listname."' id='".$listid."'>\n";
-        foreach ($list as $id => $name)
+  function InsertFileList($list, $listname,$current_value,$listid)
+  {
+      print "<td><select name='".$listname."' id='".$listid."'>\n";
+      foreach ($list as $id => $name)
+      {
+        if ($name==$current_value)
         {
-          if ($name==$current_value)
-          {
-            print "<option value='".$id."' selected='selected'>".$name."</option>\n";
-          }
-          else
-          {
-            print "<option value='".$id."'>".$name."</option>\n";
-          }
+          print "<option value='".$id."' selected='selected'>".$name."</option>\n";
         }
-        print "</select></td>\n";
-    }
-    
-    
-    session_start();
+        else
+        {
+          print "<option value='".$id."'>".$name."</option>\n";
+        }
+      }
+      print "</select></td>\n";
+  }
 ?>
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr" dir="ltr">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>CFCO 2014 Screen edit</title>
+        <style>
+          li
+          {
+            display: inline;
+            line-height:2.5em;
+          }
+          li a:active, li a:link, li a:visited
+          {
+            border: 1px solid #606060;
+            color: #808080;
+            padding: 5px 10px;
+            text-decoration: none;
+            white-space: nowrap;
+          }
+
+          li a.active:active, li a.active:link, li a.cr:visited
+          {
+            color: #1f1f1f;
+            font-weight: bold;
+            background-color: #30c030;
+          }/*
+          li a.active:hover, li a:hover
+          {
+            background-color: #30c030;
+          }*/
+        </style>
+        <title>Screen edit</title>
         <script type="text/javascript">
             function GoBack(rcid)
             {
@@ -63,160 +88,85 @@
                 location.replace("screenedit.php?action=reload&rcid="+rcid+"&sid="+sid+"&cid="+cid);
             }
             
-            function ManageFull(sel)
+            function ManagePanel(sel,i)
             {
               sel=parseInt(sel);
-              document.getElementById('fullcontent1txt').disabled=true;
 
-              document.getElementById('fullcontent2').disabled=true;
-              document.getElementById('fulltxtsize').disabled=true;
-              document.getElementById('fulltxtcolor').disabled=true;
+              //document.getElementById('panel'+i+'mode').disabled=true;
+              //document.getElementById('panel'+i+'tm_count').disabled=true;
+              //document.getElementById('panel'+i+'alternate').disabled=true;
+              document.getElementById('panel'+i+'content8').disabled=true;
 
-              document.getElementById('fullcontent3txt').disabled=true;
+              document.getElementById('panel'+i+'content1txt').disabled=true;
 
-              document.getElementById('fullcontent4').disabled=true;
-              document.getElementById('fullresultsbutton').disabled=true;
-              document.getElementById('fullfirstline').disabled=true;
-              document.getElementById('fullfixedlines').disabled=true;
-              document.getElementById('fullscrolledlines').disabled=true;
-              document.getElementById('fullscrolltime').disabled=true;
-              document.getElementById('fullscrollbeforetime').disabled=true;
-              document.getElementById('fullscrollaftertime').disabled=true;
-              document.getElementById('fullupdateduration').disabled=true;
+              document.getElementById('panel'+i+'content2').disabled=true;
+              document.getElementById('panel'+i+'txtsize').disabled=true;
+              document.getElementById('panel'+i+'txtcolor').disabled=true;
+
+              document.getElementById('panel'+i+'content3txt').disabled=true;
+
+              document.getElementById('panel'+i+'content4').disabled=true;
+              document.getElementById('panel'+i+'content5').disabled=true;
+              document.getElementById('panel'+i+'content6').disabled=true;
+              document.getElementById('panel'+i+'content9').disabled=true;
+              document.getElementById('panel'+i+'firstline').disabled=true;
+              document.getElementById('panel'+i+'fixedlines').disabled=true;
+              document.getElementById('panel'+i+'scrolledlines').disabled=true;
+              document.getElementById('panel'+i+'scrolltime').disabled=true;
+              document.getElementById('panel'+i+'scrollbeforetime').disabled=true;
+              document.getElementById('panel'+i+'scrollaftertime').disabled=true;
+              document.getElementById('panel'+i+'updateduration').disabled=true;
 
               switch(sel) {
                 case 1 :
-                  document.getElementById('fullcontent1txt').disabled=false;
+                  document.getElementById('panel'+i+'content1txt').disabled=false;
                   break;
                 case 2 :
-                  document.getElementById('fullcontent2').disabled=false;
-                  document.getElementById('fulltxtsize').disabled=false;
-                  document.getElementById('fulltxtcolor').disabled=false;
+                  document.getElementById('panel'+i+'content2').disabled=false;
+                  document.getElementById('panel'+i+'txtsize').disabled=false;
+                  document.getElementById('panel'+i+'txtcolor').disabled=false;
                   break;
                 case 3 :
-                  document.getElementById('fullcontent3txt').disabled=false;
+                  document.getElementById('panel'+i+'content3txt').disabled=false;
                   break;
                 case 4 :
-                  document.getElementById('fullcontent4').disabled=false;
-                  document.getElementById('fullresultsbutton').disabled=false;
-                  document.getElementById('fullfirstline').disabled=false;
-                  document.getElementById('fullfixedlines').disabled=false;
-                  document.getElementById('fullscrolledlines').disabled=false;
-                  document.getElementById('fullscrolltime').disabled=false;
-                  document.getElementById('fullscrollbeforetime').disabled=false;
-                  document.getElementById('fullscrollaftertime').disabled=false;
-                  document.getElementById('fullupdateduration').disabled=false;
+                  document.getElementById('panel'+i+'content4').disabled=false;
+                  document.getElementById('panel'+i+'firstline').disabled=false;
+                  document.getElementById('panel'+i+'fixedlines').disabled=false;
+                  document.getElementById('panel'+i+'scrolledlines').disabled=false;
+                  document.getElementById('panel'+i+'scrolltime').disabled=false;
+                  document.getElementById('panel'+i+'scrollbeforetime').disabled=false;
+                  document.getElementById('panel'+i+'scrollaftertime').disabled=false;
+                  document.getElementById('panel'+i+'updateduration').disabled=false;
                   break;
-                }
-            }
-            
-            function ManageLeft(sel)
-            {
-                sel=parseInt(sel);
-                document.getElementById('leftcontent1txt').disabled=true;
-                document.getElementById('leftcontent2').disabled=true;
-                document.getElementById('lefttxtsize').disabled=true;
-                document.getElementById('lefttxtcolor').disabled=true;
-                document.getElementById('leftcontent3txt').disabled=true;
-                document.getElementById('leftcontent4').disabled=true;
-                document.getElementById('leftstartlistbutton').disabled=true;
-                document.getElementById('leftcontent5').disabled=true;
-                document.getElementById('leftresultsbutton').disabled=true;
-                document.getElementById('leftfirstline').disabled=true;
-                document.getElementById('leftfixedlines').disabled=true;
-                document.getElementById('leftscrolledlines').disabled=true;
-                document.getElementById('leftscrolltime').disabled=true;
-                document.getElementById('leftscrollbeforetime').disabled=true;
-                document.getElementById('leftscrollaftertime').disabled=true;
-                document.getElementById('leftupdateduration').disabled=true;
-                switch(sel) {
-                    case 1 :
-                        document.getElementById('leftcontent1txt').disabled=false;
-                        break;
-                    case 2 :
-                        document.getElementById('leftcontent2').disabled=false;
-                        document.getElementById('lefttxtsize').disabled=false;
-                        document.getElementById('lefttxtcolor').disabled=false;
-                        break;
-                    case 3 :
-                        document.getElementById('leftcontent3txt').disabled=false;
-                        break;
-                    case 4 :
-                        document.getElementById('leftcontent4').disabled=false;
-                        document.getElementById('leftstartlistbutton').disabled=false;
-                        document.getElementById('leftfirstline').disabled=false;
-                        document.getElementById('leftfixedlines').disabled=false;
-                        document.getElementById('leftscrolledlines').disabled=false;
-                        document.getElementById('leftscrolltime').disabled=false;
-                        document.getElementById('leftscrollbeforetime').disabled=false;
-                        document.getElementById('leftscrollaftertime').disabled=false;
-                        break;
-                    case 5 :
-                        document.getElementById('leftcontent5').disabled=false;
-                        document.getElementById('leftresultsbutton').disabled=false;
-                        document.getElementById('leftfirstline').disabled=false;
-                        document.getElementById('leftfixedlines').disabled=false;
-                        document.getElementById('leftscrolledlines').disabled=false;
-                        document.getElementById('leftscrolltime').disabled=false;
-                        document.getElementById('leftscrollbeforetime').disabled=false;
-                        document.getElementById('leftscrollaftertime').disabled=false;
-                        document.getElementById('leftupdateduration').disabled=false;
-                        break;
-                }
-            }
-
-            function ManageRight(sel)
-            {
-                sel=parseInt(sel);
-                document.getElementById('rightcontent1txt').disabled=true;
-                document.getElementById('rightcontent2').disabled=true;
-                document.getElementById('righttxtsize').disabled=true;
-                document.getElementById('righttxtcolor').disabled=true;
-                document.getElementById('rightcontent3txt').disabled=true;
-                document.getElementById('rightcontent4').disabled=true;
-                document.getElementById('rightstartlistbutton').disabled=true;
-                document.getElementById('rightcontent5').disabled=true;
-                document.getElementById('rightresultsbutton').disabled=true;
-                document.getElementById('rightfirstline').disabled=true;
-                document.getElementById('rightfixedlines').disabled=true;
-                document.getElementById('rightscrolledlines').disabled=true;
-                document.getElementById('rightscrolltime').disabled=true;
-                document.getElementById('rightscrollbeforetime').disabled=true;
-                document.getElementById('rightscrollaftertime').disabled=true;
-                document.getElementById('rightupdateduration').disabled=true;
-                switch(sel) {
-                    case 1 :
-                        document.getElementById('rightcontent1txt').disabled=false;
-                        break;
-                    case 2 :
-                        document.getElementById('rightcontent2').disabled=false;
-                        document.getElementById('righttxtsize').disabled=false;
-                        document.getElementById('righttxtcolor').disabled=false;
-                        break;
-                    case 3 :
-                        document.getElementById('rightcontent3txt').disabled=false;
-                        break;
-                    case 4 :
-                        document.getElementById('rightcontent4').disabled=false;
-                        document.getElementById('rightstartlistbutton').disabled=false;
-                        document.getElementById('rightfirstline').disabled=false;
-                        document.getElementById('rightfixedlines').disabled=false;
-                        document.getElementById('rightscrolledlines').disabled=false;
-                        document.getElementById('rightscrolltime').disabled=false;
-                        document.getElementById('rightscrollbeforetime').disabled=false;
-                        document.getElementById('rightscrollaftertime').disabled=false;
-                        break;
-                    case 5 :
-                        document.getElementById('rightcontent5').disabled=false;
-                        document.getElementById('rightresultsbutton').disabled=false;
-                        document.getElementById('rightfirstline').disabled=false;
-                        document.getElementById('rightfixedlines').disabled=false;
-                        document.getElementById('rightscrolledlines').disabled=false;
-                        document.getElementById('rightscrolltime').disabled=false;
-                        document.getElementById('rightscrollbeforetime').disabled=false;
-                        document.getElementById('rightscrollaftertime').disabled=false;
-                        document.getElementById('rightupdateduration').disabled=false;
-                        break;
+                case 5 : // results
+                  document.getElementById('panel'+i+'content5').disabled=false;
+                  document.getElementById('panel'+i+'firstline').disabled=false;
+                  document.getElementById('panel'+i+'fixedlines').disabled=false;
+                  document.getElementById('panel'+i+'scrolledlines').disabled=false;
+                  document.getElementById('panel'+i+'scrolltime').disabled=false;
+                  document.getElementById('panel'+i+'scrollbeforetime').disabled=false;
+                  document.getElementById('panel'+i+'scrollaftertime').disabled=false;
+                  document.getElementById('panel'+i+'updateduration').disabled=false;
+                  break;
+                case 6 : // summary
+                  document.getElementById('panel'+i+'content6').disabled=false;
+                  document.getElementById('panel'+i+'firstline').disabled=false;
+                  document.getElementById('panel'+i+'fixedlines').disabled=false;
+                  document.getElementById('panel'+i+'updateduration').disabled=false;
+                  break;
+                case 7 : // Blog
+                  document.getElementById('panel'+i+'fixedlines').disabled=false;
+                  document.getElementById('panel'+i+'updateduration').disabled=false;
+                  break;
+                case 8 : // Slides
+                  document.getElementById('panel'+i+'content8').disabled=false;
+                  document.getElementById('panel'+i+'scrolltime').disabled=false;
+                  break;
+                case 9 : // Radio
+                  document.getElementById('panel'+i+'content9').disabled=false;
+                  document.getElementById('panel'+i+'fixedlines').disabled=false;
+                  break;
                 }
             }
             
@@ -232,608 +182,584 @@
     <body>
 <?php
 
-    $PHP_SELF = $_SERVER['PHP_SELF'];
-    ConnectToDB();
+  $PHP_SELF = $_SERVER['PHP_SELF'];
+  ConnectToDB();
 
-    $rcid = isset($_GET['rcid']) ? intval($_GET['rcid']) : 0;
-    $sid = isset($_GET['sid']) ? intval($_GET['sid']) : 0;
-    if (($rcid>0) && ($sid>0))
-    {
-        $action = isset($_GET['action']) ? $_GET['action'] : "none";
-        
-        
-        if ($action == "clearclasses")
-        {
-            $cid = isset($_GET['cid']) ? intval($_GET['cid']) : 0;
-            $panel = isset($_GET['panel']) ? intval($_GET['panel']) : 0;
-            if (($cid>0)&&($panel>0))
-            {
-                $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
-                mysql_query($sql);
-            }
-        }
-        
-        if ($action == "updateclasses")
-        {
-            $cid = isset($_GET['cid']) ? intval($_GET['cid']) : 0;
-            $panel = isset($_GET['panel']) ? intval($_GET['panel']) : 0;
-            if (($cid>0)&&($panel>0))
-            {
-                $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
-                mysql_query($sql);
-                $selclasses = isset($_GET['selclasses']) ? $_GET['selclasses'] : null;
-                if ($selclasses !== null)
-                { 
-                    foreach ($selclasses as $i => $id)
-                    {
-                        $str = "'".$rcid."', ";
-                        $str = $str."'".$cid."', ";
-                        $str = $str."'".$id."', ";
-                        $str = $str."'".$sid."', ";
-                        $str = $str."'".$panel."'";
-                        $sql = "INSERT INTO resultclass (rcid, cid, id, sid, panel) VALUES ($str)";
-                        $res = mysql_query($sql);
-                    }
-                }
-            }
-
-        }
-        
-        $configname = GetConfigurationName($rcid);
-        print "<h2>$configname, ".MyGetText(24)." $sid</h2>\n"; // Screen
-        
-        $sql = "SELECT * FROM resultscreen WHERE rcid=$rcid AND sid=$sid";
-        $res = mysql_query($sql);
-        
-        if (mysql_num_rows($res) > 0)
-        {
-        
-            $r = mysql_fetch_array($res);
-            $cid=$r['cid'];
-			if (($action == "reload")||($action == "updateclasses"))
-			{
-				$cid = isset($_GET['cid']) ? intval($_GET['cid']) : $cid;
-			}
-            $title=stripslashes($r['title']);
-            $titlesize=$r['titlesize'];
-            $titlecolor=$r['titlecolor'];
-            $subtitle=stripslashes($r['subtitle']);
-            $subtitlesize=$r['subtitlesize'];
-            $subtitlecolor=$r['subtitlecolor'];
-            $titleleftpict=$r['titleleftpict'];
-            $titlerightpict=$r['titlerightpict'];
-            $screenmode=$r['screenmode'];
-
-            $fullcontent=$r['fullcontent'];
-            $fullpict=$r['fullpict'];
-            $fulltxt=stripslashes($r['fulltxt']);
-            $fulltxtsize=$r['fulltxtsize'];
-            $fulltxtcolor=$r['fulltxtcolor'];
-            $fullhtml=$r['fullhtml'];
-            $fullfirstline=$r['fullfirstline'];
-            $fullfixedlines=$r['fullfixedlines'];
-            $fullscrolledlines=$r['fullscrolledlines'];
-            $fullscrolltime=$r['fullscrolltime'];
-            $fullscrollbeforetime=$r['fullscrollbeforetime'];
-            $fullscrollaftertime=$r['fullscrollaftertime'];
-            $fullupdateduration=$r['fullupdateduration'];
-
-            $leftcontent=$r['leftcontent'];
-            $leftpict=$r['leftpict'];
-            $lefttxt=stripslashes($r['lefttxt']);
-            $lefttxtsize=$r['lefttxtsize'];
-            $lefttxtcolor=$r['lefttxtcolor'];
-            $lefthtml=$r['lefthtml'];
-            $leftfirstline=$r['leftfirstline'];
-            $leftfixedlines=$r['leftfixedlines'];
-            $leftscrolledlines=$r['leftscrolledlines'];
-            $leftscrolltime=$r['leftscrolltime'];
-            $leftscrollbeforetime=$r['leftscrollbeforetime'];
-            $leftscrollaftertime=$r['leftscrollaftertime'];
-            $leftupdateduration=$r['leftupdateduration'];
-
-            $rightcontent=$r['rightcontent'];
-            $rightpict=$r['rightpict'];
-            $righttxt=stripslashes($r['righttxt']);
-            $righttxtsize=$r['righttxtsize'];
-            $righttxtcolor=$r['righttxtcolor'];
-            $righthtml=$r['righthtml'];
-            $rightfixedlines=$r['rightfixedlines'];
-            $rightfirstline=$r['rightfirstline'];
-            $rightscrolledlines=$r['rightscrolledlines'];
-            $rightscrolltime=$r['rightscrolltime'];
-            $rightscrollbeforetime=$r['rightscrollbeforetime'];
-            $rightscrollaftertime=$r['rightscrollaftertime'];
-            $rightupdateduration=$r['rightupdateduration'];
-
-            $fullclasses=GetClasses($rcid, $cid, $sid,1);
-            $leftclasses=GetClasses($rcid, $cid, $sid,1);
-            $rightclasses=GetClasses($rcid, $cid, $sid,2);
-
-            //---------- files lists creation ----
-            $picturefilelist= array();
-            $picturefilelist[" "]=" ";
-            $tmp_picturefilelist=array_diff(scandir("./pictures"), array('..', '.','index.php','index.html','serverip.txt','radiolog.txt'));
-            foreach ($tmp_picturefilelist as $name)
-            {
-              $picturefilelist[$name]=$name;
-            }
-
-            $htmlfilelist= array();
-            $htmlfilelist[" "]=" ";
-            $tmp_htmlfilelist=array_diff(scandir("./htmlfiles"), array('..', '.','index.php','index.html'));
-            foreach ($tmp_htmlfilelist as $name)
-            {
-              $htmlfilelist[$name]=$name;
-            }
+  class Panel {
+    var $numpanel;
+    var $classes;
     
-            
-            print "<form name='screenedit' method=GET action='screen.php'>\n";
-            print "<input type='hidden' name='action' value='update'>\n";
-            print "<input type='hidden' name='rcid' value='$rcid'>\n";
-            print "<input type='hidden' name='sid' value='$sid'>\n";
-
-            //----------------- screen global ---------------------- 
-            print "<table>\n";
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='cid'></input></td>\n";
-            print "<td>".MyGetText(24)." :</td>\n";
-            print "<td><select name='cid' id='cid' size=1 onchange='Reload(".$rcid.",".$sid.");'>";
-            $sql = "SELECT name, cid FROM mopcompetition";
-            print "<option value=0> </option>";
-            $res = mysql_query($sql);
-            while ($r = mysql_fetch_array($res))
-            {
-                $competname=$r['name'];
-                $competid=$r['cid'];
-                if ($competid==$cid)
-                {
-                    print "<option value=$competid selected>$competname</option>";
-                }
-                else
-                {
-                    print "<option value=$competid>$competname</option>";
-                }
-            }
-            print "</select></td>\n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='screenmode'></input></td>\n";
-            print "<td>".MyGetText(30)." :</td>\n";
-            print "<td><select name='screenmode' size=1>\n";
-            switch($screenmode) {
-                case 1:
-                    print "<option value='1' selected>".MyGetText(31)."</option>\n"; // Full screen
-                    print "<option value='2'>".MyGetText(37)."</option>\n"; // Two panels
-                    break;
-                case 2:
-                    print "<option value='1'>".MyGetText(31)."</option>\n"; // Full screen
-                    print "<option value='2' selected>".MyGetText(37)."</option>\n"; // Two panels
-                    break;
-            }
-            print "</select></td>\n";
-            print "</tr>\n";
-
-            print "</table>\n";
-
-            //----------------- top of the screen ---------------------- 
-            print "<hr>\n";
-            print "<h4>Top</h4>\n";
-
-            print "<table>\n";
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='title'></input></td>\n";
-            print "<td>".MyGetText(25)." :</td>\n"; // Title
-            print '<td><input type="text" name="title" size=64 maxlength=120 value="'.$title.'"></td>';
-            $str=NumericIntList("titlesize",1,32,$titlesize);
-            print "<td>$str</td>\n";
-            print '<td>'.MyGetText(66).' : <input type="text" name="titlecolor" class="color" size=6 value="'.$titlecolor.'"></td>'; // color
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='subtitle'></input></td>\n";
-            print "<td>".MyGetText(26)." : </td>\n"; // subtitle
-            print '<td><input type="text" name="subtitle" size=64 maxlength=120 value="'.$subtitle.'"></td>';
-            $str=NumericIntList("subtitlesize",1,32,$subtitlesize);
-            print "<td>$str</td>\n";
-            print '<td>'.MyGetText(66).' : <input type="text" name="subtitlecolor" class="color" size=6 value="'.$subtitlecolor.'"></td>'; // color
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='titleleftpict'></input></td>\n";
-            print "<td>".MyGetText(56)."</td>\n"; // Left picture
-            InsertFileList($picturefilelist,'titleleftpict',$titleleftpict,'titleleftcontenttxt');
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='titlerightpict'></input></td>\n";
-            print "<td>".MyGetText(57)."</td>\n"; // Right picture
-            InsertFileList($picturefilelist,'titlerightpict',$titlerightpict,'titlerightcontenttxt');
-            print "</tr>\n";
-            
-            print "</table>\n";
-
-            
-            
-            
-            
-
-            
-
-            //--------------------------------------
-             ?>
-	     <hr />
-	     <a href="#" onclick="return devPanel(1);">Panel 1</a>
-	<a href="#" onclick="return devPanel(2);">Panel 2</a>
-	<a href="#" onclick="return devPanel(3);">Panel 3</a>
-	<a href="#" onclick="return devPanel(4);">Panel 4</a>
-	
-	<div id="pan1div">
-	<?php
-	//----------------- full screen ---------------------- 
-            print "<h4>".MyGetText(31)."</h4>\n";
-
-            print "<table>\n";
-            print "<tr>\n";
-            print "<td>&nbsp;</td>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='fullcontent'></input></td>\n";
-            print "</tr>\n";
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='fullpict'></input></td>\n";
-            print "<td><input type='radio' name='fullcontent' value='1' id='full1'>".MyGetText(38)."</input></td>\n"; // Picture
-            InsertFileList($picturefilelist,'fullpict',$fullpict,'fullcontent1txt');
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='fulltxt'></input></td>\n";
-            print "<td><input type='radio' name='fullcontent' value='2' id='full2'>".MyGetText(39)."</input></td>\n"; // Text
-            print '<td><textarea name="fulltxt" cols=64 rows=4 maxlength=500 id="fullcontent2">'.$fulltxt.'</textarea></td>';
-            $str=NumericIntList("fulltxtsize",1,72,$fulltxtsize);
-            print "<td>$str</td>\n";
-            print '<td>'.MyGetText(66).' : <input type="text" name="fulltxtcolor" id="fulltxtcolor" class="color" size=6 value="'.$fulltxtcolor.'"></td>'; // color
-            print "</tr>\n";
-
-			
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='fullhtml'></input></td>\n";
-            print "<td><input type='radio' name='fullcontent' value='3' id='full3'>".MyGetText(40)."</input></td>"; // HTML
-            InsertFileList($htmlfilelist,'fullhtml',$fullhtml,'fullcontent3txt');
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td>&nbsp;</td>\n";
-            print "<td><input type='radio' name='fullcontent' value='4' id='full4'>".MyGetText(43)."</input>&nbsp;\n"; // Results
-            print '<td><input type="text" name="fullresults" size=64 id="fullcontent4" readonly value="'.$fullclasses.'"></td>';
-            print '<td><input type="button" name="fullresultsbutton" size=64 id="fullresultsbutton" value="'.MyGetText(1).'" onclick="EditClassesList('.$rcid.','.$cid.','.$sid.',1)"></td>'; // Edit
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='fullfirstline'></input></td>\n";
-            $str=NumericIntList("fullfirstline",1,999,$fullfirstline);
-            print "<td>".MyGetText(58)."</td>\n"; // Fisrt line
-            print "<td>$str</td>\n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='fullfixedlines'></input></td>\n";
-            $str=NumericIntList("fullfixedlines",0,30,$fullfixedlines);
-            print "<td>".MyGetText(59)."</td>\n"; // Fixed line
-            print "<td>$str</td>\n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='fullscrolledlines'></input></td>\n";
-            $str=NumericIntList("fullscrolledlines",0,30,$fullscrolledlines);
-            print "<td>".MyGetText(60)."</td>\n"; // Scrolling lines
-            print "<td>$str</td>\n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='fullscrollbeforetime'></input></td>\n";
-            $str=NumericIntList("fullscrollbeforetime",1,200,$fullscrollbeforetime);
-            print "<td>".MyGetText(62)."</td>\n"; // Before scroll wait time
-            print "<td>$str 1/10°s</td> \n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='fullscrolltime'></input></td>\n";
-            $str=NumericIntList("fullscrolltime",1,200,$fullscrolltime);
-            print "<td>".MyGetText(61)."</td>\n"; // Scroll speed
-            print "<td>$str 1/10°s</td> \n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='fullscrollaftertime'></input></td>\n";
-            $str=NumericIntList("fullscrollaftertime",1,200,$fullscrollaftertime);
-            print "<td>".MyGetText(63)."</td>\n"; // After scroll wait time
-            print "<td>$str 1/10°s</td> \n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='fullupdateduration'></input></td>\n";
-            $str=NumericIntList("fullupdateduration",1,200,$fullupdateduration);
-            print "<td>".MyGetText(64)."</td>\n"; // recent higlight
-            print "<td>$str min</td> \n";
-            print "</tr>\n";
-
-
-
-            print "</table>\n";
-	?>
-	</div>
-	<div id="pan2div">
-	<?php
-	//----------------- left panel ---------------------- 
-            print "<h4>".MyGetText(34)."</h4>\n"; // Left panel
-
-            print "<table>\n";
-
-            print "<tr>\n";
-            print "<td>&nbsp;</td>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='leftcontent'></input></td>\n";
-            print "</tr>\n";
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='leftpict'></input></td>\n";
-            print "<td><input type='radio' name='leftcontent' value='1' id='left1'>".MyGetText(38)."</input></td>\n"; // Picture
-            InsertFileList($picturefilelist,'leftpict',$leftpict,'leftcontent1txt');
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='lefttxt'></input></td>\n";
-            print "<td><input type='radio' name='leftcontent' value='2' id='left2'>".MyGetText(39)."</input></td>\n"; // Text
-            print '<td><textarea name="lefttxt" cols=64 rows=4 maxlength=500 id="leftcontent2">'.$lefttxt.'</textarea></td>';
-            $str=NumericIntList("lefttxtsize",1,72,$lefttxtsize);
-            print "<td>$str</td>\n";
-            print '<td>'.MyGetText(66).' : <input type="text" name="lefttxtcolor" id="lefttxtcolor"class="color" size=6 value="'.$lefttxtcolor.'"></td>'; // color
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='lefthtml'></input></td>\n";
-            print "<td><input type='radio' name='leftcontent' value='3' id='left3'>".MyGetText(40)."</input></td>\n"; // HTML
-            InsertFileList($htmlfilelist,'lefthtml',$lefthtml,'leftcontent3txt');
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td>&nbsp;</td>\n";
-            print "<td><input type='radio' name='leftcontent' value='4' id='left4'>".MyGetText(42)."</input></td>\n"; // Start list
-            print '<td><input type="text" name="leftstartlist" size=64 id="leftcontent4" readonly value="'.$leftclasses.'"></td>';
-            print '<td><input type="button" name="leftstartlistbutton" size=64 id="leftstartlistbutton" value="'.MyGetText(1).'" onclick="EditClassesList('.$rcid.','.$cid.','.$sid.',1)"></td>'; // Edit
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td>&nbsp;</td>\n";
-            print "<td><input type='radio' name='leftcontent' value='5' id='left5'>".MyGetText(43)."</input>&nbsp;\n"; // Results
-            print '<td><input type="text" name="leftresults" size=64 id="leftcontent5" readonly value="'.$leftclasses.'"></td>';
-            print '<td><input type="button" name="leftresultsbutton" size=64 id="leftresultsbutton" value="'.MyGetText(1).'" onclick="EditClassesList('.$rcid.','.$cid.','.$sid.',1)"></td>'; // Edit
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='leftfirstline'></input></td>\n";
-            $str=NumericIntList("leftfirstline",1,999,$leftfirstline);
-            print "<td>".MyGetText(58)."</td>\n"; // First line
-            print "<td>$str</td>\n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='leftfixedlines'></input></td>\n";
-            $str=NumericIntList("leftfixedlines",0,30,$leftfixedlines);
-            print "<td>".MyGetText(59)."</td>\n"; // Fixed lines
-            print "<td>$str</td>\n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='leftscrolledlines'></input></td>\n";
-            $str=NumericIntList("leftscrolledlines",0,30,$leftscrolledlines);
-            print "<td>".MyGetText(60)."</td>\n"; // Scrolling lines
-            print "<td>$str</td>\n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='leftscrollbeforetime'></input></td>\n";
-            $str=NumericIntList("leftscrollbeforetime",1,200,$leftscrollbeforetime);
-            print "<td>".MyGetText(62)."</td>\n"; // Before
-            print "<td>$str 1/10°s</td> \n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='leftscrolltime'></input></td>\n";
-            $str=NumericIntList("leftscrolltime",1,200,$leftscrolltime);
-            print "<td>".MyGetText(61)."</td>\n"; // Scroll speed
-            print "<td>$str 1/10°s</td> \n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='leftscrollaftertime'></input></td>\n";
-            $str=NumericIntList("leftscrollaftertime",1,200,$leftscrollaftertime);
-            print "<td>".MyGetText(63)."</td>\n"; // after
-            print "<td>$str 1/10°s</td> \n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='leftupdateduration'></input></td>\n";
-            $str=NumericIntList("leftupdateduration",1,200,$leftupdateduration);
-            print "<td>".MyGetText(64)."</td>\n"; // recent
-            print "<td>$str min</td> \n";
-            print "</tr>\n";
-
-            print "</table>\n";
-	?>
-	</div>
-	<div id="pan3div">
-	<?php
-	//----------------- right panel ---------------------- 
-            print "<h4>".MyGetText(35)."</h4>\n"; // Right panel
-
-            print "<table>\n";
-
-            print "<tr>\n";
-            print "<td>&nbsp;</td>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='rightcontent'></input></td>\n";
-            print "</tr>\n";
-            print "<tr>\n";
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='rightpict'></input></td>\n";
-            print "<td><input type='radio' name='rightcontent' value='1' id='right1'>".MyGetText(38)."</input></td>\n"; // Picture
-            InsertFileList($picturefilelist,'rightpict',$rightpict,'rightcontent1txt');
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='righttxt'></input></td>\n";
-            print "<td><input type='radio' name='rightcontent' value='2' id='right2'>".MyGetText(39)."</input></td>\n"; // Text
-            print '<td><textarea name="righttxt" cols=64 rows=4 maxlength=500 id="rightcontent2">'.$righttxt.'</textarea></td>';
-            $str=NumericIntList("righttxtsize",1,72,$righttxtsize);
-            print "<td>$str</td>\n";
-            print '<td>'.MyGetText(66).' : <input type="text" name="righttxtcolor" id="righttxtcolor" class="color" size=6 value="'.$righttxtcolor.'"></td>'; // Color
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='righthtml'></input></td>\n";
-            print "<td><input type='radio' name='rightcontent' value='3' id='right3'>".MyGetText(40)."</input></td>\n"; // HTML
-            InsertFileList($htmlfilelist,'righthtml',$righthtml,'rightcontent3txt');
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td>&nbsp;</td>\n";
-            print "<td><input type='radio' name='rightcontent' value='4' id='right4'>".MyGetText(42)."</input></td>\n";  // Start
-            print '<td><input type="text" name="rightstartlist" size=64 id="rightcontent4" readonly value="'.$rightclasses.'"></td>';
-            print '<td><input type="button" name="rightstartlistbutton" size=64 id="rightstartlistbutton" value="'.MyGetText(1).'" onclick="EditClassesList('.$rcid.','.$cid.','.$sid.',2)"></td>'; // Edit
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td>&nbsp;</td>\n";
-            print "<td><input type='radio' name='rightcontent' value='5' id='right5'>".MyGetText(43)."</input>&nbsp;\n"; // Results
-            print '<td><input type="text" name="rightresults" size=64 id="rightcontent5" readonly value="'.$rightclasses.'"></td>';
-            print '<td><input type="button" name="rightresultsbutton" size=64 id="rightresultsbutton" value="'.MyGetText(1).'" onclick="EditClassesList('.$rcid.','.$cid.','.$sid.',2)"></td>'; // Edit
-            print "</tr>\n";
-            
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='rightfirstline'></input></td>\n";
-            $str=NumericIntList("rightfirstline",1,999,$rightfirstline);
-            print "<td>".MyGetText(58)."</td>\n"; // First line
-            print "<td>$str</td>\n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='rightfixedlines'></input></td>\n";
-            $str=NumericIntList("rightfixedlines",0,30,$rightfixedlines);
-            print "<td>".MyGetText(59)."</td>\n"; // Fixed lines
-            print "<td>$str</td>\n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='rightscrolledlines'></input></td>\n";
-            $str=NumericIntList("rightscrolledlines",0,30,$rightscrolledlines);
-            print "<td>".MyGetText(60)."</td>\n"; // Scrolling lines
-            print "<td>$str</td>\n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='rightscrollbeforetime'></input></td>\n";
-            $str=NumericIntList("rightscrollbeforetime",1,200,$rightscrollbeforetime);
-            print "<td>".MyGetText(62)."</td>\n"; // Before
-            print "<td>$str 1/10°s</td> \n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='rightscrolltime'></input></td>\n";
-            $str=NumericIntList("rightscrolltime",1,200,$rightscrolltime);
-            print "<td>".MyGetText(61)."</td>\n"; // Speed
-            print "<td>$str 1/10°s</td> \n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='rightscrollaftertime'></input></td>\n";
-            $str=NumericIntList("rightscrollaftertime",1,200,$rightscrollaftertime);
-            print "<td>".MyGetText(63)."</td>\n"; // after
-            print "<td>$str 1/10°s</td> \n";
-            print "</tr>\n";
-
-            print "<tr>\n";
-            print "<td><input type='checkbox' name='chkall[]' value='rightupdateduration'></input></td>\n";
-            $str=NumericIntList("rightupdateduration",1,200,$rightupdateduration);
-            print "<td>".MyGetText(64)."</td>\n"; // recent
-            print "<td>$str min</td> \n";
-            print "</tr>\n";
-
-            print "</table>\n";
-	?>
-	</div>
-	<div id="pan4div">4</div>
-	     <?php
-            print "<hr>\n";
-            print "<div align=center>\n";
-            print MyGetText(65);
-            print "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='submit' value='".MyGetText(52)."'>&nbsp;&nbsp;&nbsp;"; //OK
-            print "<input type='button' value='".MyGetText(53)."' onclick='GoBack($rcid);'>"; // cancel
-            print "</div>\n";
-            print "</form>\n";
-        }
+    var $content;
+    var $mode;
+    var $tm_count;
+    var $alternate;
+    var $pict;
+    var $slides;
+    var $txt;
+    var $txtsize;
+    var $txtcolor;
+    var $html;
+    var $firstline;
+    var $fixedlines;
+    var $scrolledlines;
+    var $scrolltime;
+    var $scrollbeforetime;
+    var $scrollaftertime;
+    var $updateduration;
+    var $radioctrl;
+    
+    function Panel($num)
+    {
+      $this->numpanel = $num;
     }
+
+    function Initialise($r, $cls, $rad = 0)
+    {
+      $this->content=$r['panel'.$this->numpanel.'content'];
+      $this->mode = $r['panel'.$this->numpanel.'mode'];
+      $this->tm_count = $r['panel'.$this->numpanel.'tm_count'];
+      $this->alternate = $r['panel'.$this->numpanel.'alternate'];
+      $this->pict=$r['panel'.$this->numpanel.'pict'];
+      $this->slides=$r['panel'.$this->numpanel.'slides'];
+      $this->txt=stripslashes($r['panel'.$this->numpanel.'txt']);
+      $this->txtsize=$r['panel'.$this->numpanel.'txtsize'];
+      $this->txtcolor=$r['panel'.$this->numpanel.'txtcolor'];
+      $this->html=$r['panel'.$this->numpanel.'html'];
+      $this->firstline=$r['panel'.$this->numpanel.'firstline'];
+      $this->fixedlines=$r['panel'.$this->numpanel.'fixedlines'];
+      $this->scrolledlines=$r['panel'.$this->numpanel.'scrolledlines'];
+      $this->scrolltime=$r['panel'.$this->numpanel.'scrolltime'];
+      $this->scrollbeforetime=$r['panel'.$this->numpanel.'scrollbeforetime'];
+      $this->scrollaftertime=$r['panel'.$this->numpanel.'scrollaftertime'];
+      $this->updateduration=$r['panel'.$this->numpanel.'updateduration'];
+      $this->radioctrl=$r['panel'.$this->numpanel.'radioctrl'];
+      
+      $this->classes = $cls;
+    }
+    
+    function Display()
+    {
+      global $picturefilelist;
+      global $slidesfilelist;
+      global $htmlfilelist;
+      
+      print '<div id="pan'.$this->numpanel.'div">';
+      $prefix = 'panel'.$this->numpanel;
+      //print "<h4>$prefix</h4>"; //TODO to be replaced with tab higlighting
+
+      print "<table>\n";
+
+
+      // mode
+      print "<tr>\n";
+      print "<td><input type='checkbox' name='chkall[]' value='".$prefix."mode'></input></td>\n";
+      print "<td>".MyGetText(30)."</td>\n";
+      print "<td><select name='".$prefix."mode' size=1>\n";
+      switch($this->mode) {
+          case 1:
+              print "<option value='1' selected>".MyGetText(101)."</option>\n"; // indiv
+              print "<option value='2'>".MyGetText(102)."</option>\n"; // relay
+              print "<option value='3'>".MyGetText(103)."</option>\n"; // multistages
+			  print "<option value='4'>".MyGetText(105)."</option>\n"; // showO
+              break;
+          case 2:
+              print "<option value='1'>".MyGetText(101)."</option>\n"; // indiv
+              print "<option value='2' selected>".MyGetText(102)."</option>\n"; // relay
+              print "<option value='3'>".MyGetText(103)."</option>\n"; // multistages
+			  print "<option value='4'>".MyGetText(105)."</option>\n"; // showO
+              break;
+          case 3:
+              print "<option value='1'>".MyGetText(101)."</option>\n"; // indiv
+              print "<option value='2'>".MyGetText(102)."</option>\n"; // relay
+              print "<option value='3' selected>".MyGetText(103)."</option>\n"; // multistages
+			  print "<option value='4'>".MyGetText(105)."</option>\n"; // showO
+              break;
+          case 4:
+              print "<option value='1'>".MyGetText(101)."</option>\n"; // indiv
+              print "<option value='2'>".MyGetText(102)."</option>\n"; // relay
+              print "<option value='3'>".MyGetText(103)."</option>\n"; // multistages
+			  print "<option value='4' selected>".MyGetText(105)."</option>\n"; // showO
+              break;
+      }
+      print "</select></td>\n";
+      print "</tr>\n";
+
+      // relay team member count
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'tm_count"></input></td>';
+      print "<td>".MyGetText(81)."</td>\n";
+      $str=NumericIntList($prefix."tm_count",1,10,$this->tm_count);
+      print "<td>$str</td>\n";
+      print "</tr>\n";
+
+      // alternate
+      print "<tr>\n";
+      print "<td><input type='checkbox' name='chkall[]' value='".$prefix."alternate'></input></td>\n";
+      print "<td>".MyGetText(97)."</td>\n";
+      print "<td><select name='".$prefix."alternate' size=1>\n";
+      switch($this->alternate) {
+          case 0:
+              print "<option value='0' selected>".MyGetText(104)."</option>\n"; // Classical
+			  print "<option value='1'>".MyGetText(106)."</option>\n"; // Alternate
+              break;
+			case 1:
+				print "<option value='0'>".MyGetText(104)."</option>\n"; // Classical
+			  print "<option value='1' selected>".MyGetText(106)."</option>\n"; // Alternate
+			break;
+          default:
+              print "<option value='0' selected>".MyGetText(104)."</option>\n"; // Classical
+			  print "<option value='1'>".MyGetText(106)."</option>\n"; // Alternate
+              break;
+      }
+      print "</select></td>\n";
+      print "</tr>\n";
+
+      // Empty line
+      print "<tr>\n";
+      print "<td>&nbsp;</td>\n";
+      print "<td>&nbsp;</td>\n";
+      print "</tr>\n";
+
+      // content
+      print "<tr>\n";
+      print "<td>&nbsp;</td>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'content"></input></td>';
+      print "</tr>\n";
+
+      // Picture
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'pict"></input></td>';
+      print '<td><input type="radio" name="'.$prefix.'content" value="1" id="'.$prefix.'id1">'.MyGetText(38).'</input></td>'; 
+      InsertFileList($picturefilelist,$prefix.'pict',$this->pict,$prefix.'content1txt');
+      print "</tr>\n";
+      
+      // Slides
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'slides"></input></td>';
+      print '<td><input type="radio" name="'.$prefix.'content" value="8" id="'.$prefix.'id8">'.MyGetText(99).'</input></td>'; 
+      InsertFileList($slidesfilelist,$prefix.'slides',$this->slides,$prefix.'content8');
+      print "</tr>\n";
+      
+      // Text
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'txt"></input></td>';
+      print '<td><input type="radio" name="'.$prefix.'content" value="2" id="'.$prefix.'id2">'.MyGetText(39).'</input></td>'; 
+      print '<td><textarea name="'.$prefix.'txt" cols=64 rows=4 maxlength=500 id="'.$prefix.'content2">'.$this->txt.'</textarea></td>';
+      $str=NumericIntList($prefix.'txtsize',1,72,$this->txtsize);
+      print "<td>$str</td>\n";
+      print '<td>'.MyGetText(66).' : <input type="text" name="'.$prefix.'txtcolor" id="'.$prefix.'txtcolor" class="color" size=6 value="'.$this->txtcolor.'"></td>';
+      print "</tr>\n";
+
+       // Blog
+      print "<tr>\n";
+      print "<td>&nbsp;</td>\n";
+      print '<td><input type="radio" name="'.$prefix.'content" value="7" id="'.$prefix.'id7">'.MyGetText(93).'</input></td>'; 
+      print "</tr>\n";
+
+       // HTML
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'html"></input></td>';
+      print '<td><input type="radio" name="'.$prefix.'content" value="3" id="'.$prefix.'id3">'.MyGetText(40).'</input></td>'; 
+      InsertFileList($htmlfilelist,$prefix.'html',$this->html,$prefix.'content3txt');
+      print "</tr>\n";
+
+      // Start list
+      print "<tr>\n";
+      print "<td>&nbsp;</td>\n";
+      print '<td><input type="radio" name="'.$prefix.'content" value="4" id="'.$prefix.'id4">'.MyGetText(42).'</input></td>'; 
+      print '<td><input type="text" name="'.$prefix.'startlist" size=64 id="'.$prefix.'content4" readonly value="'.$this->classes.'"></td>';
+      print "</tr>\n";
+      
+      // Results
+      print "<tr>\n";
+      print "<td>&nbsp;</td>\n";
+      print '<td><input type="radio" name="'.$prefix.'content" value="5" id="'.$prefix.'id5">'.MyGetText(43).'</input></td>'; 
+      print '<td><input type="text" name="'.$prefix.'results" size=64 id="'.$prefix.'content5" readonly value="'.$this->classes.'"></td>';
+      print "</tr>\n";
+
+      // Summary
+      print "<tr>\n";
+      print "<td>&nbsp;</td>\n";
+      print '<td><input type="radio" name="'.$prefix.'content" value="6" id="'.$prefix.'id6">'.MyGetText(92).'</input></td>'; 
+      print '<td><input type="text" name="'.$prefix.'summary" size=64 id="'.$prefix.'content6" readonly value="'.$this->classes.'"></td>';
+      print "</tr>\n";
+
+      // Radio
+      print "<tr>\n";
+      print "<td>&nbsp;</td>\n";
+      print '<td><input type="radio" name="'.$prefix.'content" value="9" id="'.$prefix.'id9">'.MyGetText(107).'</input></td>'; 
+      print '<td><input type="text" name="'.$prefix.'radio" size=64 id="'.$prefix.'content9" readonly value="'.$this->classes.'"></td>';
+      $str=NumericIntList($prefix.'radioctrl',31,255,$this->radioctrl);
+      print "<td>$str</td>\n";
+      print "</tr>\n";
+
+      // First line
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'firstline"></input></td>';
+      $str=NumericIntList($prefix."firstline",1,999,$this->firstline);
+      print "<td>".MyGetText(58)."</td>\n";
+      print "<td>$str</td>\n";
+      print "</tr>\n";
+
+      // Fixed line
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'fixedlines"></input></td>';
+      $str=NumericIntList($prefix."fixedlines",0,30,$this->fixedlines);
+      print "<td>".MyGetText(59)."</td>\n"; 
+      print "<td>$str</td>\n";
+      print "</tr>\n";
+
+      // Scrolling lines
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'scrolledlines"></input></td>';
+      $str=NumericIntList($prefix."scrolledlines",0,30,$this->scrolledlines);
+      print "<td>".MyGetText(60)."</td>\n"; 
+      print "<td>$str</td>\n";
+      print "</tr>\n";
+
+      // Before scroll wait time
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'scrollbeforetime"></input></td>';
+      $str=NumericIntList($prefix."scrollbeforetime",1,200,$this->scrollbeforetime);
+      print "<td>".MyGetText(62)."</td>\n";
+      print "<td>$str 1/10°s</td> \n";
+      print "</tr>\n";
+
+      // Scroll speed
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'scrolltime"></input></td>';
+      $str=NumericIntList($prefix."scrolltime",1,200,$this->scrolltime);
+      print "<td>".MyGetText(61)."</td>\n"; 
+      print "<td>$str 1/10°s</td> \n";
+      print "</tr>\n";
+
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'scrollaftertime"></input></td>';
+      $str=NumericIntList($prefix."scrollaftertime",1,200,$this->scrollaftertime);
+      print "<td>".MyGetText(63)."</td>\n"; // After scroll wait time
+      print "<td>$str 1/10°s</td> \n";
+      print "</tr>\n";
+
+      print "<tr>\n";
+      print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'updateduration"></input></td>';
+      $str=NumericIntList($prefix."updateduration",1,200,$this->updateduration);
+      print "<td>".MyGetText(64)."</td>\n"; // recent higlight
+      print "<td>$str min</td> \n";
+      print "</tr>\n";
+
+      print "</table>\n";
+
+      print '</div>';
+    }
+
+  }
+
+  $panel1 = new Panel(1);
+  $panel2 = new Panel(2);
+  $panel3 = new Panel(3);
+  $panel4 = new Panel(4);
+  $panels = array($panel1,$panel2,$panel3,$panel4); 
+
+
+  $rcid = isset($_GET['rcid']) ? intval($_GET['rcid']) : 0;
+  $sid = isset($_GET['sid']) ? intval($_GET['sid']) : 0;
+  if (($rcid>0) && ($sid>0))
+  {
+      $action = isset($_GET['action']) ? $_GET['action'] : "none";
+      
+      
+      if ($action == "clearclasses")
+      {
+          $cid = isset($_GET['cid']) ? intval($_GET['cid']) : 0;
+          $panel = isset($_GET['panel']) ? intval($_GET['panel']) : 0;
+          if (($cid>0)&&($panel>0))
+          {
+              $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
+              mysql_query($sql);
+          }
+      }
+      
+      if ($action == "updateclasses")
+      {
+          $cid = isset($_GET['cid']) ? intval($_GET['cid']) : 0;
+          $panel = isset($_GET['panel']) ? intval($_GET['panel']) : 0;
+          if (($cid>0)&&($panel>0))
+          {
+              $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
+              mysql_query($sql);
+              $selclasses = isset($_GET['selclasses']) ? $_GET['selclasses'] : null;
+              if ($selclasses !== null)
+              { 
+                  foreach ($selclasses as $i => $id)
+                  {
+                      $str = "'".$rcid."', ";
+                      $str = $str."'".$cid."', ";
+                      $str = $str."'".$id."', ";
+                      $str = $str."'".$sid."', ";
+                      $str = $str."'".$panel."'";
+                      $sql = "INSERT INTO resultclass (rcid, cid, id, sid, panel) VALUES ($str)";
+                      $res = mysql_query($sql);
+                  }
+              }
+          }
+
+      }
+      
+      $configname = GetConfigurationName($rcid);
+      print "<h2>$configname, ".MyGetText(24)." $sid</h2>\n"; // Screen
+      
+      $sql = "SELECT * FROM resultscreen WHERE rcid=$rcid AND sid=$sid";
+      $res = mysql_query($sql);
+      
+      if (mysql_num_rows($res) > 0)
+      {
+      
+          $r = mysql_fetch_array($res);
+          $cid=$r['cid'];
+          if (($action == "reload")||($action == "updateclasses"))
+          {
+            $cid = isset($_GET['cid']) ? intval($_GET['cid']) : $cid;
+          }
+          $style=$r['style'];
+          $title=stripslashes($r['title']);
+          $titlesize=$r['titlesize'];
+          $titlecolor=$r['titlecolor'];
+          $subtitle=stripslashes($r['subtitle']);
+          $subtitlesize=$r['subtitlesize'];
+          $subtitlecolor=$r['subtitlecolor'];
+          $titleleftpict=$r['titleleftpict'];
+          $titlerightpict=$r['titlerightpict'];
+          $panelscount=$r['panelscount'];
+          
+          for ($i=1; $i<=NB_PANEL; $i++)
+          {
+            $panels[$i-1]->Initialise($r, GetClasses($rcid, $cid, $sid,$i));
+          }
+
+          //---------- files lists creation ----
+          $stylefilelist= array();
+          $stylefilelist[" "]=" ";
+          $tmp_stylefilelist=array_diff(scandir("./styles"), array('..', '.','index.php','index.html'));
+          foreach ($tmp_stylefilelist as $name)
+          {
+            $stylefilelist[$name]=$name;
+          }
+
+          $picturefilelist= array();
+          $picturefilelist[" "]=" ";
+          $tmp_picturefilelist=array_diff(scandir("./pictures"), array('..', '.','index.php','index.html','serverip.txt','radiolog.txt'));
+          foreach ($tmp_picturefilelist as $name)
+          {
+            $picturefilelist[$name]=$name;
+          }
+
+          $slidesfilelist= array();
+          $slidesfilelist[" "]=" ";
+          $tmp_slidesfilelist=array_diff(scandir("./slides"), array('..', '.','index.php','index.html'));
+          foreach ($tmp_slidesfilelist as $name)
+          {
+            $slidesfilelist[$name]=$name;
+          }
+
+          $htmlfilelist= array();
+          $htmlfilelist[" "]=" ";
+          $tmp_htmlfilelist=array_diff(scandir("./htmlfiles"), array('..', '.','index.php','index.html'));
+          foreach ($tmp_htmlfilelist as $name)
+          {
+            $htmlfilelist[$name]=$name;
+          }
+  
+          
+          print "<form name='screenedit' method=GET action='screen.php'>\n";
+          print "<input type='hidden' name='action' value='update'>\n";
+          print "<input type='hidden' name='rcid' value='$rcid'>\n";
+          print "<input type='hidden' name='sid' value='$sid'>\n";
+
+          //----------------- screen global ---------------------- 
+          print "<table>\n";
+          print "<tr>\n";
+          print "<td><input type='checkbox' name='chkall[]' value='cid'></input></td>\n";
+          print "<td>".MyGetText(55)." :</td>\n"; // competition
+          print "<td><select name='cid' id='cid' size=1 onchange='Reload(".$rcid.",".$sid.");'>";
+          $sql = "SELECT name, cid FROM mopcompetition";
+          print "<option value=0> </option>";
+          $res = mysql_query($sql);
+          while ($r = mysql_fetch_array($res))
+          {
+              $competname=$r['name'];
+              $competid=$r['cid'];
+              if ($competid==$cid)
+              {
+                  print "<option value=$competid selected>$competid - $competname</option>";
+              }
+              else
+              {
+                  print "<option value=$competid>$competid - $competname</option>";
+              }
+          }
+          print "</select></td>\n";
+          print "</tr>\n";
+
+          // panels count
+          print "<tr>\n";
+          print "<td><input type='checkbox' name='chkall[]' value='panelscount'></input></td>\n";
+          print "<td>".MyGetText(98)." :</td>\n";
+          print "<td><select name='panelscount' size=1>\n";
+          switch($panelscount) {
+              case 1:
+                  print "<option value='1' selected>1 ".MyGetText(31)."</option>\n"; // one panel
+                  print "<option value='2'>2 ".MyGetText(37)."</option>\n"; // Two panels
+                  print "<option value='3'>3 ".MyGetText(37)."</option>\n"; // Three panels
+                  print "<option value='4'>4 ".MyGetText(37)."</option>\n"; // Four panels
+                  break;
+              case 2:
+                  print "<option value='1'>1 ".MyGetText(31)."</option>\n"; // one panel
+                  print "<option value='2' selected>2 ".MyGetText(37)."</option>\n"; // Two panels
+                  print "<option value='3'>3 ".MyGetText(37)."</option>\n"; // Three panels
+                  print "<option value='4'>4 ".MyGetText(37)."</option>\n"; // Four panels
+                  break;
+              case 3:
+                  print "<option value='1'>1 ".MyGetText(31)."</option>\n"; // one panel
+                  print "<option value='2'>2 ".MyGetText(37)."</option>\n"; // Two panels
+                  print "<option value='3' selected>3 ".MyGetText(37)."</option>\n"; // Three panels
+                  print "<option value='4'>4 ".MyGetText(37)."</option>\n"; // Four panels
+                  break;
+              case 4:
+                  print "<option value='1'>1 ".MyGetText(31)."</option>\n"; // one panel
+                  print "<option value='2'>2 ".MyGetText(37)."</option>\n"; // Two panels
+                  print "<option value='3'>3 ".MyGetText(37)."</option>\n"; // Three panels
+                  print "<option value='4' selected>4 ".MyGetText(37)."</option>\n"; // Four panels
+                  break;
+          }
+          print "</select></td>\n";
+          print "</tr>\n";
+
+          // style
+          print "<tr>\n";
+          print "<td><input type='checkbox' name='chkall[]' value='style'></input></td>\n";
+          print "<td>".MyGetText(96)."</td>\n"; // Style
+          InsertFileList($stylefilelist,'style',$style,'stylecontenttxt');
+          print "</tr>\n";
+
+          print "</table>\n";
+
+          //----------------- top of the screen ---------------------- 
+          print "<hr>\n";
+          print "<h4>".MyGetText(100)."</h4>\n";
+
+          print "<table>\n";
+          print "<tr>\n";
+          print "<td><input type='checkbox' name='chkall[]' value='title'></input></td>\n";
+          print "<td>".MyGetText(25)." :</td>\n"; // Title
+          print '<td><input type="text" name="title" size=64 maxlength=120 value="'.$title.'"></td>';
+          $str=NumericIntList("titlesize",1,32,$titlesize);
+          print "<td>$str</td>\n";
+          print '<td>'.MyGetText(66).' : <input type="text" name="titlecolor" class="color" size=6 value="'.$titlecolor.'"></td>'; // color
+          print "</tr>\n";
+          
+          print "<tr>\n";
+          print "<td><input type='checkbox' name='chkall[]' value='subtitle'></input></td>\n";
+          print "<td>".MyGetText(26)." : </td>\n"; // subtitle
+          print '<td><input type="text" name="subtitle" size=64 maxlength=120 value="'.$subtitle.'"></td>';
+          $str=NumericIntList("subtitlesize",1,32,$subtitlesize);
+          print "<td>$str</td>\n";
+          print '<td>'.MyGetText(66).' : <input type="text" name="subtitlecolor" class="color" size=6 value="'.$subtitlecolor.'"></td>'; // color
+          print "</tr>\n";
+          
+          print "<tr>\n";
+          print "<td><input type='checkbox' name='chkall[]' value='titleleftpict'></input></td>\n";
+          print "<td>".MyGetText(56)."</td>\n"; // Left picture
+          InsertFileList($picturefilelist,'titleleftpict',$titleleftpict,'titleleftcontenttxt');
+          print "</tr>\n";
+          
+          print "<tr>\n";
+          print "<td><input type='checkbox' name='chkall[]' value='titlerightpict'></input></td>\n";
+          print "<td>".MyGetText(57)."</td>\n"; // Right picture
+          InsertFileList($picturefilelist,'titlerightpict',$titlerightpict,'titlerightcontenttxt');
+          print "</tr>\n";
+		  
+          
+          print "</table>\n";
+
+          //------- Panels configuration -------------------------------
+
+          print "<hr />\n";
+          print "<ul>\n";
+          for ($i=1; $i<=NB_PANEL; $i++)
+          {
+            print "<li>\n";
+            print '<a href="#" id="linkpan'.$i.'" onclick="return devPanel('.$i.');">'.MyGetText(37).' '.$i.'</a>&nbsp;';
+            print "</li>\n";
+          }
+          print "</ul>\n";
+
+          for ($i=1; $i<=NB_PANEL; $i++)
+          {
+            $panels[$i-1]->Display();
+          }
+
+          print "<hr>\n";
+          print "<div align=center>\n";
+          print MyGetText(65);
+          print "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='submit' value='".MyGetText(52)."'>&nbsp;&nbsp;&nbsp;"; //OK
+          print "<input type='button' value='".MyGetText(53)."' onclick='GoBack($rcid);'>"; // cancel
+          print "</div>\n";
+          print "</form>\n";
+      }
+  }
     
 ?>
         <script type="text/javascript">
             window.onload = function() 
             {
-                
 <?php
-                print "document.getElementById('full$fullcontent').click();\n";
-                print "document.getElementById('left$leftcontent').click();\n";
-                print "document.getElementById('right$rightcontent').click();\n";
+                for ($i=1; $i<=NB_PANEL; $i++)
+                {
+                  print 'document.getElementById("panel'.$i.'id'.$panels[$i-1]->content.'").click();';
+                  print "\n";
+                }
 ?>
             }
 
-        var radiofullcontent = document.screenedit.fullcontent;
-            var radiofullcontentprev = null;
-            for(var i = 0; i < radiofullcontent.length; i++) {
-                radiofullcontent[i].onclick = function() {
-                    //(prev)? console.log("prev="+prev.value):null;
-                    if(this !== radiofullcontentprev) {
-                        radiofullcontentprev = this;
-                    }
-                    ManageFull(this.value)
-                    //console.log("new="+this.value)
-                };
-            }
+<?php
+            for ($i=1; $i<=NB_PANEL; $i++)
+            {
 
-            var radioleftcontent = document.screenedit.leftcontent;
-            var radioleftcontentprev = null;
-            for(var i = 0; i < radioleftcontent.length; i++) {
-                radioleftcontent[i].onclick = function() {
-                    if(this !== radioleftcontentprev) {
-                        radioleftcontentprev = this;
-                    }
-                    ManageLeft(this.value)
-                };
+              print 'var radiopanel'.$i.'content = document.screenedit.panel'.$i.'content;';
+              print 'var radiopanel'.$i.'contentprev = null;';
+              print 'for(var j = 0; j < radiopanel'.$i.'content.length; j++)';
+              print '{';
+              print '    radiopanel'.$i.'content[j].onclick = function() {';
+              print '        if(this !== radiopanel'.$i.'contentprev) {';
+              print '            radiopanel'.$i.'contentprev = this;';
+              print '        }';
+              print '        ManagePanel(this.value,'.$i.');';
+              print '     };';
+              print '}';
+              print "\n";
             }
-            
-            var radiorightcontent = document.screenedit.rightcontent;
-            var radiorightcontentprev = null;
-            for(var i = 0; i < radiorightcontent.length; i++) {
-                radiorightcontent[i].onclick = function() {
-                    if(this !== radiorightcontentprev) {
-                        radiorightcontentprev = this;
-                    }
-                    ManageRight(this.value)
-                };
-            }
+?>
 
+          function devPanel(num)
+          {
+            document.getElementById("pan1div").style.display = "none";
+            document.getElementById("pan2div").style.display = "none";
+            document.getElementById("pan3div").style.display = "none";
+            document.getElementById("pan4div").style.display = "none";
+            document.getElementById("linkpan1").className = "";
+            document.getElementById("linkpan2").className = "";
+            document.getElementById("linkpan3").className = "";
+            document.getElementById("linkpan4").className = "";
+            if(num)
+            {
+              document.getElementById("pan"+num+"div").style.display = "block";
+              document.getElementById("linkpan" + num).className = "active";
+            }
+            return false;
+          }
+          devPanel(1);
         </script>
-	
-	<script type="text/javascript">
-		function devPanel(num)
-		{
-			document.getElementById("pan1div").style.display = "none";
-			document.getElementById("pan2div").style.display = "none";
-			document.getElementById("pan3div").style.display = "none";
-			document.getElementById("pan4div").style.display = "none";
-			if(num)
-				document.getElementById("pan"+num+"div").style.display = "block";
-			return false;
-		}
-		devPanel(1);
-	</script>
-	
+        
     </body>
 </html>
 

@@ -1,6 +1,6 @@
 <?php
   /*
-  Copyright 2014 Metraware
+  Copyright 2014-2016 Metraware
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,15 +15,8 @@
   limitations under the License.
   */
   
-    $ip=$_SERVER['REMOTE_ADDR'];
-    $ipnb=explode('.',$ip);
-    session_start();
-    
-    if (($ipnb[0]!='192')||($ipnb[1]!='168')||($ipnb[2]!='0')||($ipnb[3]=='20'))
-    {
-        header("Location: http://192.168.0.10");
-        die();
-    }
+  include_once('functions.php');
+  redirectSwitchUsers();
     
     function GetLanguages()
     {
@@ -33,7 +26,7 @@
       
       return $lng;
     }
-    
+	
     function MyGetText($sentence)
     {
       $text[0]['fr']="Configurations";
@@ -160,9 +153,9 @@
       $text[30]['en']="Mode";
       $text[30]['sv']="Metod";
       
-      $text[31]['fr']="Plein écran";
-      $text[31]['en']="Full screen";
-      $text[31]['sv']="Fullskärm";
+      $text[31]['fr']="Panel";
+      $text[31]['en']="Panel";
+      $text[31]['sv']="Rutor";
       
       $text[32]['fr']="Type";
       $text[32]['en']="Type";
@@ -172,21 +165,21 @@
       $text[33]['en']="Content";
       $text[33]['sv']="Innehåll";
       
-      $text[34]['fr']="Partie gauche";
-      $text[34]['en']="Left pane";
-      $text[34]['sv']="Vänstra rutan";
+      $text[34]['fr']="Panel 2";
+      $text[34]['en']="Panel 2";
+      $text[34]['sv']="Panel 2";
       
-      $text[35]['fr']="Partie droite";
-      $text[35]['en']="Right pane";
-      $text[35]['sv']="Högra rutan";
+      $text[35]['fr']="Panel 3";
+      $text[35]['en']="Panel 3";
+      $text[35]['sv']="Panel 3";
       
       $text[36]['fr']="Langue";
       $text[36]['en']="Language";
       $text[36]['sv']="Språk";
       
-      $text[37]['fr']="Deux parties";
-      $text[37]['en']="Two panels";
-      $text[37]['sv']="Två rutor";
+      $text[37]['fr']="Panels";
+      $text[37]['en']="Panels";
+      $text[37]['sv']="Rutor";
       
       $text[38]['fr']="Image";
       $text[38]['en']="Picture";
@@ -328,14 +321,167 @@
       $text[72]['en']="Radio log file";
       $text[72]['sv']="Radio log file";
       
-      
-      
-      
-      return $text[$sentence][$_SESSION['CurrentLanguage']];
+      $text[73]['fr']="&ndash;"; //status 0 : unknown or running
+      $text[73]['en']="&ndash;";
+      $text[73]['sv']="&ndash;";
 
+      $text[74]['fr']="OK"; // status 1 : OK
+      $text[74]['en']="OK";
+      $text[74]['sv']="OK";
+
+      $text[75]['fr']="P.M.";  // status 3 : missing punch
+      $text[75]['en']="MP";
+      $text[75]['sv']="MP";
+      
+      $text[76]['fr']="Aband.";  // status 4 : Did not finish
+      $text[76]['en']="DNF";
+      $text[76]['sv']="DNF";
+      
+      $text[77]['fr']="Disq.";  // status 5 : Disqualified
+      $text[77]['en']="DQ";
+      $text[77]['sv']="DQ";
+
+      $text[78]['fr']="Hors D.";  // status 6 : Overtime
+      $text[78]['en']="OT";
+      $text[78]['sv']="OT";
+
+      $text[79]['fr']="Non par";  // status 20 : Did not start
+      $text[79]['en']="DNS";
+      $text[79]['sv']="DNS";
+
+      $text[80]['fr']="Abs.";  // status 99 : Not participating
+      $text[80]['en']="NP";
+      $text[80]['sv']="NP";
+      
+      $text[81]['fr']="Relayeurs";
+      $text[81]['en']="Team Members";
+      $text[81]['sv']="Team Members";
+      
+      $text[82]['fr']="Effacer les infos radio";
+      $text[82]['en']="Clear radio data";
+      $text[82]['sv']="Clear radio data";
+      
+      $text[83]['fr']="Voir les infos radio";
+      $text[83]['en']="View radio data";
+      $text[83]['sv']="View radio data";
+      
+      $text[84]['fr']="Etes-vous sûr de vouloir effacer les infos radio";
+      $text[84]['en']="Are you sure you want to clear radio data";
+      $text[84]['sv']="Are you sure you want to clear radio data";
+      
+      $text[85]['fr']="Infos radio";
+      $text[85]['en']="Radio data";
+      $text[85]['sv']="Radio data";
+
+      $text[86]['fr']="Configuration des radios";
+      $text[86]['en']="Radio Configurations";
+      $text[86]['sv']="Radio Configurations";
+
+      $text[87]['fr']="Fermer";
+      $text[87]['en']="Close";
+      $text[87]['sv']="Close";
+
+      $text[88]['fr']="Carte";
+      $text[88]['en']="Map";
+      $text[88]['sv']="Map";
+
+      $text[89]['fr']="Changer";
+      $text[89]['en']="Change";
+      $text[89]['sv']="Change";
+
+      $text[90]['fr']="Souhaitez-vous vraiment supprimer la radio ";
+      $text[90]['en']="Do you really want to delete radio ";
+      $text[90]['sv']="Do you really want to delete radio ";
+
+      $text[91]['fr']="Vous pouvez cliquer sur la carte";
+      $text[91]['en']="You may click on the map";
+      $text[91]['sv']="You may click on the map";
+
+      $text[92]['fr']="Résumé";
+      $text[92]['en']="Summary";
+      $text[92]['sv']="Summary";
+      
+      $text[93]['fr']="Blog";
+      $text[93]['en']="Blog";
+      $text[93]['sv']="Blog";
+      
+      $text[94]['fr']="Relais"; // relay results column header
+      $text[94]['en']="Relay";
+      $text[94]['sv']="Relay";
+
+      $text[95]['fr']="Après R"; // After Relay n
+      $text[95]['en']="After R";
+      $text[95]['sv']="After R";
+
+      $text[96]['fr']="Style";
+      $text[96]['en']="Style";
+      $text[96]['sv']="Style";
+
+      $text[97]['fr']="Option"; // Alternate display
+      $text[97]['en']="Option";
+      $text[97]['sv']="Option";
+
+      $text[98]['fr']="Organisation"; // Number of panels
+      $text[98]['en']="Organisation";
+      $text[98]['sv']="Organisation";
+
+      $text[99]['fr']="Diaporama";
+      $text[99]['en']="Slides";
+      $text[99]['sv']="Slides";
+
+      $text[100]['fr']="En tête"; // Top of the screen
+      $text[100]['en']="Header";
+      $text[100]['sv']="Header";
+
+      $text[101]['fr']="Individuel"; // type of race
+      $text[101]['en']="Individual";
+      $text[101]['sv']="Individual";
+
+      $text[102]['fr']="Relais";
+      $text[102]['en']="Relay";
+      $text[102]['sv']="Relay";
+
+      $text[103]['fr']="A étape";
+      $text[103]['en']="Multistages";
+      $text[103]['sv']="Multisatges";
+
+      $text[104]['fr']="Standard"; // alternate mode
+      $text[104]['en']="Classical";
+      $text[104]['sv']="Classical";
+      
+      $text[105]['fr']="ShowO";
+      $text[105]['en']="ShowO";
+      $text[105]['sv']="ShowO";
+
+      $text[106]['fr']="Alternatif"; // alternate
+      $text[106]['en']="Alternate";
+      $text[106]['sv']="Alternate";
+      
+      $text[107]['fr']="Radio"; // radio
+      $text[107]['en']="Radio";
+      $text[107]['sv']="Radio";
+      
+      $text[108]['fr']="Edition Blog"; // blog
+      $text[108]['en']="Blog edit";
+      $text[108]['sv']="Blog edit";
+      
+      $text[109]['fr']="Slides";
+      $text[109]['en']="Slides folders";
+      $text[109]['sv']="Slides folders";
+      
+      $text[110]['fr']="Chargement d'un nouveau répertoire";
+      $text[110]['en']="Image folder upload";
+      $text[110]['sv']="Image folder upload";
+      
+      $text[111]['fr']="Poste";
+      $text[111]['en']="Control";
+      $text[111]['sv']="Control";
+      
+
+
+return $text[$sentence][$_SESSION['CurrentLanguage']];
 
     }
-    
 ?>
 
 

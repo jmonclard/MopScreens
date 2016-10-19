@@ -16,7 +16,11 @@
   */
 
   include_once('functions.php');
+  include_once('lang.php');
   session_start();
+  
+  $_SESSION['CurrentLanguage'] = isset($_SESSION['CurrentLanguage']) ? $_SESSION['CurrentLanguage'] : autoSelectLanguage(array('fr','en','sv'),'en');
+  
   header('Content-type: text/html;charset=utf-8');
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
@@ -27,11 +31,12 @@
   $leg = ((isset($_GET['leg'])) ? $_GET['leg'] : "0");
   $ord = ((isset($_GET['ord'])) ? $_GET['ord'] : "0");
   $radio = ((isset($_GET['radio'])) ? $_GET['radio'] : "finish");
+  $limit = ((isset($_GET['limit'])) ? $_GET['limit'] : "9999");
   
   
   $rcid = ((isset($_GET['rcid'])) ? $_GET['rcid'] : "0");
   $sid = ((isset($_GET['sid'])) ? $_GET['sid'] : "0");
-  $sql = 'UPDATE resultscreen SET fulllastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
+  $sql = 'UPDATE resultscreen SET panel1lastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
   mysql_query($sql);
 
   
@@ -54,6 +59,7 @@
         $arr_radio = array_slice($arr_radio, 0, $nb_radio);
     }
   }
+  $numlegs = null;
   
 
   if ($numlegs > 1) {
@@ -78,7 +84,7 @@
                "AND t.cid = '$cmpId' AND tm.cid = '$cmpId' AND cmp.cid = '$cmpId' ".
                "AND ((t.stat>0) OR ((t.stat=0) AND ((SELECT COUNT(*) FROM mopradio AS mr WHERE mr.cid='$cmpId' AND tm.rid=mr.id) > 0)))".
                "AND tm.leg='$leg' AND tm.ord='$ord' ORDER BY t.stat ASC, cmp.rt ASC, t.id";
-        $rname = $lang["finish"];
+        $rname = "Finish";
         $res = mysql_query($sql);
         $results = calculateResult($res, $nb_radio);
       }
@@ -102,7 +108,7 @@
             $res = mysql_query($sql);
             $results = addRadioResult($res, $results);
       }
-      formatResultScreen($results);
+      formatResultScreen($results, $limit);
     }      
   }
   else {
@@ -116,7 +122,7 @@
                  "AND cmp.cid = '$cmpId' ".
                  "AND ((cmp.stat>0) OR ((cmp.stat=0) AND ((SELECT COUNT(*) FROM mopradio AS mr WHERE mr.cid='$cmpId' AND cmp.id=mr.id) > 0)))".
                  "ORDER BY FIELD(cmp.stat, 1) DESC, cmp.stat ASC, cmp.rt ASC, cmp.id";
-            $rname = $lang["finish"];
+            $rname = "Finish";
           
             $res = mysql_query($sql);
             $results = calculateResult($res, $nb_radio);
@@ -139,7 +145,7 @@
             $res = mysql_query($sql);
             $results = addRadioResult($res, $results);
         }
-        formatResultScreen($results); 
+        formatResultScreen($results, $limit); 
       }
     }
     else {
@@ -153,7 +159,7 @@
                   "AND t.cid = '$cmpId' AND tm.cid = '$cmpId' AND cmp.cid = '$cmpId' ".
                   "AND ((t.stat>0) OR ((t.stat=0) AND ((SELECT COUNT(*) FROM mopradio AS mr WHERE mr.cid='$cmpId' AND tm.rid=mr.id) > 0)))".
                   "ORDER BY t.stat ASC, t.rt ASC, t.id";
-            $rname = $lang["finish"];
+            $rname = "Finish";
            
             $res = mysql_query($sql);
             $results = calculateResult($res, $nb_radio);
@@ -176,7 +182,7 @@
             $results = addRadioResult($res, $results);
        }
        
-       formatResultScreen($results);
+       formatResultScreen($results, $limit);
       }
     }
   }
