@@ -3,15 +3,23 @@ Large event results display for MeOS
 
 ###2016-05-04 Version used for French Clubs Championship
 ####What's New ?
-[x] Rows height have been decreased in order to stack more lines on the screen<br/>
+[x] Rows height have been decreased in order to stack more lines on the screen
+
 [x] Support for slideshow
+
 [x] Support for micro blogging (not connected to standard blogging software)
+
 [x] Suport for homemade radio system (based on LoRa technology) with real time radio quality and battery level display superimposed on map. Ask for details.
+
 [x] Allows CSS selection on a screen by screen basis to match caracteristics of screens (ex adapt rows height)
+
 [x] Partial support of GECO software.
+
 ####Known bugs
 [ ] Multistages competition are not correctly handled (no cumulative time)
+
 [ ] Documentation is no more up to date, but still help.
+
 ####Missing features
 See below.
 
