@@ -1,6 +1,6 @@
 <?php
   session_start();
-  date_default_timezone_set('UTC');
+  date_default_timezone_set('Europe/Paris');
   include_once('functions.php');
   include_once('lang.php');
   redirectSwitchUsers();
@@ -21,7 +21,7 @@
   while ($r = mysql_fetch_array($res))
   {
     //echo $r['idsender'].', '.$r['senderbattery'].', '.($now - strtotime($r['timestamp'])).'<br/>';
-    $batteryInfo[] = '['.$r['idsender'].', '.$r['senderbattery'].', '.($now - strtotime($r['timestamp'])).']';
+    $batteryInfo[] = '['.$r['idsender'].', '.$r['senderbattery'].', '.($now - strtotime($r['timestamp'])).', '.$r['status'].']';
   }
   //echo '<hr />';
   $sql = 'SELECT * FROM (SELECT * FROM resultradio ORDER BY timestamp DESC) x GROUP BY idsender, idreceiver';

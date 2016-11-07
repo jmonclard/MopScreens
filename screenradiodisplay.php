@@ -16,7 +16,7 @@
   */
   
   session_start();
-  date_default_timezone_set('UTC');
+  date_default_timezone_set('Europe/Paris');
   include_once('functions.php');
   redirectSwitchUsers();
   
@@ -30,6 +30,33 @@
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
   ConnectToDB();
+
+  if(isset($_GET['action']))
+  {
+    $action = trim($_GET['action']);
+    switch($action)
+    {
+      case 'clear':
+        $sql = 'TRUNCATE resultradio';
+        mysql_query($sql);
+        header('Location: screenradiodisplay.php');
+        exit;
+      break;
+      case 'installdone':
+        file_put_contents('pictures/command.txt',"INSTDONE**\n");
+        header('Location: screenradiodisplay.php');
+        exit;
+      break;
+      case 'installstart':
+        file_put_contents('pictures/command.txt',"INSTSTART\n");
+        header('Location: screenradiodisplay.php');
+        exit;
+      break;
+      default:
+      break;
+    }
+  }
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -46,20 +73,6 @@
   var previousData = "";
   //var positionInfo = [];
 <?php
-
-  if(isset($_GET['action']))
-  {
-    $action = trim($_GET['action']);
-    switch($action)
-    {
-      case 'clear':
-        $sql = 'TRUNCATE resultradio';
-        mysql_query($sql);
-      break;
-      default:
-      break;
-    }
-  }
 
 
   $arr_radio = array();
@@ -78,7 +91,7 @@
     {
       while ($r = mysql_fetch_array($res))
       {
-        $arr_radio[] = '['.$r['radioid'].','.$r['radiox'].','.$r['radioy'].']';
+        $arr_radio[] = '['.$r['radioid'].','.$r['radiox'].','.$r['radioy'].', 0]';
       }
     }
   }
@@ -228,7 +241,17 @@ _logerror("Je suis un log error");
       }
   }
 
-  function getPositionById(id)
+  function InstallDone()
+  {
+    location.replace("screenradiodisplay.php?action=installdone");
+  }
+  
+  function InstallStart()
+  {
+    location.replace("screenradiodisplay.php?action=installstart");
+  }
+
+function getPositionById(id)
   {
     var knownIdPositionCount = positionInfo.length;
     var found = false;
@@ -287,8 +310,16 @@ _logerror("Je suis un log error");
     newelemB2.setAttributeNS(null,"width",elementW);
     newelemB2.setAttributeNS(null,"height",elementH);
     newelemB2.setAttributeNS(null,"style",qual);
-    newelemB2.setAttributeNS(null,"title","ID : " + elementName + "\nLevel : " + elementLevel + " mV\nAge : " + ToHMSstring(elementAge));
+    /*var newelemB3 = document.createElement("title");
+    newelemB3.appendChild(document.createTextNode("ID : " + elementName + "\nLevel : " + elementLevel + " mV\nAge : " + ToHMSstring(elementAge)));
+    newelemB2.appendChild(newelemB3);*/
+    var newelemB3 = document.createElementNS(svgNS,"text");
+    newelemB3.appendChild(document.createTextNode("ID : " + elementName + "\nLevel : " + elementLevel + " mV\nAge : " + ToHMSstring(elementAge)));
+    newelemB3.setAttributeNS(null,"id",elementName);
+    newelemB3.setAttributeNS(null,"y",y0);
+    newelemB3.setAttributeNS(null,"x",x0);
     svg.appendChild(newelemB2);
+    //svg.appendChild(newelemB3);
   }
 
   function drawFillRect(svg,svgNS,elementName,elementX,elementY,elementW, elementH, elementFillH, elementLevel,elementAge,qualfill)
@@ -302,7 +333,10 @@ _logerror("Je suis un log error");
     newelemB2.setAttributeNS(null,"width",elementW);
     newelemB2.setAttributeNS(null,"height",elementFillH);
     newelemB2.setAttributeNS(null,"style",qualfill);
-    newelemB2.setAttributeNS(null,"title","ID : " + elementName + "\nLevel : " + elementLevel + " mV\nAge : " + ToHMSstring(elementAge));
+    /*var newelemB3 = document.createElement("title");
+    newelemB3.appendChild(document.createTextNode("ID : " + elementName + "\nLevel : " + elementLevel + " mV\nAge : " + ToHMSstring(elementAge)));
+    newelemB2.appendChild(newelemB3);*/
+    
     svg.appendChild(newelemB2);
   }
 
@@ -341,108 +375,18 @@ _logerror("Je suis un log error");
 
   function addPositionWithoutBattery(svg, id)
   {
-    addBattery(svg, id, 0, 66666);
-    /*
-    var level = 0;
-    var age = 66666;
-    var bposition = getPositionById(id);
-    if (bposition != null)
-    {
-        // ajout d'une batterie
-        var elementID = id;
-        var elementName = elementID;
-        var elementR = RAYON_BATTERIE;// TODO: pour l'instant rayon des batteries => a changer en rectangle...
-        var elementX = bposition.x;
-        var elementY = bposition.y;
-        var elementLevel = level;
-        var elementAge = age;
-        previousElems.push(elementName);
-
-        // choix de la couleur de la batterie en fonction du niveau (en mV), on convertit en %
-        var status_pc = 0.0;
-        if (elementLevel>=3600.0)
-        {
-            status_pc = 100;
-        }
-        else
-        if (elementLevel>=3500.0)
-        {
-            status_pc = 100.0 * (elementLevel-3500.0) / (3600.0 - 3500.0);
-        }
-
-        var qual,qualfill;
-        if (status_pc >= 90)
-        {
-            qual = "stroke-width:2;stroke:green;fill:none;"
-            qualfill = "stroke-width:2;stroke:green;fill:green;"
-        }
-        else
-        if (status_pc >= 50)
-        {
-            qual = "stroke-width:2;stroke:orange;fill:none;"
-            qualfill = "stroke-width:2;stroke:orange;fill:orange;"
-        }
-        else
-        {
-            qual = "stroke-width:2;stroke:red;fill:none;"
-            qualfill = "stroke-width:2;stroke:red;fill:red;"
-        }
-
-        if (id==0)
-        {
-          var newelem = document.createElementNS(svgNS,"circle");
-          newelem.setAttributeNS(null,"id",elementName);
-          newelem.setAttributeNS(null,"cx",elementX);
-          newelem.setAttributeNS(null,"cy",elementY);
-          newelem.setAttributeNS(null,"r",elementR);
-          newelem.setAttributeNS(null,"style","stroke-width:2;stroke:magenta;fill:none;");
-          newelem.setAttributeNS(null,"title","ID : " + elementName + "\nLevel : " + elementLevel + " mV \nAge : " + ToHMSstring(elementAge));
-          svg.appendChild(newelem);
-
-          var newelem2 = document.createElementNS(svgNS,"circle");
-          newelem2.setAttributeNS(null,"id",elementName);
-          newelem2.setAttributeNS(null,"cx",elementX);
-          newelem2.setAttributeNS(null,"cy",elementY);
-          newelem2.setAttributeNS(null,"r",elementR*0.6);
-          newelem2.setAttributeNS(null,"style","stroke-width:2;stroke:magenta;fill:none;");
-          newelem2.setAttributeNS(null,"title","ID : " + elementName + "\nLevel : " + elementLevel + " mv \nAge : " + ToHMSstring(elementAge));
-          svg.appendChild(newelem2);
-        }
-        else if (id>=200)
-        {
-          drawRect(svg,svgNS,elementName,elementX,elementY,2*elementR,2*elementR, elementLevel,elementAge,"stroke-width:2;stroke:magenta;fill:none;");
-          drawBattery(svg,svgNS,elementName,elementX,elementY, status_pc/100, elementLevel,elementAge,qual,qualfill);
-        }
-        else
-        {
-          var newelem = document.createElementNS(svgNS,"circle");
-          newelem.setAttributeNS(null,"id",elementName);
-          newelem.setAttributeNS(null,"cx",elementX);
-          newelem.setAttributeNS(null,"cy",elementY);
-          newelem.setAttributeNS(null,"r",elementR);
-          newelem.setAttributeNS(null,"style","stroke-width:2;stroke:magenta;fill:none;");
-          newelem.setAttributeNS(null,"title","ID : " + elementName + "\nLevel : " + elementLevel + " mV \nAge : " + ToHMSstring(elementAge));
-          svg.appendChild(newelem);
-
-          drawBattery(svg,svgNS,elementName,elementX,elementY, status_pc/100, elementLevel,elementAge,qual,qualfill);
-        }
-    }
-    else
-    {
-        _logerror("Don't find position for battery id " + binfo[0]);
-    }
-    */
+    addBattery(svg, id, 0, 66666, 0);
   }
 
-  function addBattery(svg, id, level, age)
+  function addBattery(svg, id, level, age, status)
   {
     var bposition = getPositionById(id);
     if (bposition != null)
     {
-        // ajout d'une batterie
+            // ajout d'une batterie
         var elementID = id;
         var elementName = elementID;
-        var elementR = RAYON_BATTERIE;// TODO: pour l'instant rayon des batteries => a changer en rectangle...
+        var elementR = RAYON_BATTERIE;
         var elementX = bposition.x;
         var elementY = bposition.y;
         var elementLevel = level;
@@ -478,7 +422,14 @@ _logerror("Je suis un log error");
             qual = "stroke-width:2;stroke:red;fill:none;"
             qualfill = "stroke-width:2;stroke:red;fill:red;"
         }
+        
+        
 
+        // STATUS
+        //  xxx
+        //    . 1=> installation mode, 0=> normal mode
+        //   .  1=> relay mode, 0=> normal mode
+        //  .   1=> srr supported, 0=> no srr
         if (id==0)
         {
           var newelem = document.createElementNS(svgNS,"circle");
@@ -486,8 +437,16 @@ _logerror("Je suis un log error");
           newelem.setAttributeNS(null,"cx",elementX);
           newelem.setAttributeNS(null,"cy",elementY);
           newelem.setAttributeNS(null,"r",elementR);
-          newelem.setAttributeNS(null,"style","stroke-width:2;stroke:magenta;fill:none;");
-          newelem.setAttributeNS(null,"title","ID : " + elementName + "\nLevel : " + elementLevel + " mV \nAge : " + ToHMSstring(elementAge));
+          if (status & 1)
+          {
+            // installation mode 
+            newelem.setAttributeNS(null,"style","stroke-width:2;stroke:white;fill:none;stroke-dasharray:9,5;");
+          }
+          else
+          {
+            // normal mode 
+            newelem.setAttributeNS(null,"style","stroke-width:2;stroke:magenta;fill:none;");
+          }
           svg.appendChild(newelem);
 
           var newelem2 = document.createElementNS(svgNS,"circle");
@@ -496,26 +455,84 @@ _logerror("Je suis un log error");
           newelem2.setAttributeNS(null,"cy",elementY);
           newelem2.setAttributeNS(null,"r",elementR*0.6);
           newelem2.setAttributeNS(null,"style","stroke-width:2;stroke:magenta;fill:none;");
-          newelem2.setAttributeNS(null,"title","ID : " + elementName + "\nLevel : " + elementLevel + " mv \nAge : " + ToHMSstring(elementAge));
           svg.appendChild(newelem2);
         }
-        else if (id>=200)
+        else 
         {
-          drawRect(svg,svgNS,elementName,elementX,elementY,2*elementR,2*elementR, elementLevel,elementAge,"stroke-width:2;stroke:magenta;fill:none;");
-          drawBattery(svg,svgNS,elementName,elementX,elementY, status_pc/100, elementLevel,elementAge,qual,qualfill);
-        }
-        else
-        {
-          var newelem = document.createElementNS(svgNS,"circle");
-          newelem.setAttributeNS(null,"id",elementName);
-          newelem.setAttributeNS(null,"cx",elementX);
-          newelem.setAttributeNS(null,"cy",elementY);
-          newelem.setAttributeNS(null,"r",elementR);
-          newelem.setAttributeNS(null,"style","stroke-width:2;stroke:magenta;fill:none;");
-          newelem.setAttributeNS(null,"title","ID : " + elementName + "\nLevel : " + elementLevel + " mV \nAge : " + ToHMSstring(elementAge));
-          svg.appendChild(newelem);
+          if (age == 66666)
+          {
+              var newelem = document.createElementNS(svgNS,"circle");
+              newelem.setAttributeNS(null,"id",elementName);
+              newelem.setAttributeNS(null,"cx",elementX);
+              newelem.setAttributeNS(null,"cy",elementY);
+              newelem.setAttributeNS(null,"r",elementR*0.3);
+              newelem.setAttributeNS(null,"style","stroke-width:2;stroke:magenta;fill:magenta;");
+              svg.appendChild(newelem);
+              
+              newelem = document.createElementNS(svgNS,"text");
+              newelem.appendChild(document.createTextNode("ID : " + elementName));
+              newelem.setAttributeNS(null,"id",elementName);
+              newelem.setAttributeNS(null,"y",elementY -12);
+              newelem.setAttributeNS(null,"x",elementX + 0.35*elementR);
+              svg.appendChild(newelem);              
+          }
+          else
+          {
+            var newelemB3 = document.createElementNS(svgNS,"text");
+            newelemB3.appendChild(document.createTextNode(elementLevel + " mV"));
+            newelemB3.setAttributeNS(null,"id",elementName);
+            newelemB3.setAttributeNS(null,"y",elementY + 0);
+            newelemB3.setAttributeNS(null,"x",elementX + 1.1*elementR);
+            svg.appendChild(newelemB3);
+            newelemB3 = document.createElementNS(svgNS,"text");
+            newelemB3.appendChild(document.createTextNode(ToHMSstring(elementAge)));
+            newelemB3.setAttributeNS(null,"id",elementName);
+            newelemB3.setAttributeNS(null,"y",elementY + 12);
+            newelemB3.setAttributeNS(null,"x",elementX + 1.1*elementR);
+            svg.appendChild(newelemB3);
+            newelemB3 = document.createElementNS(svgNS,"text");
+            newelemB3.appendChild(document.createTextNode("ID : " + elementName));
+            newelemB3.setAttributeNS(null,"id",elementName);
+            newelemB3.setAttributeNS(null,"y",elementY -12);
+            newelemB3.setAttributeNS(null,"x",elementX + 1.1*elementR);
+            svg.appendChild(newelemB3);            
 
-          drawBattery(svg,svgNS,elementName,elementX,elementY, status_pc/100, elementLevel,elementAge,qual,qualfill);
+            if (status & 2)// relay mode
+            {
+              if (status & 1)
+              {
+                // installation mode
+                drawRect(svg,svgNS,elementName,elementX,elementY,2*elementR,2*elementR, elementLevel,elementAge,"stroke-width:2;stroke:magenta;fill:none;stroke-dasharray:9,5;");
+              }
+              else
+              {
+                // normal mode
+                drawRect(svg,svgNS,elementName,elementX,elementY,2*elementR,2*elementR, elementLevel,elementAge,"stroke-width:2;stroke:magenta;fill:none;");
+              }
+            }
+
+            if (status & 4)
+            {
+              var newelem = document.createElementNS(svgNS,"circle");
+              newelem.setAttributeNS(null,"id",elementName);
+              newelem.setAttributeNS(null,"cx",elementX);
+              newelem.setAttributeNS(null,"cy",elementY);
+              newelem.setAttributeNS(null,"r",elementR);
+              if (status & 1)
+              {
+                // en mode installation
+                newelem.setAttributeNS(null,"style","stroke-width:2;stroke:magenta;fill:none;stroke-dasharray:9,5;");
+              }
+              else
+              {
+                // en mode normal
+                newelem.setAttributeNS(null,"style","stroke-width:2;stroke:magenta;fill:none;");
+              }
+              svg.appendChild(newelem);
+            }
+            
+            drawBattery(svg,svgNS,elementName,elementX,elementY, status_pc/100, elementLevel,elementAge,qual,qualfill);
+          }
         }
     }
     else
@@ -593,29 +610,21 @@ _logerror("Je suis un log error");
         newelem.setAttributeNS(null,"y1",elementS.y);
         newelem.setAttributeNS(null,"x2",elementR.x);
         newelem.setAttributeNS(null,"y2",elementR.y);
-
-        newelem.setAttributeNS(null,"title","Level : " + elementLevel + " dB\nAge : " + ToHMSstring(elementAge));
-        /*
-        //var path = 'M' + elementS.x + ',' + elementS.y + 'L ' + elementMID.x + ',' + elementMID.y + ' L' + elementR.x + ',' + elementR.y;
-        var newelem = document.createElementNS(svgNS,"path");
-        newelem.setAttributeNS(null,"id",elementName);
-        //newelem.setAttributeNS(null,"marker-mid","url(#head)");
-        newelem.setAttributeNS(null,"stroke-width",width);
-        newelem.setAttributeNS(null,"fill","none");
-        newelem.setAttributeNS(null,"stroke",color);
-        if (dsh != null)
-        {
-            newelem.setAttributeNS(null,"stroke-dasharray",dsh);
-        }
-        var path = 'M' + elementS.x + ',' + elementS.y + 'L ' + elementMID.x + ',' + elementMID.y + ' L' + elementR.x + ',' + elementR.y;
-        newelem.setAttributeNS(null,"d",path);
-
-        newelem.setAttributeNS(null,"title","Level : " + elementLevel + " dB\nAge : " + ToHMSstring(elementAge));
-
-        */
-
-
         svg.appendChild(newelem);
+        
+        
+        var newelemA3 = document.createElementNS(svgNS,"text");
+        newelemA3.appendChild(document.createTextNode(elementLevel + " dB"));
+        newelemA3.setAttributeNS(null,"id",elementName);
+        newelemA3.setAttributeNS(null,"y",(1.2*elementS.y + 0.8*elementR.y)/2);
+        newelemA3.setAttributeNS(null,"x",(1.2*elementS.x + 0.8*elementR.x)/2 + 12);
+        svg.appendChild(newelemA3);
+        newelemA3 = document.createElementNS(svgNS,"text");
+        newelemA3.appendChild(document.createTextNode(ToHMSstring(elementAge)));
+        newelemA3.setAttributeNS(null,"id",elementName);
+        newelemA3.setAttributeNS(null,"y",(1.2*elementS.y + 0.8*elementR.y)/2 +12);
+        newelemA3.setAttributeNS(null,"x",(1.2*elementS.x + 0.8*elementR.x)/2 + 12);
+        svg.appendChild(newelemA3);
     }
     else
     {
@@ -629,15 +638,19 @@ _logerror("Je suis un log error");
     var knownIdPositionCount = positionInfo.length;
     for(i=0;i<knownIdPositionCount;i++)
     {
-        addPositionWithoutBattery(svg, positionInfo[i][0]);
+        if(positionInfo[i][3] === 0)
+          addPositionWithoutBattery(svg, positionInfo[i][0]);
     }
   }
   function updateDisplay(dataInfos)
   {
     try
     {
+        // svg pour accéder aux éléments graphiques
+        var svg = document.getElementById("map");
+        
         // Effaçons les éléments existants
-        while(previousElems.length > 0)
+        /*while(previousElems.length > 0)
         {
             var lastElem = previousElems.pop();
             try
@@ -649,14 +662,31 @@ _logerror("Je suis un log error");
             {
                 _logexception(err.message);
             }
+        }*/
+        first = svg.firstChild;
+        while((toto = svg.lastChild) && (toto !== first))
+        {
+          svg.removeChild(toto);
         }
+        /*
+        <g id="background">
+    <image xlink:href="<?php echo $srcmap; ?>" x="0" y="0" width="100%" height="100%"/>
+  </g>*/
+        var elem = document.createElementNS(svgNS, "g");
+        elem.setAttributeNS(null,"id","background");
+        var elem1 = document.createElementNS(svgNS, "image");
+        //alert("<?php echo $srcmap; ?>");
+        elem1.setAttributeNS(xlinkNS,"href","<?php echo $srcmap; ?>");
+        
+        elem1.setAttributeNS(null,"x","0");
+        elem1.setAttributeNS(null,"y","0");
+        elem1.setAttributeNS(null,"width","100%");
+        elem1.setAttributeNS(null,"height","100%");
+        
+        elem.appendChild(elem1);
+        svg.appendChild(elem);
 
-        // svg pour accéder aux éléments graphiques
-        var svg = document.getElementById("map");
-
-        // Add all known position elements
-        addKnownPosition(svg);
-
+        
         // Et ajoutons de nouveaux éléments
         if (dataInfos.length == 2)
         {
@@ -669,10 +699,17 @@ _logerror("Je suis un log error");
                 var i;
 
                 // gestion des battery
-                var batteryCount = batteryArray.length;//_loginfo("Il y a " + batteryCount + " batteries");
+                var batteryCount = batteryArray.length;
                 for(i=0;i<batteryCount;i++)
                 {
-                    addBattery(svg, batteryArray[i][0], batteryArray[i][1], batteryArray[i][2])// id level age
+                    for(j=0;j<positionInfo.length;j++)
+                    {
+                      if(positionInfo[j][0] == batteryArray[i][0])
+                      {
+                        positionInfo[j][3] = 1;
+                      }
+                    }
+                    addBattery(svg, batteryArray[i][0], batteryArray[i][1], batteryArray[i][2], batteryArray[i][3])// id level age status
                 }
                 // gestion des level
                 var levelCount = levelArray.length;//_loginfo("Il y a " + levelCount + " levels");
@@ -680,6 +717,9 @@ _logerror("Je suis un log error");
                 {
                     addLevel(svg, levelArray[i][0], levelArray[i][1], levelArray[i][2], levelArray[i][3]); //senderid, receiverid, rxlevel, age
                 }
+                
+                // Add all known position elements
+                addKnownPosition(svg);
             }
             catch(err)
             {
@@ -697,6 +737,7 @@ _logerror("Je suis un log error");
 
     setTimeout(getData, 10000);
   }
+  
   </script>
 
   <style>
@@ -714,14 +755,15 @@ _logerror("Je suis un log error");
   </style>
 
   </head>
-  <body onload="getData()">
+  <body onload="getData();">
   <?php
     print "<input type='button' value='".MyGetText(87)."' onclick='window.close();'> &nbsp;"; // Close button
     print "<input type='button' value='".MyGetText(72)."' onclick='ViewRadioLog();'> &nbsp;"; // View log button
     print "<input type='button' value='".MyGetText(82)."' onclick='DelRadiodata(\"".MyGetText(82)."\");'> &nbsp;"; // Clear data button
+    print "<input type='button' value='".MyGetText(112)."' onclick='InstallDone();'> &nbsp;"; // Clear data button
+    print "<input type='button' value='".MyGetText(113)."' onclick='InstallStart();'> &nbsp;"; // Clear data button
   ?>
-  <svg id="map" viewbox="0 0 <?php echo $sizeX; ?> <?php echo $sizeY; ?>" xmlns="http://www.w3.org/2000/svg">
-  <title>Radio quality</title>
+  <svg id="map" viewbox="0 0 <?php echo $sizeX; ?> <?php echo $sizeY; ?>" xmlns="http://www.w3.org/2000/svg" style="font-size:12px;stroke:magenta;stroke-width:0.5;fill:magenta;">
   <defs>
     <marker id='head' orient='auto' markerWidth='4' markerHeight='4'
             refX='0.1' refY='2'>
@@ -733,6 +775,7 @@ _logerror("Je suis un log error");
     <image xlink:href="<?php echo $srcmap; ?>" x="0" y="0" width="100%" height="100%"/>
   </g>
   </svg>
+  
   </body>
 </html>
 

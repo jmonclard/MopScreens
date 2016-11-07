@@ -33,6 +33,8 @@
   $radio = ((isset($_GET['radio'])) ? $_GET['radio'] : "finish");
   $limit = ((isset($_GET['limit'])) ? $_GET['limit'] : "9999");
   
+  $nb_radio = ((isset($_GET['nbradio'])) ? intval($_GET['nbradio']) : 15);
+  
   
   $rcid = ((isset($_GET['rcid'])) ? $_GET['rcid'] : "0");
   $sid = ((isset($_GET['sid'])) ? $_GET['sid'] : "0");
@@ -51,7 +53,6 @@
     }
   }
   
-  $nb_radio = 4;
   if($arr_radio != null)
   {
     if(count($arr_radio) > $nb_radio)

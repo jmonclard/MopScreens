@@ -477,6 +477,14 @@
       $text[111]['en']="Control";
       $text[111]['sv']="Control";
       
+      $text[112]['fr']="Quitter le mode installation"; //screenradiodisplay
+      $text[112]['en']="Leave install mode";
+      $text[112]['sv']="Leave install mode";
+      
+      $text[113]['fr']="Réactiver le mode installation"; //screenradiodisplay
+      $text[113]['en']="Restart install mode";
+      $text[113]['sv']="Restart install mode";
+      
 
 
 return $text[$sentence][$_SESSION['CurrentLanguage']];

@@ -15,7 +15,7 @@
   limitations under the License.
   */
   session_start();
-  date_default_timezone_set('UTC');
+  date_default_timezone_set('Europe/Paris');
   include_once('functions.php');
   include_once('lang.php');
   redirectSwitchUsers();
@@ -124,24 +124,24 @@
         $panels[$i-1]->Initialise($r, null);
       }
 
-      $classPanels = Array();
-      $classNamePanels = Array();
+      $classPanels = array();
+      $classNamePanels = array();
       $sql_classes = array(-1);
       
-      if( ($panelscount > 1) || (($panelscount == 1) && (($panels[0]->content == CST_CONTENT_RESULT) || ($panels[0]->content == CST_CONTENT_SUMMARY) || ($panels[0]->content == CST_CONTENT_RADIO)) && (($panels[0]->mode == CST_MODE_RELAY) || ($panels[0]->mode == CST_MODE_SHOWO))))
+      for($i=0; $i<$panelscount; $i++)
       {
-        for($panindex=0; $panindex<$panelscount; $panindex++)
+        if(($panels[$i]->content == CST_CONTENT_RESULT) || ($panels[$i]->content == CST_CONTENT_SUMMARY) || ($panels[$i]->content == CST_CONTENT_RADIO) || ($panels[$i]->content == CST_CONTENT_START))
         {
           //-----------------------------------------------------------------
           // Class recollection
-          $sql = "SELECT id FROM resultclass WHERE cid=$cid AND rcid=$rcid AND sid=$screenIndex AND panel=".($panindex+1);
+          $sql = "SELECT id FROM resultclass WHERE cid=$cid AND rcid=$rcid AND sid=$screenIndex AND panel=".($i+1);
           $res = mysql_query($sql);
           if (mysql_num_rows($res) > 0)
           {
             while ($r = mysql_fetch_array($res))
             {
               $myid = $r['id'];
-              $classPanels[$panindex][] = $myid;
+              $classPanels[$i][] = $myid;
               
               $sql = "SELECT name FROM mopclass WHERE cid=$cid AND id=$myid";
               $resname = mysql_query($sql);
@@ -149,22 +149,22 @@
               {
                 if ($rname = mysql_fetch_array($resname))
                 {
-                  $classNamePanels[$panindex][] = $rname['name'];
+                  $classNamePanels[$i][] = $rname['name'];
                 }
                 else
                 {
-                  $classNamePanels[$panindex][] = $myid;
+                  $classNamePanels[$i][] = $myid;
                 }
               }
               else
               {
-                  $classNamePanels[$panindex][] = $myid;
+                  $classNamePanels[$i][] = $myid;
               }
             }
           }
-          if((isset($classPanels[$panindex])) && (is_array($classPanels[$panindex])))
+          if((isset($classPanels[$i])) && (is_array($classPanels[$i])))
           {
-            $sql_classes = array_merge($classPanels[$panindex], $sql_classes);
+            $sql_classes = array_merge($classPanels[$i], $sql_classes);
           }
         }
       }
@@ -214,6 +214,17 @@
       var after_decrement_counter = [5, 5, 5, 5];
       var before_decrement_counter = [5, 5, 5, 5];
       var tm_count;
+      var nbradio = <?php
+      switch($panelscount)
+      {
+        case 1:
+          echo '15';
+        break;
+        default:
+          echo '4';
+        break;
+      }
+      ?>;
       
       window.onload = function() 
       { 
@@ -233,6 +244,8 @@
   
   defineVariableArr("phpmode", $panels[0]->mode, $panels[1]->mode, $panels[2]->mode, $panels[3]->mode);
   defineVariableArr("phpradioctrl", $panels[0]->radioctrl, $panels[1]->radioctrl, $panels[2]->radioctrl, $panels[3]->radioctrl);
+  
+  defineVariableArr("phpalternate", $panels[0]->alternate, $panels[1]->alternate, $panels[2]->alternate, $panels[3]->alternate);
 
   defineVariableArr("phpcmpId", $cid, $cid, $cid, $cid);
   defineVariableArr("phpleg", 1, 1, 1, 1);
@@ -271,100 +284,134 @@
         displayScrollIndex = [phpfixedlines[0] + phpfirstline[0] - 1, phpfixedlines[1] + phpfirstline[1] - 1, phpfixedlines[2] + phpfirstline[2] - 1, phpfixedlines[3] + phpfirstline[3] - 1];
         
 <?php
-  if($panelscount > 1)
-  {
-    $bUpdaterInit = false;
-    for($i=0;$i<$panelscount;$i++)
-    {
-      if(($panels[$i]->content == CST_CONTENT_RESULT) || ($panels[$i]->content == CST_CONTENT_START) || ($panels[$i]->content == CST_CONTENT_SUMMARY))
-      {
-        $bUpdaterInit = true;
-      }
-    }
-    if($bUpdaterInit)
-    {
-?>
-        updatePage();
-        updateTables();
-        updateStarts();
-<?php
-      for($i=0;$i<$panelscount;$i++)
-      {
-        switch ($panels[$i]->content)
-        {
-          case CST_CONTENT_RESULT:
-            echo 'updateDisplay'.($i+1).'();'."\n";
-            break;
-          case CST_CONTENT_START:
-            echo 'updateDisplayStart'.($i+1).'();'."\n";
-            break;
-          case CST_CONTENT_SUMMARY:
-            echo 'updateDisplaySummaries'.($i+1).'();'."\n";
-            break;
-        }
-      }
-?>
-        create_refresh_table();
-        create_refresh_start();
-        create_refresh_display();
-		create_refresh_summary();
-<?php
-    }
-  }
-  else
-  if(($panelscount == 1) && (($panels[0]->content == CST_CONTENT_RESULT) || ($panels[0]->content == CST_CONTENT_SUMMARY)) && (($panels[0]->mode == CST_MODE_RELAY) || ($panels[0]->mode == CST_MODE_SHOWO)))
-  {
-?>
-        updatePage();
-<?php
-		if($panels[0]->mode == CST_MODE_RELAY)
-		{
-?>
-			updateRelay();
-<?php
-      if($panels[0]->content == CST_CONTENT_SUMMARY)
-      {
-?>
-      create_refresh_summary();
-<?php
-      }
-      else
-      if($panels[0]->content == CST_CONTENT_RESULT)
-      {
-?>
-			create_refresh_relay();
-<?php
-      }
-      if($panels[0]->mode == CST_MODE_SHOWO)
-      {
-?>
-			updateShowO(0);
-			create_refresh_showO();
-<?php
-      }
-    }
-?>
-       create_refresh_display();
-<?php
-  }
-  if(($panelscount >= 1) && ($panels[0]->content == CST_CONTENT_BLOG))
-    echo 'updateBlog(0);'."\n";
-  if(($panelscount >= 2) && ($panels[1]->content == CST_CONTENT_BLOG))
-    echo 'updateBlog(1);'."\n";
-  if(($panelscount >= 3) && ($panels[2]->content == CST_CONTENT_BLOG))
-    echo 'updateBlog(2);'."\n"; 
-  if(($panelscount >= 4) && ($panels[3]->content == CST_CONTENT_BLOG))
-    echo 'updateBlog(3);'."\n";
   
-  if(($panelscount >= 1) && ($panels[0]->content == CST_CONTENT_RADIO))
-    echo 'updateRadio(0);'."\n";
-  if(($panelscount >= 2) && ($panels[1]->content == CST_CONTENT_RADIO))
-    echo 'updateRadio(1);'."\n";
-  if(($panelscount >= 3) && ($panels[2]->content == CST_CONTENT_RADIO))
-    echo 'updateRadio(2);'."\n"; 
-  if(($panelscount >= 4) && ($panels[3]->content == CST_CONTENT_RADIO))
-    echo 'updateRadio(3);'."\n";
+  $bRefreshTable = false;
+  $bRefreshStart = false;
+  $bRefreshPage = false;
+  $bRefreshRelay = false;
+  $bRefreshShowo = false;
+  $bRefreshSummary = false;
+  
+  $bRefreshBlog = false;
+  $bRefreshRadio = false;
+  $bRefreshSlide = false;
 ?>
+      updatePage();
+<?php
+  for($i=0;$i<$panelscount;$i++)
+  {
+    switch($panels[$i]->content)
+    {
+      case CST_CONTENT_PICTURE:
+      break;
+      case CST_CONTENT_TEXT:
+      break;
+      case CST_CONTENT_HTML:
+      break;
+      case CST_CONTENT_START:
+        switch($panels[$i]->mode)
+        {
+          case CST_MODE_INDIVIDUAL:
+            echo 'updateDisplayStart'.($i+1).'();'."\n";
+            $bRefreshStart = true;
+          break;
+        }
+      break;
+      case CST_CONTENT_RESULT:
+        switch($panels[$i]->mode)
+        {
+          case CST_MODE_INDIVIDUAL:
+            echo 'updateDisplay'.($i+1).'();'."\n";
+            $bRefreshTable = true;
+          break;
+          case CST_MODE_RELAY:
+            if($i == 0)
+            {
+              ?>
+              updateRelay();
+              <?php
+              $bRefreshRelay = true;
+            }
+          break;
+          case CST_MODE_SHOWO:
+            if($i == 0)
+            {
+              ?>
+              updateShowO(0);
+              <?php
+              $bRefreshShowo = true;
+            }
+          break;
+          case CST_MODE_MULTISTAGE:
+            if($i == 0)
+            {
+              ?>
+              updateRelay();
+              <?php
+              $bRefreshRelay = true;
+            }
+          break;
+        }
+      break;
+      case CST_CONTENT_SUMMARY:
+        switch($panels[$i]->mode)
+        {
+          case CST_MODE_INDIVIDUAL:
+            echo 'updateDisplaySummaries'.($i+1).'();'."\n";
+            $bRefreshSummary = true;
+          break;
+          case CST_MODE_RELAY:
+            if($i == 0)
+            {
+              ?>
+              updateRelay();
+              <?php
+              $bRefreshSummary = true;
+            }
+          break;
+        }
+      break;
+      case CST_CONTENT_BLOG:
+        echo 'updateBlog('.$i.');'."\n";
+        $bRefreshBlog = true;
+      break;
+      case CST_CONTENT_SLIDES:
+        $bRefreshSlide = true;
+      break;
+      case CST_CONTENT_RADIO:
+        echo 'updateRadio('.$i.');'."\n";
+        $bRefreshRadio = true;
+      break;
+      default:
+        // not supported
+      break;
+    }
+  }
+  if($bRefreshTable)
+  {
+    echo 'updateTables();'."\n";
+    echo 'create_refresh_table();'."\n";
+  }
+  if($bRefreshStart)
+  {
+    echo 'updateStarts();'."\n";
+    echo 'create_refresh_start();'."\n";
+  }
+  if($bRefreshRelay)
+  {
+    echo 'create_refresh_relay();'."\n";
+  }
+  if($bRefreshShowo)
+  {
+    echo 'create_refresh_showO();'."\n";
+  }
+  if($bRefreshSummary)
+  {
+    echo 'create_refresh_summary();'."\n";
+  }
+  
+?>
+        create_refresh_display();
         create_refresh_page();
         
       } // onload
@@ -452,7 +499,8 @@
                               "&radio=" + phpradio[panelIndex] +
                               "&rcid=" + rcid +
                               "&sid=" + screenIndex +
-                              "&limit=" + mylimit, false);
+                              "&limit=" + mylimit +
+                              "&nbradio=" + nbradio, false);
           xmlhttp.send();
         }
       }
@@ -565,7 +613,8 @@
 <?php
   for ($i=0; $i<$panelscount; $i++)
   {
-    if((($panels[$i]->content == CST_CONTENT_SUMMARY) || ($panels[$i]->content == CST_CONTENT_RESULT)) && ($panels[$i]->mode == CST_MODE_INDIVIDUAL))
+    if((($panels[$i]->content == CST_CONTENT_SUMMARY) && ($panels[$i]->mode == CST_MODE_INDIVIDUAL)) || 
+        (($panels[$i]->content == CST_CONTENT_RESULT) && ($panels[$i]->mode == CST_MODE_INDIVIDUAL)))
     {
       print 'updateTable('.$i.');'."\n";
     }
@@ -578,7 +627,7 @@
 <?php
   for ($i=0; $i<$panelscount; $i++)
   {
-	print 'updateDisplaySummaries'.($i+1).'();'."\n";
+    print 'updateDisplaySummaries'.($i+1).'();'."\n";
   }
 ?>
       }
@@ -855,10 +904,10 @@
         return r;
       }
 
-      function generateOthersCells(line, prefix_class, panelscount)
+      function generateOthersCells(line, prefix_class, panelscount, alternate)
       {
         r = '';
-        alternate = 0; // parametre. chronologique = 0, alphabetique = 1
+        //parametre alternate pour start: chronologique = 0, alphabetique = 1
         for(var e in line)
         {
           switch(panelscount)
@@ -873,7 +922,6 @@
               {
                 r += '<td class="'+ prefix_class + e +'">' + ((line[e] === '') ? "&nbsp;" : line[e]) + '</td>\r\n';
               }
-              else
             break;
             case 4:
               if((alternate != 0) && (e > 2))
@@ -913,7 +961,7 @@
         }
         else
         {
-          r = generateOthersCells(line, prefix_class, panelscount);
+          r = generateOthersCells(line, prefix_class, panelscount, alternate);
         }
         return r;
       }
@@ -1469,7 +1517,7 @@
         if(identifiant === 'result')
         {
           prefix_class = 'td_'+panelscount + '_';
-          count = 11;//9;
+          count = 7+nbradio; //22 pour 15// 11 pour 4, 7+N pour N
         }
         else
         if(identifiant === 'showo')
@@ -2080,14 +2128,6 @@
         }
         
 		
-		function updateDisplaySummary<?php echo ($i+1); ?>(num1, num2)
-        {
-            if(document.getElementById("tableContainer<?php echo ($i); ?>_" + num1 + "_" + num2))
-            {
-                document.getElementById("tableContainer<?php echo ($i); ?>_" + num1 + "_" + num2).innerHTML = ConvertToSummaryHtmlTableRow(<?php echo ($i); ?>, 'resultsummary', 1,tm_count,<?php echo $panelscount; ?>, num1, num2, <?php echo $panels[$i]->alternate; ?>);
-            }
-        }
-		
 		function updateDisplaySummaries<?php echo ($i+1); ?>()
 		{
 <?php
@@ -2095,16 +2135,16 @@
 			{
 				foreach($classPanels[$i] as $k => $v)
 				{
-          if(($i == 0) && ($panelscount == 1))
+          if($panels[$i]->mode == CST_MODE_RELAY)
           {
 ?>
-					updateDisplayRelaySummary(<?php echo $k; ?>, <?php echo $v; ?>);
+					updateDisplayRelaySummary(<?php echo $i ?>, <?php echo $k; ?>, <?php echo $v; ?>);
 <?php
           }
           else
           {
 ?>
-					updateDisplaySummary<?php echo ($i+1); ?>(<?php echo $k; ?>, <?php echo $v; ?>);
+					updateDisplaySummary(<?php echo $i; ?>, <?php echo $k; ?>, <?php echo $v; ?>);
 <?php
           }
 				}
@@ -2114,79 +2154,121 @@
 <?php
   }
 ?>        
-        function updateDisplayRelay()
+        function updateDisplayRelays()
         {
-            if(document.getElementById("tableContainer3"))
+<?php
+        for($i=0;$i<$panelscount;$i++)
+        {
+          if($panels[$i]->mode == CST_MODE_RELAY)
+          {
+            echo 'updateDisplayRelay('.$i.');'."\n";
+          }
+        }
+?>
+        }
+        
+        function updateDisplayRelay(panel)
+        {
+            if(document.getElementById("tableContainer" + panel))
             {
-                document.getElementById("tableContainer3").innerHTML = ConvertToNiceHtmlTableRow(0, 'relay', <?php echo $panels[0]->firstline; ?>, tm_count,<?php echo $panelscount; ?>, <?php echo $panels[0]->alternate; ?>);
+                document.getElementById("tableContainer" + panel).innerHTML = ConvertToNiceHtmlTableRow(panel, 'relay', phpfirstline[panel], tm_count,<?php echo $panelscount; ?>, phpalternate[panel]);
             }
         }
         
-        function updateDisplayRelaySummary(num1, num2)
+        function updateDisplayRelaySummary(panel, num1, num2)
         {
-            if(document.getElementById("tableContainer3_" + num1 + "_" + num2))
+            if(document.getElementById("tableContainer" + panel + "_" + num1 + "_" + num2))
             {
-                document.getElementById("tableContainer3_" + num1 + "_" + num2).innerHTML = ConvertToSummaryHtmlTableRow(0, 'relay', 1, tm_count,<?php echo $panelscount; ?>, num1, num2, <?php echo $panels[0]->alternate; ?>);
+                document.getElementById("tableContainer" + panel + "_" + num1 + "_" + num2).innerHTML = ConvertToSummaryHtmlTableRow(panel, 'relay', 1, tm_count,<?php echo $panelscount; ?>, num1, num2, phpalternate[panel]);
             }
         }
+        
+        function updateDisplaySummary(panel, num1, num2)
+        {
+            if(document.getElementById("tableContainer" + panel + "_" + num1 + "_" + num2))
+            {
+                document.getElementById("tableContainer" + panel + "_" + num1 + "_" + num2).innerHTML = ConvertToSummaryHtmlTableRow(panel, 'resultsummary', 1,tm_count,<?php echo $panelscount; ?>, num1, num2, phpalternate[panel]);
+            }
+        }
+
         function create_refresh_display()
         {
-<?php       
-            if(($panelscount == 1) && ($panels[0]->content == CST_CONTENT_RESULT) && ($panels[0]->mode == CST_MODE_RELAY))
+          <?php
+          for($i=0;$i<$panelscount;$i++)
+          {
+            switch($panels[$i]->content)
             {
-?>
-                window.setInterval(updateDisplayRelay, phpscrolltime[0]*100);
-<?php
-            }
-            else
-            if(($panelscount == 1) && ($panels[0]->content == CST_CONTENT_RESULT) && ($panels[0]->mode == CST_MODE_SHOWO))
-            {
-?>
-                window.setInterval(updateDisplay1, phpscrolltime[0]*100);
-<?php
-            }
-            else
-            if(($panelscount == 1) && ($panels[0]->content == CST_CONTENT_SUMMARY) && ($panels[0]->mode == CST_MODE_RELAY))
-            {
-?>
-                window.setInterval(updateDisplaySummaries1, ATTENTE_BASE_s*1000);
-<?php
-            }
-            else
-            if($panelscount > 1)
-            {
-              for($i=0;$i<$panelscount;$i++)
-              {
-                if(($panels[$i]->content == CST_CONTENT_RESULT) && ($panels[$i]->mode == CST_MODE_SHOWO))
-              {
-?>
-                window.setInterval(updateDisplay<?php echo ($i+1); ?>, phpscrolltime[<?php echo ($i); ?>]*100);
-<?php
-              }
-              else
-                if($panels[$i]->content == CST_CONTENT_RESULT)
+              case CST_CONTENT_PICTURE:
+              break;
+              case CST_CONTENT_TEXT:
+              break;
+              case CST_CONTENT_HTML:
+              break;
+              case CST_CONTENT_START:
+                switch($panels[$i]->mode)
                 {
-?>
-                    window.setInterval(updateDisplay<?php echo ($i+1); ?>, phpscrolltime[<?php echo ($i); ?>]*100);
-<?php
-                }
-                else
-                if($panels[$i]->content == CST_CONTENT_START)
-                {
-?>
+                  default:
+                    ?>
                     window.setInterval(updateDisplayStart<?php echo ($i+1); ?>, phpscrolltime[<?php echo ($i); ?>]*100);
-<?php
+                    <?php
+                  break;
                 }
-                else
-                if($panels[$i]->content == CST_CONTENT_SUMMARY)
+              break;
+              case CST_CONTENT_RESULT:
+                switch($panels[$i]->mode)
                 {
-?>
-                    window.setInterval(updateDisplaySummaries<?php echo ($i+1); ?>,  ATTENTE_BASE_s*1000);
-<?php
+                  case CST_MODE_INDIVIDUAL:
+                    ?>
+                    window.setInterval(updateDisplay<?php echo ($i+1); ?>, phpscrolltime[<?php echo ($i); ?>]*100);
+                    <?php
+                  break;
+                  case CST_MODE_RELAY:
+                    if($i == 0)
+                    {
+                      ?>
+                      window.setInterval(updateDisplayRelays, phpscrolltime[<?php echo ($i); ?>]*100);
+                      <?php
+                    }
+                  break;
+                  case CST_MODE_SHOWO:
+                    ?>
+                    window.setInterval(updateDisplay<?php echo ($i+1); ?>, phpscrolltime[<?php echo ($i); ?>]*100);
+                    <?php
+                  break;
+                  case CST_MODE_MULTISTAGE:
+                    ?>
+                    window.setInterval(updateDisplay<?php echo ($i+1); ?>, phpscrolltime[<?php echo ($i); ?>]*100);
+                    <?php
+                  break;
                 }
-              }
+              break;
+              case CST_CONTENT_SUMMARY:
+                switch($panels[$i]->mode)
+                {
+                  case CST_MODE_INDIVIDUAL:
+                    ?>
+                    window.setInterval(updateDisplaySummaries<?php echo ($i+1); ?>,  ATTENTE_BASE_s*1000);
+                    <?php
+                  break;
+                  case CST_MODE_RELAY:
+                    ?>
+                    window.setInterval(updateDisplaySummaries<?php echo ($i+1); ?>, ATTENTE_BASE_s*1000);
+                    <?php
+                  break;
+                }
+              break;
+              case CST_CONTENT_BLOG:
+              break;
+              case CST_CONTENT_SLIDES:
+              break;
+              case CST_CONTENT_RADIO:
+              break;
+              default:
+                // not supported
+              break;
             }
-?>
+          }
+          ?>
         }
         function create_refresh_table()
         {
@@ -2204,19 +2286,16 @@
         {
             window.setInterval(updateRelay, ATTENTE_BASE_s*1000);
         }
-		function create_refresh_showO()
+        function create_refresh_showO()
         {
             window.setInterval(updateShowOs, ATTENTE_BASE_s*1000);
         }
-		function create_refresh_summary()
+        function create_refresh_summary()
         {
             window.setInterval(updateSummaries, ATTENTE_BASE_s*1000);
         }
 <?php
-  if((($panelscount >= 1) && ($panels[0]->content == CST_CONTENT_BLOG)) ||
-      (($panelscount >= 2) && ($panels[1]->content == CST_CONTENT_BLOG)) ||
-      (($panelscount >= 3) && ($panels[2]->content == CST_CONTENT_BLOG)) || 
-      (($panelscount >= 4) && ($panels[3]->content == CST_CONTENT_BLOG)))
+  if($bRefreshBlog)
   {
 ?>
       function blogView(mytab, panel)
@@ -2271,11 +2350,58 @@
       create_refresh_blog();
 <?php
   }
+  
+  if($bRefreshSlide)
+  {
+    for($i=0;$i<$panelscount;$i++)
+    {
+      if($panels[$i]->content == CST_CONTENT_SLIDES)
+      {
+?>
+      
+      var myIndex_<?php echo $i; ?> = 0;
+      function carousel<?php echo $i; ?>()
+      {
+          var i;
+          var x = document.getElementsByClassName("mySlides<?php echo $i; ?>");
+          for (i = 0; i < x.length; i++)
+          {
+             x[i].style.display = "none";  
+          }
+          myIndex_<?php echo $i; ?>++;
+          if (myIndex_<?php echo $i; ?> > x.length)
+          {
+            myIndex_<?php echo $i; ?> = 1;
+          }   
+          x[myIndex_<?php echo $i; ?> - 1].style.display = "table-cell";  
+          setTimeout(carousel<?php echo $i; ?>, <?php echo $panels[$i]->scrolltime; ?> * 100); // Change image
+      }
+<?php
+      }
+    }
+?>
+    function computeSizeImg(imgElem, or_width, or_height)
+    {
+      
+      var panelCnt = <?php echo $panelscount; ?>;
+      
+      ratio_device = 1.25;
+      screenw = (screen.height - 70) / panelCnt / ratio_device;
+      screenh = (screen.width - 140) / ratio_device;
+      ratio_h = or_height / screenh;
+      ratio_w = or_width / screenw;
+      ratio = Math.max(ratio_h, ratio_w);
+      h = or_height / ratio;
+      w = or_width / ratio;
+      
+      imgElem.width = w;
+      imgElem.height = h;
+      //alert(or_width + "x" + or_height + "**" + w + "x" + h + "//" + screenw + "x" + screenh + "!!" + ratio_w + "x" + ratio_h);
+    }
+<?php
+  }
 
-  if((($panelscount >= 1) && ($panels[0]->content == CST_CONTENT_RADIO)) ||
-      (($panelscount >= 2) && ($panels[1]->content == CST_CONTENT_RADIO)) ||
-      (($panelscount >= 3) && ($panels[2]->content == CST_CONTENT_RADIO)) || 
-      (($panelscount >= 4) && ($panels[3]->content == CST_CONTENT_RADIO)))
+  if($bRefreshRadio)
   {
 ?>
       function radioView(mytab, panel, clsTitle, ctrlid, panelscount)
@@ -2368,140 +2494,11 @@
 
         <div style="clear:both;"></div>
 <?php
-    switch($panelscount)
-    {
-      case 1:
-        switch($panels[0]->content)
-        {
-          case CST_CONTENT_PICTURE:
-            print displayContentPicture($panels[0]->pict, 0, $panelscount);
-          break;
-          case CST_CONTENT_TEXT:
-            print displayContentText($panels[0]->txt, $panels[0]->txtsize, $panels[0]->txtcolor);
-          break;
-          case CST_CONTENT_HTML:
-            print displayContentHtml($panels[0]->html);
-          break;
-          case CST_CONTENT_RESULT:
-            switch($panels[0]->mode)
-            {
-              case CST_MODE_RELAY:
-                print '<div style="padding:0;margin:0;display:block;width:100%">';
-                print '    <div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer3" class="tableContainer">';
-                print '    </div>';
-                print '</div>';
-              break;
-              case CST_MODE_SHOWO:
-                print '<div style="padding:0;margin:0;display:block;width:100%">';
-                print '    <div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer0" class="tableContainer">';
-                print '    </div>';
-                print '</div>';
-              break;
-              default:
-                echo 'Format non supported yet';
-              break;
-            }
-          break;
-          case CST_CONTENT_SUMMARY:
-              switch($panels[0]->mode)
-              {
-                case CST_MODE_RELAY:
-                  print '<div style="padding:0;margin:0;display:block;width:100%">';
-                  if($classPanels[0] != null)
-                  {
-                    foreach($classPanels[0] as $k => $v)
-                    {
-                      print '    <div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer3_'.$k.'_'.$v.'" class="tableContainer">';
-                      print '    </div>';
-                    }
-                  }
-                  print '</div>';
-                break;
-                default:
-                  echo 'Format non supported yet';
-                break;
-              }
-          break;
-          case CST_CONTENT_BLOG:
-            print displayContentBlog($rcid, $panels[0]->fixedlines, $panels[0]->updateduration, 0);
-          break;
-          case CST_CONTENT_SLIDES:
-?>
-<div style="display:table;overflow:hidden;margin:auto;">
-  <div style="padding:2px;display:table-cell;vertical-align:middle;text-align:center;"><?php
-          $slidesfilelist= array();
-          $tmp_slidesfilelist=array_diff(scandir("./slides/".$panels[0]->slides), array('..', '.','index.php','index.html'));
-          foreach ($tmp_slidesfilelist as $name)
-          {
-            $slidesfilelist[$name]=$name;
-          }
-          if($slidesfilelist != null)
-          {
-            foreach($slidesfilelist as $key => $val)
-            {
-              $arr_img = getimagesize ('./slides/'.$panels[0]->slides.'/'.$val);
-              echo '<img class="mySlides" src="./slides/'.$panels[0]->slides.'/'.$val.'" style="" onload="computeSizeImg(this, '.$arr_img[0].', '.$arr_img[1].');">';
-            }
-          }
-?></div>
-</div>
-<script type="text/javascript">
-var myIndex = 0;
-carousel();
-
-function carousel()
-{
-    var i;
-    var x = document.getElementsByClassName("mySlides");
-    for (i = 0; i < x.length; i++)
-    {
-       x[i].style.display = "none";  
-    }
-    myIndex++;
-    if (myIndex > x.length)
-    {
-      myIndex = 1;
-    }    
-    x[myIndex-1].style.display = "table-cell";  
-    setTimeout(carousel, <?php echo $panels[0]->scrolltime; ?> * 100); // Change image
-}
-
-
-function computeSizeImg(imgElem, or_width, or_height)
-{
-  
-  var panelCnt = 1;
-  
-  ratio_device = 1.25;
-  screenw = (screen.height - 70) / panelCnt / ratio_device;
-  screenh = (screen.width - 140) / ratio_device;
-  ratio_h = or_height / screenh;
-  ratio_w = or_width / screenw;
-  ratio = Math.max(ratio_h, ratio_w);
-  h = or_height / ratio;
-  w = or_width / ratio;
-  
-  imgElem.width = w;
-  imgElem.height = h;
-  //alert(or_width + "x" + or_height + "**" + w + "x" + h + "//" + screenw + "x" + screenh + "!!" + ratio_w + "x" + ratio_h);
-}
-
-</script>
-<?php
-          break;
-          case CST_CONTENT_RADIO:
-            print displayContentRadio($rcid, $panels[0]->fixedlines, $panels[0]->updateduration, 0);
-          break;
-          default:
-            echo 'Format non supported yet';
-          break;
-        }
-      break;
-      case 2:
-        print '<div style="padding:0;margin:0;display:block;width:100%">';
+        print '<div style="padding:0;margin:0;display:block;width:100%">'."\n";
+        $wpanel = 99.0 / $panelscount;
         for($i=0;$i<$panelscount;$i++)
         {
-          echo '<div style="float:left;margin:0px;display:inline;min-width:50%;width:50%;">';
+          echo '<div style="float:left;margin:1.2px;display:inline;min-width:'.$wpanel.'%;width:'.$wpanel.'%;">'."\n";
           switch($panels[$i]->content)
           {
             case CST_CONTENT_PICTURE:
@@ -2514,104 +2511,49 @@ function computeSizeImg(imgElem, or_width, or_height)
               print displayContentHtml($panels[$i]->html);
             break;
             case CST_CONTENT_START:
-              echo '<div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'" class="tableContainer">';
-              echo '</div>';
+              echo '<div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'" class="tableContainer">'."\n";
+              echo '</div>'."\n";
             break;
             case CST_CONTENT_RESULT:
-              
-              switch($panels[0]->mode)
-              {
-                case CST_MODE_INDIVIDUAL:
-                  echo '<div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'" class="tableContainer">';
-                  echo '</div>';
-                break;
-                case CST_MODE_SHOWO:
-                  echo '<div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'" class="tableContainer">';
-                  echo '</div>';
-                break;
-                default:
-                  echo 'Format non supported yet';
-                break;
-              }
+              echo '<div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'" class="tableContainer">'."\n";
+              echo '</div>'."\n";
             break;
             case CST_CONTENT_SUMMARY:
-              print '<div style="padding:0;margin:0;display:block;width:100%">';
-                if($classPanels[$i] != null)
-                {
+              print '<div style="padding:0;margin:0;display:block;width:100%">'."\n";
+              if($classPanels[$i] != null)
+              {
                 foreach($classPanels[$i] as $k => $v)
                 {
-                  print '    <div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'_'.$k.'_'.$v.'" class="tableContainer">';
-                  print '    </div>';
+                  print '    <div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'_'.$k.'_'.$v.'" class="tableContainer">'."\n";
+                  print '    </div>'."\n";
                 }
-                }
-                print '</div>';
+              }
+              print '</div>';
             break;
             case CST_CONTENT_BLOG:
               print displayContentBlog($rcid, $panels[$i]->fixedlines, $panels[$i]->updateduration, $i);
             break;
             case CST_CONTENT_SLIDES:
-?>
-<div style="display:table;overflow:hidden;margin:auto;">
-  <div style="padding:2px;display:table-cell;vertical-align:middle;text-align:center;"><?php
-          $slidesfilelist= array();
-          $tmp_slidesfilelist=array_diff(scandir("./slides/".$panels[$i]->slides), array('..', '.','index.php','index.html'));
-          foreach ($tmp_slidesfilelist as $name)
-          {
-            $slidesfilelist[$name]=$name;
-          }
-          if($slidesfilelist != null)
-          {
-            foreach($slidesfilelist as $key => $val)
-            {
-              $arr_img = getimagesize ('./slides/'.$panels[$i]->slides.'/'.$val);
-              echo '<img class="mySlides'.$i.'" src="./slides/'.$panels[$i]->slides.'/'.$val.'" style="" onload="computeSizeImg'.$i.'(this, '.$arr_img[0].', '.$arr_img[1].');">';
-            }
-          }
-?></div>
-</div>
-<script type="text/javascript">
-var myIndex_<?php echo $i; ?> = 0;
-carousel<?php echo $i; ?>();
-
-function carousel<?php echo $i; ?>(pan)
-{
-    var i;
-    var x = document.getElementsByClassName("mySlides<?php echo $i; ?>");
-    for (i = 0; i < x.length; i++)
-    {
-       x[i].style.display = "none";  
-    }
-    myIndex_<?php echo $i; ?>++;
-    if (myIndex_<?php echo $i; ?> > x.length)
-    {
-      myIndex_<?php echo $i; ?> = 1;
-    }    
-    x[myIndex_<?php echo $i; ?> - 1].style.display = "table-cell";  
-    setTimeout(carousel<?php echo $i; ?>, <?php echo $panels[$i]->scrolltime; ?> * 100); // Change image
-}
-
-
-function computeSizeImg<?php echo $i; ?>(imgElem, or_width, or_height)
-{
-  
-  var panelCnt = 2;
-  
-  ratio_device = 1.25;
-  screenw = (screen.height - 70) / panelCnt / ratio_device;
-  screenh = (screen.width - 140) / ratio_device;
-  ratio_h = or_height / screenh;
-  ratio_w = or_width / screenw;
-  ratio = Math.max(ratio_h, ratio_w);
-  h = or_height / ratio;
-  w = or_width / ratio;
-  
-  imgElem.width = w;
-  imgElem.height = h;
-  //alert(or_width + "x" + or_height + "**" + w + "x" + h + "//" + screenw + "x" + screenh + "!!" + ratio_w + "x" + ratio_h);
-}
-
-</script>
-<?php
+              print '<div style="display:table;overflow:hidden;margin:auto;">'."\n";
+              print '<div style="padding:2px;display:table-cell;vertical-align:middle;text-align:center;">'."\n";
+              $slidesfilelist= array();
+              $tmp_slidesfilelist=array_diff(scandir("./slides/".$panels[$i]->slides), array('..', '.','index.php','index.html'));
+              foreach ($tmp_slidesfilelist as $name)
+              {
+                $slidesfilelist[$name]=$name;
+              }
+              if($slidesfilelist != null)
+              {
+                foreach($slidesfilelist as $key => $val)
+                {
+                  $arr_img = getimagesize ('./slides/'.$panels[$i]->slides.'/'.$val);
+                  echo '<img class="mySlides'.$i.'" src="./slides/'.$panels[$i]->slides.'/'.$val.'" style="" onload="computeSizeImg(this, '.$arr_img[0].', '.$arr_img[1].');">'."\n";
+                  //echo '<img class="mySlides'.$i.'" src="./slides/'.$panels[$i]->slides.'/'.$val.'" style="" />'."\n";
+                }
+              }
+              print '</div>'."\n";
+              print '</div>'."\n";
+              print '<script type="text/javascript">carousel'.$i.'();</script>'."\n";
             break;
             case CST_CONTENT_RADIO:
               print displayContentRadio($rcid, $panels[$i]->fixedlines, $panels[$i]->updateduration, $i);
@@ -2620,113 +2562,9 @@ function computeSizeImg<?php echo $i; ?>(imgElem, or_width, or_height)
               echo 'Format non supported yet';
             break;
           }
-          echo '</div>';
+          echo '</div>'."\n";
         }
-        print '</div>';
-      break;
-      case 3:
-        print '<div style="padding:0;margin:0;display:block;width:100%">';
-        for($i=0;$i<$panelscount;$i++)
-        {
-          echo '<div style="float:left;margin:1px;display:inline;min-width:33%;width:33%;">';
-          switch($panels[$i]->content)
-          {
-            case CST_CONTENT_PICTURE:
-              print displayContentPicture($panels[$i]->pict, $i, $panelscount);
-            break;
-            case CST_CONTENT_TEXT:
-              print displayContentText($panels[$i]->txt, $panels[$i]->txtsize, $panels[$i]->txtcolor);
-            break;
-            case CST_CONTENT_HTML:
-              print displayContentHtml($panels[$i]->html);
-            break;
-            case CST_CONTENT_START:
-              echo '<div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'" class="tableContainer">';
-              echo '</div>';
-            break;
-            case CST_CONTENT_RESULT:
-              echo '<div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'" class="tableContainer">';
-              echo '</div>';
-            break;
-            case CST_CONTENT_SUMMARY:
-              print '<div style="padding:0;margin:0;display:block;width:100%">';
-                if($classPanels[$i] != null)
-                {
-                foreach($classPanels[$i] as $k => $v)
-                {
-                  print '    <div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'_'.$k.'_'.$v.'" class="tableContainer">';
-                  print '    </div>';
-                }
-                }
-                print '</div>';
-            break;
-            case CST_CONTENT_BLOG:
-              print displayContentBlog($rcid, $panels[$i]->fixedlines, $panels[$i]->updateduration, $i);
-            break;
-            case CST_CONTENT_RADIO:
-              print displayContentRadio($rcid, $panels[$i]->fixedlines, $panels[$i]->updateduration, $i);
-            break;
-            default:
-              echo 'Format non supported yet';
-            break;
-          }
-          echo '</div>';
-        }
-        print '</div>';
-      break;
-      case 4:
-        print '<div style="padding:0;margin:0;display:block;width:100%">';
-        for($i=0;$i<$panelscount;$i++)
-        {
-          echo '<div style="float:left;margin:1.2px;display:inline;min-width:24.8%;width:24.8%;">';
-          switch($panels[$i]->content)
-          {
-            case CST_CONTENT_PICTURE:
-              print displayContentPicture($panels[$i]->pict, $i, $panelscount);
-            break;
-            case CST_CONTENT_TEXT:
-              print displayContentText($panels[$i]->txt, $panels[$i]->txtsize, $panels[$i]->txtcolor);
-            break;
-            case CST_CONTENT_HTML:
-              print displayContentHtml($panels[$i]->html);
-            break;
-            case CST_CONTENT_START:
-              echo '<div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'" class="tableContainer">';
-              echo '</div>';
-            break;
-            case CST_CONTENT_RESULT:
-              echo '<div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'" class="tableContainer">';
-              echo '</div>';
-            break;
-            case CST_CONTENT_SUMMARY:
-              print '<div style="padding:0;margin:0;display:block;width:100%">';
-                if($classPanels[$i] != null)
-                {
-                  foreach($classPanels[$i] as $k => $v)
-                  {
-                    print '    <div style="float:left;display:inline;min-width:100%;width:100%;" id="tableContainer'.$i.'_'.$k.'_'.$v.'" class="tableContainer">';
-                    print '    </div>';
-                  }
-                }
-                print '</div>';
-            break;
-            case CST_CONTENT_BLOG:
-              print displayContentBlog($rcid, $panels[$i]->fixedlines, $panels[$i]->updateduration, $i);
-            break;
-            case CST_CONTENT_RADIO:
-              print displayContentRadio($rcid, $panels[$i]->fixedlines, $panels[$i]->updateduration, $i);
-            break;
-            default:
-              echo 'Format non supported yet';
-            break;
-          }
-          echo '</div>';
-        }
-        print '</div>';
-      break;
-      default:
-      break;
-    }
+        print '</div>'."\n";
 ?>
     </body>
 </html>

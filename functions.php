@@ -312,6 +312,8 @@ function ordonnertableau($result, $arr_radiomax)
   $arr_keyRunning = array();
   $arr_timeRunning = array();
   $temp_tab = array();
+  
+  $nradios = count($arr_radio); // 2016
 
   foreach($arr_radiomax as $k => $v)
   {
@@ -335,7 +337,7 @@ function ordonnertableau($result, $arr_radiomax)
     $temp_tab[] = $mykey;
   }
 
-  for($i=(count($arr_radio) - 1);$i>=0;$i--)
+  for($i=($nradios - 1);$i>=0;$i--)
   {
     if($arr_keyRunning[$i] != null)
     {
@@ -372,11 +374,18 @@ function ordonnertableau($result, $arr_radiomax)
   foreach($temp_tab as $k => $v)
   {
     $place++;
+    $last_res = array(); // 2016
     if(!$first)
     {
       $first = true;
       $place_affichee = $place;
-      $last_res = array($result[$v]['radio0'], $result[$v]['radio1'], $result[$v]['radio2'], $result[$v]['radio3'], $global_out4[$v]);
+      //$last_res = array($result[$v]['radio0'], $result[$v]['radio1'], $result[$v]['radio2'], $result[$v]['radio3'], $global_out4[$v]); // 2016
+      for($inc=0;$inc<$nradios;$inc++)
+      {
+        $last_res[] = $result[$v]['radio'.$inc];
+      }
+      $last_res[] = $global_out4[$v];
+      // 2016
       if($result[$v]['st'] == 1)
       {
         $last_radio = $finish_radio;
@@ -392,17 +401,17 @@ function ordonnertableau($result, $arr_radiomax)
       {
         if($last_radio == $finish_radio)
         {
-          if($global_out4[$v] != $last_res[4])
+          if($global_out4[$v] != $last_res[$nradios]) // 2016
           {
-            $last_res[4] = $global_out4[$v];
+            $last_res[$nradios] = $global_out4[$v]; // 2016
             $place_affichee = $place;
           }
         }
         else
         {
-          if($global_out4[$v] != $last_res[4])
+          if($global_out4[$v] != $last_res[$nradios]) // 2016
           {
-            $last_res[4] = $global_out4[$v];
+            $last_res[$nradios] = $global_out4[$v]; // 2016
             $place_affichee = $place;
             $last_radio = $finish_radio;
           }
@@ -428,7 +437,7 @@ function ordonnertableau($result, $arr_radiomax)
     }
 
     $result[$v]['place'] = $place_affichee;
-    for($i=0;$i<4;$i++)
+    for($i=0;$i<$nradios;$i++) // 2016
     {
       $t = $result[$v]['radio'.$i];
       if ($t >= 3600)
@@ -444,7 +453,7 @@ function ordonnertableau($result, $arr_radiomax)
   {
     foreach($global_out3 as $k => $v)
     {
-      for($i=0;$i<4;$i++)
+      for($i=0;$i<$nradios;$i++) // 2016
       {
         $t = $result[$k]['radio'.$i];
         if ($t >= 3600)

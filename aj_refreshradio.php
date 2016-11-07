@@ -26,7 +26,7 @@
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
   ConnectToDB();
-  date_default_timezone_set('UTC');
+  date_default_timezone_set('Europe/Paris');
 	
 	$rcid = ((isset($_GET['rcid'])) ? intval($_GET['rcid']) : 0);
   $sid = ((isset($_GET['sid'])) ? $_GET['sid'] : "0");

@@ -13,13 +13,7 @@ td.screen_subtitlecolor{
 td.screen_screenmode{
     text-align:center; vertical-align:middle;
 }
-td.screen_fullcontent{
-    text-align:center; vertical-align:middle;
-}
-td.screen_leftcontent{
-    text-align:center; vertical-align:middle;
-}
-td.screen_rightcontent{
+td.screen_content{
     text-align:center; vertical-align:middle;
 }
 

@@ -1,6 +1,24 @@
 # MopScreens
 Large event results display for MeOS
 
+###2016-11-07 Version planned to be used for PACA night orienteering on November the 19th
+####What's New ?
+[x] Better support of 1, 2, 3 and 4 panels modes
+
+[x] Up to 15 radio control supported (in 1 panel mode individual race)
+
+[x] Better suport for homemade radio system (based on LoRa technology) with real time radio quality and battery level display superimposed on map. Ask for details.
+
+####Known bugs
+[ ] Multistages competition are not correctly handled (no cumulative time)
+
+[ ] Documentation is no more up to date, but still help.
+
+####Missing features
+[ ] Add multilines scrolling. Well not sure it is really useful...
+
+[ ] Allow course based instead of class based display (may require some changes in MeOS)
+
 ###2016-05-04 Version used for French Clubs Championship
 ####What's New ?
 [x] Rows height have been decreased in order to stack more lines on the screen
@@ -8,6 +26,8 @@ Large event results display for MeOS
 [x] Support for slideshow
 
 [x] Support for micro blogging (not connected to standard blogging software)
+
+[x] Support for a summary of the competition allowing winners of all classes to be displayed on the same screen (updated in real time)
 
 [x] Suport for homemade radio system (based on LoRa technology) with real time radio quality and battery level display superimposed on map. Ask for details.
 

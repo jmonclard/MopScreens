@@ -1,6 +1,6 @@
 <?php
   session_start();
-  date_default_timezone_set('UTC');
+  date_default_timezone_set('Europe/Paris');
   include_once('functions.php');
   redirectSwitchUsers();
   
@@ -34,13 +34,15 @@
   if((isset($_GET['idsender']))
     && (isset($_GET['idreceiver']))
     &&(isset($_GET['senderbattery']))
-    &&(isset($_GET['rxlevel'])))
+    &&(isset($_GET['rxlevel']))
+    &&(isset($_GET['status'])))
   {
     $idsender = intval($_GET['idsender']);
     $idreceiver = intval($_GET['idreceiver']);
     $senderbattery = intval($_GET['senderbattery']);
     $rxlevel = intval($_GET['rxlevel']);
+    $status = intval($_GET['status']);
     
-    $sql = 'INSERT INTO resultradio (idsender, idreceiver, senderbattery, rxlevel) VALUES ('.$idsender.', '.$idreceiver.', '.$senderbattery.', '.$rxlevel.')';
+    $sql = 'INSERT INTO resultradio (idsender, idreceiver, senderbattery, rxlevel, status) VALUES ('.$idsender.', '.$idreceiver.', '.$senderbattery.', '.$rxlevel.', '.$status.')';
     mysql_query($sql);
   }

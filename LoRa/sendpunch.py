@@ -153,7 +153,11 @@ class MyApplication(object):
         parser.add_argument('-f',
                             '--filewithip',
                             dest='ipfile',
-                            default=None,
+                            default='/var/www/cfco/pictures/serverip.txt',
+                            help="text file with destination ip address (a simple text line with ip address, ex:192.168.0.50)")
+        parser.add_argument('--commandfile',
+                            dest='commandfile',
+                            default='/var/www/cfco/pictures/command.txt',
                             help="text file with destination ip address (a simple text line with ip address, ex:192.168.0.50)")
         parser.add_argument('-g',
                             dest='simulateget',
@@ -224,6 +228,7 @@ class MyApplication(object):
 
         self.log.debug("Arg done")
         self.previoustime = None
+        self.commandprevioustime = None
         self.sent = 0
         self.thcomport = None
         self.threcport = None
@@ -235,8 +240,34 @@ class MyApplication(object):
         self.localBatLevel = None
         self.localSigPoste = None
         self.localSigLevel = None
+        self.localStatus = None
+        self.commandToDo = ["INSTSTART"]
+        self.installMode = False
         self.punchMemory = []
+        
+        try:
+          os.remove(self.args.commandfile)
+        except Exception as e:
+          pass
+        
+    def docommand(self):
+        try:
+            if self.args.commandfile is not None:
+                if os.path.isfile(self.args.commandfile):
+                  if self.commandprevioustime != self.modification_date(self.args.commandfile):
+                      self.log.info("Command file changed !")
+                      self.commandprevioustime = self.modification_date(self.args.commandfile)
+                      with open(self.args.commandfile, "r") as f:
+                          for line in f:
+                              line = line.strip()
 
+                              if line and not line.startswith("#"):
+                                self.commandToDo.append(line)
+                                self.log.debug("Commands are " + str(self.commandToDo))
+                                self.dumpInfo("C\tCommand is " + str(line))
+        except Exception as e:
+            self.log.error(str(e))
+            self.dumpInfo("E\t" + str(e))
 
     def getip(self):
         try:
@@ -302,8 +333,8 @@ class MyApplication(object):
                     self.sendto(datatosend)
             elif tag == '3A':
                 # potentiellement des infos batteries
-                decalinc = 8
-                self.decodeBatteryInfo(r_str[decal+2:decal+8])
+                decalinc = 10
+                self.decodeBatteryInfo(r_str[decal+2:decal+10])
             elif tag == '3B':
                 # potentiellement des infos niveau de signal
                 decalinc = 8
@@ -317,56 +348,21 @@ class MyApplication(object):
             done = done or decal >= lenstr
 
         if not error:
-            self.updateInfo(self.localBatPoste, 0, self.localBatLevel, self.localRSSI)
-
-
-        """
-        if "DEADBEEF" in r_str:
-            tag = "d"
-            # traitement special
-            #info = "I'm alive : " + r_str + " Count=" + str(self.sent)
-            #info = "\t" + datas.join("\t") + "\t" + str(self.sent)
-            if "DEADBEEF3A" in r_str:# deadbeef: avec bonus
-                tag = "D"
-                start = r_str.find("DEADBEEF3A") + 10
-                self.decodeBatteryInfo(r_str[start:])
-                #poste = int(r_str[start:start+2], 16)
-                #level = int(r_str[start+3:start+7], 16)
-                #self.log.info("id:" + str(poste) + " BatteryLevel:" + str(level) + " mV")
-                #self.radioupdate(poste, 0, level, self.localRSSI)
-        else:
-            done = False
-            decal = 0
-            tag = "P"
-            while not done:
-                #self.log.debug(r_str[decal:decal+2])
-                if r_str[decal:decal+2] == 'FF':
-                    self.log.debug("!!! Removing 0xff !!!")
-                    decal += 2
-
-                datatosend, nextindex = self.decode_punch(r_str[decal:])
-                self.sendto(datatosend)
-
-                if (decal + nextindex) < len(r_str):
-                    decal += nextindex
-                else:
-                    done = True
-        self.dumpInfo(tag + "\t" + str(self.localPosteID) + "\t" + str(self.localCardNR) + "\t" + str(self.localBatPoste) + "\t" + str(self.localBatLevel) + "\t" + str(info).strip())
-        """
+            self.updateInfo(self.localBatPoste, 0, self.localBatLevel, self.localRSSI, self.localStatus)
 
     def comportThread(self):
         self.log.debug("Com mode")
         # serial server
 
         self.log.debug("Trying to open com port " + str(self.args.comport))
-        # configure the serial connections (the parameters differs on the device you are connecting to)
         ser = serial.Serial\
                 (
                     port=self.args.comport,# '/dev/ttyUSB1',
                     baudrate=38400,
                     parity=serial.PARITY_NONE,
                     stopbits=serial.STOPBITS_ONE,
-                    bytesize=serial.EIGHTBITS
+                    bytesize=serial.EIGHTBITS,
+                    timeout=5
                 )
 
         # ser.open()
@@ -389,10 +385,14 @@ class MyApplication(object):
         # receive 0xCAFE hexa frame, rssi -78, snr 3, at timestamp 152987007 ms
         # A la fin éventuellement, AT+RFRX=STOP  Stop continuous Rx
 
+        before = time.time()
+        self.log.debug("Waiting data from comport")
         while 1:
-            self.log.debug("Waiting data from comport")
             r = ser.readline()
             r_str = r.decode('utf-8').strip()
+            if r_str == "OK" or r_str == "ERROR":
+              r_str = ""
+              
             if r_str:
                 self.log.debug("Just receiving >" + r_str)
                 if r_str.startswith("+RFRX:") :
@@ -412,8 +412,15 @@ class MyApplication(object):
                         self.log.debug("Content:" + datas[4])
 
                         info = "\t".join(datas)
-
-                        self.workWithReceivedData(datas[4], info)
+                        
+                        
+                        if datas[4][0:8] == '4C4F473A':
+                          # cherchons le \r\n
+                          ip = datas[4].find('0D0A')
+                          if ip > -1:
+                            self.log.info(binascii.unhexlify(datas[4][0:ip]).decode().strip())
+                        else:
+                          self.workWithReceivedData(datas[4], info)
 
                         # print(termcolor.colored(str(datatosend),'green'))
                     except Exception as e:
@@ -422,6 +429,40 @@ class MyApplication(object):
 
                 else:
                     self.log.error("Don't start with +RFRX: !")
+            else:
+                maintenant = time.time()
+                if maintenant - before > 10:
+                  before = maintenant
+                  self.docommand()
+                  tosend = None
+                  if len(self.commandToDo) > 0:
+                    cmd = self.commandToDo.pop(0)
+                    self.log.info("Running command " + cmd)
+                    if cmd == 'INSTSTART':
+                      self.installMode = True
+                    elif cmd.startswith('INSTDONE'):
+                      if cmd == 'INSTDONE**':
+                        self.installMode = False
+                      tosend = cmd
+                    else:
+                      tosend = cmd
+                    
+                  if not tosend and self.installMode:
+                    tosend = 'TOPNOW'
+                  
+                  if tosend:
+                    self.log.debug("Message:" + tosend)
+                    ser.write("AT+RFRX=STOP\n".encode())#on bloque la reception sinon on la prend en retour
+                    #time.sleep(.3)
+
+                    ser.write("AT+RFTX=7,LORA,868100000,14,125000,7\n".encode())
+                    #time.sleep(.3)
+                    #ser.write("AT+RFTX=SNDBIN,544F504E4F57,1\n".encode())
+                    ser.write(("AT+RFTX=SNDTXT," + tosend + ",1\n").encode())#sndtxt code en hexa tout seul
+                    time.sleep(.3)
+                    
+                    ser.write("AT+RFRX=CONTRX\n".encode())#et on remet la reception
+                    time.sleep(.1)
 
         ser.close()
 
@@ -521,7 +562,7 @@ class MyApplication(object):
             self.dumpInfo("E\t" + str(e))
             self.log.error(str(e))
 
-    def radioupdate(self, idsender, idreceiver, senderbattery, rxlevel):
+    def radioupdate(self, idsender, idreceiver, senderbattery, rxlevel, status):
         done = False
         try:
             self.log.debug("Socket creation")
@@ -529,7 +570,7 @@ class MyApplication(object):
             self.log.debug("Socket connection")
             sock.connect((HOST, PORT))
             self.log.debug("Socket sending")
-            parameters="?idsender="+str(idsender)+"&idreceiver="+str(idreceiver)+"&senderbattery="+str(senderbattery)+"&rxlevel="+str(rxlevel)
+            parameters="?idsender="+str(idsender)+"&idreceiver="+str(idreceiver)+"&senderbattery="+str(senderbattery)+"&rxlevel="+str(rxlevel)+"&status="+str(status)
             sock.send(("GET %s%s HTTP/1.0\r\nHost: %s\r\n\r\n" % (GET,parameters,HOST)).encode())
             self.log.debug("Socket receiving")
             data = sock.recv(1024)
@@ -569,19 +610,19 @@ class MyApplication(object):
 
         if self.args.simulateget:
             self.log.info("Sending GET request")
-            self.radioupdate(0,1,3547,-100)
-            self.radioupdate(0,2,3700,-110)
-            self.radioupdate(1,2,3530,-80)
-            self.radioupdate(2,3,3580,-124)
-            self.radioupdate(4,0,3680,-95)
-            self.radioupdate(3,4,3680,-60)
+            self.radioupdate(0,1,3547,-100,0)
+            self.radioupdate(0,2,3700,-110,0)
+            self.radioupdate(1,2,3530,-80,1)
+            self.radioupdate(2,3,3580,-124,0)
+            self.radioupdate(4,0,3680,-95,0)
+            self.radioupdate(3,4,3680,-60,0)
             exit(1)
 
         if self.args.simulatemultipleget:
             self.log.info("Sending multiple GET request")
 
             for i in range(10):
-                self.radioupdate(i+60,1+i,1000+i,-100+i)
+                self.radioupdate(i+60,1+i,1000+i,-100+i,0)
 
             exit(1)
 
@@ -853,35 +894,23 @@ class MyApplication(object):
         #datatosend = struct.pack('<BHlLL',int(_type), int(self.args.codenumber), int(self.args.sicardno), int(_codeday), int(self.args.codetime))
         return datatosend, index
 
-    def updateInfo(self, idsender, idreceiver, senderbattery, rxlevel):
-        self.radioupdate(idsender, idreceiver, senderbattery, rxlevel)
+    def updateInfo(self, idsender, idreceiver, senderbattery, rxlevel, status):
+        self.radioupdate(idsender, idreceiver, senderbattery, rxlevel, status)
 
         self.dumpInfo('S' + "\t" + str(idsender) + "\t" + str(idreceiver) + "\t" + str(rxlevel))
-        self.dumpInfo('B' + "\t" + str(idsender) + "\t" + str(senderbattery))
+        self.dumpInfo('B' + "\t" + str(idsender) + "\t" + str(senderbattery) + "\t" + str(status))
 
     def decodeSignalInfo(self, r_str):
         self.log.debug("decoding signal info:" + r_str)
         poste = int(r_str[0:2], 16)
         level = -int(r_str[2:6], 16)
+        
         self.log.info("id:" + str(poste) + " SignalLevel:" + str(level) + " dB")
-        #self.localBatPoste contient normalement l'id de l'emetteur vers ce poste
-        #self.localRSSI = level
-        #self.radioupdate(self.localBatPoste, poste, level, self.localRSSI)
-        #idsender, idreceiver, senderbattery, rxlevel):
-
-        self.localSigPoste = poste #self.localBatPoste #poste
+        
+        self.localSigPoste = poste 
         self.localSigLevel = level
 
-        self.updateInfo(self.localBatPoste, self.localSigPoste, self.localBatLevel, self.localSigLevel)
-        """
-        self.log.info("UPDATE with batposte=" + str(self.localBatPoste) +
-        " Sigposte=" + str(self.localSigPoste) + " batlevel=" + str(self.localBatLevel) + " siglevel=" + str(self.localSigLevel))
-
-        self.radioupdate(self.localBatPoste, self.localSigPoste, self.localBatLevel, self.localSigLevel)
-
-        self.dumpInfo('S' + "\t" + str(self.localBatPoste) + "\t" + str(self.localSigPoste) + "\t" + str(self.localSigLevel))
-        self.dumpInfo('B' + "\t" + str(self.localBatPoste) + "\t" + str(self.localBatLevel))
-        """
+        self.updateInfo(self.localBatPoste, self.localSigPoste, self.localBatLevel, self.localSigLevel, self.localStatus)
 
         datatosend = None
         index = 9
@@ -891,22 +920,13 @@ class MyApplication(object):
         self.log.debug("decoding battery info:" + r_str)
         poste = int(r_str[0:2], 16)
         level = int(r_str[2:6], 16)
-        self.log.info("id:" + str(poste) + " BatteryLevel:" + str(level) + " mV")
+        status = int(r_str[6:8], 16)
 
-        #self.radioupdate(poste, 0, level, self.localRSSI)
+        self.log.info("id:" + str(poste) + " BatteryLevel:" + str(level) + " mV" + " status:" + str(status))
+
         self.localBatPoste = poste
         self.localBatLevel = level
-
-
-        """
-        self.log.info("UPDATE with batposte=" + str(self.localBatPoste) +
-        " Sigposte=" + str(self.localSigPoste) + " batlevel=" + str(self.localBatLevel) + " siglevel=" + str(self.localSigLevel))
-
-        self.radioupdate(self.localBatPoste, self.localSigPoste, self.localBatLevel, self.localSigLevel)
-
-        self.dumpInfo('S' + "\t" + str(self.localBatPoste) + "\t" + str(self.localSigPoste) + "\t" + str(self.localSigLevel))
-        self.dumpInfo('B' + "\t" + str(self.localBatPoste) + "\t" + str(self.localBatLevel))
-        """
+        self.localStatus = status
 
         datatosend = None
         index = 9

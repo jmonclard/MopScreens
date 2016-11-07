@@ -16,7 +16,7 @@
   */
   
   session_start();
-  date_default_timezone_set('UTC');
+  date_default_timezone_set('Europe/Paris');
   include_once('functions.php');
   redirectSwitchUsers();
     
@@ -666,7 +666,7 @@
                     //-- 1st Start
                     $heuremin="00:00:00";
                     $heuremax="00:00:00";
-                    date_default_timezone_set('UTC');
+                    date_default_timezone_set('Europe/Paris');
                     $sql2 = "SELECT MIN(st),MAX(st) FROM mopcompetitor WHERE cid=$cid AND cls=$classid";
                     $res2 = mysql_query($sql2);
                     if (mysql_num_rows($res2) > 0)
@@ -701,7 +701,7 @@
 
                     //-- Done
                     $n=0;
-                    $sql2 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid AND cls=$classid AND tstat>0";
+                    $sql2 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid AND cls=$classid AND stat>0";
                     $res2 = mysql_query($sql2);
                     if (mysql_num_rows($res2) > 0)
                     {
