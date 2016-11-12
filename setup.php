@@ -116,7 +116,7 @@ function setup() {
   query($sql);
         
   
-  $sql = "CREATE TABLE `resultclass` (
+  $sql = "CREATE TABLE IF NOT EXISTS `resultclass` (
       `rcid` int(11) NOT NULL,
       `cid` int(11) NOT NULL default '0',
       `id` int(11) NOT NULL,
@@ -129,7 +129,7 @@ function setup() {
       ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
 
-  $sql = "CREATE TABLE `resultconfig` (
+  $sql = "CREATE TABLE IF NOT EXISTS `resultconfig` (
       `rcid` int(11) NOT NULL,
       `name` varchar(64) character set utf8 NOT NULL,
       `active` tinyint(1) NOT NULL default '0' COMMENT '1=active',
@@ -137,7 +137,7 @@ function setup() {
       ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
 
-  $sql = "CREATE TABLE `resultradio` (
+  $sql = "CREATE TABLE IF NOT EXISTS `resultradio` (
       `idsender` tinyint(3) unsigned NOT NULL,
       `idreceiver` tinyint(3) unsigned NOT NULL,
       `senderbattery` smallint(6) unsigned NOT NULL,
@@ -146,7 +146,7 @@ function setup() {
       ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
   
-  $sql = "CREATE TABLE `resultradioconfig` (
+  $sql = "CREATE TABLE IF NOT EXISTS `resultradioconfig` (
       `srcid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'screen radio competition id',
       `srcname` varchar(30) NOT NULL,
       `srcmap` varchar(120) NOT NULL,
@@ -158,7 +158,7 @@ function setup() {
       ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci AUTO_INCREMENT=1 ;";
   query($sql);
 
-  $sql = "CREATE TABLE `resultradioposition` (
+  $sql = "CREATE TABLE IF NOT EXISTS `resultradioposition` (
       `srcid` int(10) unsigned NOT NULL,
       `radioid` int(10) unsigned NOT NULL,
       `radiox` double NOT NULL,
@@ -166,7 +166,7 @@ function setup() {
       ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
 
-  $sql = "CREATE TABLE `resultscreen` (
+  $sql = "CREATE TABLE IF NOT EXISTS `resultscreen` (
       `rcid` int(11) NOT NULL,
       `sid` int(11) NOT NULL,
       `cid` int(11) NOT NULL DEFAULT '0',
