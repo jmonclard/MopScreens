@@ -18,7 +18,6 @@
   include_once('functions.php');
   redirectSwitchUsers();
 
-
 	function ECRIRE_LOG($errtxt)
 	{
 		$fp = fopen('log.txt','a+'); // ouvrir le fichier ou le créer
@@ -62,14 +61,14 @@
 
   //-------- screens configuration functions ---------
   
-  function GetConfigurationName($rcid)
+  function GetConfigurationName($rcid, $link)
   {
     $configname = "unknown";
     $sql = "SELECT name FROM resultconfig WHERE rcid=$rcid";
-    $res = mysql_query($sql);
-    if (mysql_num_rows($res)>0)
+    $res = mysqli_query($link, $sql);
+    if (mysqli_num_rows($res)>0)
     {
-      $r = mysql_fetch_array($res);
+      $r = mysqli_fetch_array($res);
       $configname= $r['name'];
     }
     return $configname;
@@ -77,39 +76,43 @@
     
   function AddNewConfiguration($rcid,$name)
   {
+    $link = ConnectToDB();
     $sql = "INSERT INTO resultconfig SET rcid=$rcid, name='$name'"; 
-    $ret=mysql_query($sql);
+    $ret=mysqli_query($link, $sql);
   }
 
 
   function DelConfiguration($rcid)
   {
+    $link = ConnectToDB();
     $sql = "DELETE FROM resultconfig WHERE rcid='$rcid'";  
-    mysql_query($sql);
+    mysqli_query($link, $sql);
 
     $sql = "DELETE FROM resultscreen WHERE rcid=$rcid";
-    mysql_query($sql);
+    mysqli_query($link, $sql);
 
     $sql = "DELETE FROM resultclass WHERE rcid=$rcid";
-    mysql_query($sql);
+    mysqli_query($link, $sql);
   }
 
   //--------- screen functions ----------
 
-  function AddNewScreen($rcid,$sid)
+  function AddNewScreen($rcid,$sid,$link)
   {
     $title="Screen #$sid";
     $sql = "INSERT INTO resultscreen SET rcid=$rcid, sid=$sid, title='$title'"; 
-    $ret=mysql_query($sql);
+    $ret=mysqli_query($link, $sql);
   }
+
 
   function CloneScreen($oldrcid,$newrcid)
   {
+    $link = ConnectToDB();
     $sql = "SELECT * FROM resultscreen WHERE rcid=$oldrcid";
-    $res = mysql_query($sql);
-    if (mysql_num_rows($res) > 0)
+    $res = mysqli_query($link, $sql);
+    if (mysqli_num_rows($res) > 0)
     {
-      while ($r = mysql_fetch_array($res))
+      while ($r = mysqli_fetch_array($res))
       {
         $str = "rcid=$newrcid, ";
 
@@ -205,7 +208,7 @@
         $sql = "INSERT INTO resultscreen SET $str";
         
 
-        $ret=mysql_query($sql);
+        $ret=mysqli_query($link, $sql);
       }
     }
   }
@@ -213,12 +216,14 @@
 
   function GetClasses($rcid, $cid, $sid, $panel)
   {
+    $link = ConnectToDB();
     $sqltmp = "SELECT name,ord FROM resultclass, mopclass WHERE mopclass.cid=resultclass.cid AND mopclass.id=resultclass.id AND mopclass.cid=$cid AND resultclass.rcid=$rcid AND resultclass.panel=$panel AND resultclass.sid=$sid ORDER BY ord";
-    $restmp = mysql_query($sqltmp);
-    if (mysql_num_rows($restmp) > 0)
+    $restmp = mysqli_query($link, $sqltmp);
+    $panelclasses="";
+    
+    if (mysqli_num_rows($restmp) > 0)
     {
-      $panelclasses="";
-      while ($rtmp = mysql_fetch_array($restmp))
+      while ($rtmp = mysqli_fetch_array($restmp))
       {
         $nametmp=$rtmp['name'];
         if (strlen($panelclasses)>0)
@@ -234,7 +239,7 @@
     return $panelclasses;            
   }
   
-    function GetFirstClass($rcid, $cid, $sid, $panel)
+    function GetFirstClass($rcid, $cid, $sid, $panel, $link)
   {
     $sqltmp = "SELECT mopclass.id AS classid, name, ord FROM resultclass, mopclass WHERE ";
     $sqltmp = $sqltmp."mopclass.cid=resultclass.cid AND ";
@@ -244,20 +249,21 @@
     $sqltmp = $sqltmp."resultclass.panel=$panel AND ";
     $sqltmp = $sqltmp."resultclass.sid=$sid ";
     $sqltmp = $sqltmp."ORDER BY ord LIMIT 1";
-    $restmp = mysql_query($sqltmp);
+    $restmp = mysqli_query($link, $sqltmp);
 
     $nentry=0;
-    if (mysql_num_rows($restmp) > 0)
+    $panelclasses="";
+    
+    if (mysqli_num_rows($restmp) > 0)
     {
-      $panelclasses="";
-      $rtmp = mysql_fetch_array($restmp);
+      $rtmp = mysqli_fetch_array($restmp);
       $panelclasses=$rtmp['name'];
     }
     return $panelclasses;            
   }
 	
     
-  function GetClassesAndEntries($rcid, $cid, $sid, $panel)
+  function GetClassesAndEntries($rcid, $cid, $sid, $panel, $link)
   {
     $sqltmp = "SELECT mopclass.id AS classid, name, ord FROM resultclass, mopclass WHERE ";
     $sqltmp = $sqltmp."mopclass.cid=resultclass.cid AND ";
@@ -267,13 +273,13 @@
     $sqltmp = $sqltmp."resultclass.panel=$panel AND ";
     $sqltmp = $sqltmp."resultclass.sid=$sid ";
     $sqltmp = $sqltmp."ORDER BY ord";
-    $restmp = mysql_query($sqltmp);
+    $restmp = mysqli_query($link, $sqltmp);
 
     $nentry=0;
-    if (mysql_num_rows($restmp) > 0)
+    $panelclasses="";
+    if (mysqli_num_rows($restmp) > 0)
     {
-      $panelclasses="";
-      while ($rtmp = mysql_fetch_array($restmp))
+      while ($rtmp = mysqli_fetch_array($restmp))
       {
         $nametmp=$rtmp['name'];
         if (strlen($panelclasses)>0)
@@ -288,10 +294,10 @@
         // determines number of entries
         $classid = intval($rtmp['classid']);
         $sql2 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid AND cls=$classid";
-        $res2 = mysql_query($sql2);
-        if (mysql_num_rows($res2) > 0)
+        $res2 = mysqli_query($link, $sql2);
+        if (mysqli_num_rows($res2) > 0)
         {
-          if ($r2 = mysql_fetch_array($res2))
+          if ($r2 = mysqli_fetch_array($res2))
           {
             $nentry=$nentry+$r2[0];
           }
@@ -305,11 +311,12 @@
   //--------- class functions ----------    
   function CloneClass($oldrcid,$newrcid)
   {
+    $link = ConnectToDB();
     $sql = "SELECT * FROM resultclass WHERE rcid=$oldrcid";
-    $res = mysql_query($sql);
-    if (mysql_num_rows($res) > 0)
+    $res = mysqli_query($link, $sql);
+    if (mysqli_num_rows($res) > 0)
     {
-      while ($r = mysql_fetch_array($res))
+      while ($r = mysqli_fetch_array($res))
       {
         $str = "'".$newrcid."', ";
         $str = $str."'".$r['cid']."', ";
@@ -317,7 +324,7 @@
         $str = $str."'".$r['sid']."', ";
         $str = $str."'".$r['panel']."'";
         $sql2 = "INSERT INTO resultclass (rcid, cid, id, sid, panel) VALUES ($str)";
-        $res2 = mysql_query($sql2);
+        $res2 = mysqli_query($link, $sql2);
       }
     }
   }

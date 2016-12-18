@@ -24,7 +24,7 @@
   header('Content-type: text/html;charset=utf-8');
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
 
   $cls = ((isset($_GET['cls'])) ? $_GET['cls'] : "0");
   $cmpId = ((isset($_GET['cmpId'])) ? $_GET['cmpId'] : "0");
@@ -39,15 +39,15 @@
   $rcid = ((isset($_GET['rcid'])) ? $_GET['rcid'] : "0");
   $sid = ((isset($_GET['sid'])) ? $_GET['sid'] : "0");
   $sql = 'UPDATE resultscreen SET panel1lastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
-  mysql_query($sql);
+  mysqli_query($link, $sql);
 
   
   $arr_radio = array();
   $sql = 'SELECT * FROM mopclasscontrol WHERE cid ='.$cmpId.' AND id='.$cls.' AND leg='.$leg.' ORDER BY ord ASC';
-  $res = mysql_query($sql);
-  if(mysql_num_rows($res) > 0)
+  $res = mysqli_query($link, $sql);
+  if(mysqli_num_rows($res) > 0)
   {
-    while($r = mysql_fetch_array($res))
+    while($r = mysqli_fetch_array($res))
     {
         $arr_radio[] = $r['ctrl'];
     }
@@ -67,8 +67,8 @@
     for ($k = 1; $k <= $numlegs; $k++) {
       $sql = "SELECT max(ord) FROM mopteammember tm, mopteam t WHERE t.cls = '$cls' AND tm.leg=$k AND ".
               "tm.cid = '$cmpId' AND t.cid = '$cmpId' AND tm.id = t.id";
-      $res = mysql_query($sql);
-      $r = mysql_fetch_array($res);
+      $res = mysqli_query($link, $sql);
+      $r = mysqli_fetch_array($res);
       $numparallel = $r[0];
       
       if ($numparallel == 0) {
@@ -86,7 +86,7 @@
                "AND ((t.stat>0) OR ((t.stat=0) AND ((SELECT COUNT(*) FROM mopradio AS mr WHERE mr.cid='$cmpId' AND tm.rid=mr.id) > 0)))".
                "AND tm.leg='$leg' AND tm.ord='$ord' ORDER BY t.stat ASC, cmp.rt ASC, t.id";
         $rname = "Finish";
-        $res = mysql_query($sql);
+        $res = mysqli_query($link, $sql);
         $results = calculateResult($res, $nb_radio);
       }
       /*else*/
@@ -106,7 +106,7 @@
                  "AND cmp.cls='$cls' ".
                  "AND team.cid = '$cmpId' AND m.cid = '$cmpId' AND cmp.cid = '$cmpId' ".
                  "ORDER BY radio.rt ASC ";
-            $res = mysql_query($sql);
+            $res = mysqli_query($link, $sql);
             $results = addRadioResult($res, $results);
       }
       formatResultScreen($results, $limit);
@@ -125,7 +125,7 @@
                  "ORDER BY FIELD(cmp.stat, 1) DESC, cmp.stat ASC, cmp.rt ASC, cmp.id";
             $rname = "Finish";
           
-            $res = mysql_query($sql);
+            $res = mysqli_query($link, $sql);
             $results = calculateResult($res, $nb_radio);
             
         }
@@ -143,7 +143,7 @@
                  "AND cmp.cls='$cls' ".
                  "AND cmp.cid = '$cmpId' AND radio.cid = '$cmpId' ".
                  "ORDER BY radio.id ASC, radio.rt ASC ";
-            $res = mysql_query($sql);
+            $res = mysqli_query($link, $sql);
             $results = addRadioResult($res, $results);
         }
         formatResultScreen($results, $limit); 
@@ -162,7 +162,7 @@
                   "ORDER BY t.stat ASC, t.rt ASC, t.id";
             $rname = "Finish";
            
-            $res = mysql_query($sql);
+            $res = mysqli_query($link, $sql);
             $results = calculateResult($res, $nb_radio);
          }
        /*else*/
@@ -179,7 +179,7 @@
                  "AND cmp.cls='$cls' ".
                  "AND radio.cid = '$cmpId' AND m.cid = '$cmpId' AND team.cid = '$cmpId' AND cmp.cid = '$cmpId' ".
                  "ORDER BY radio.id ASC, radio.rt ASC ";
-            $res = mysql_query($sql);
+            $res = mysqli_query($link, $sql);
             $results = addRadioResult($res, $results);
        }
        

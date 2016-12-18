@@ -10,26 +10,26 @@
   
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
   
 
   $sql = 'SELECT * FROM (SELECT * FROM resultradio ORDER BY timestamp DESC) x GROUP BY idsender';
-  $res = mysql_query($sql);
+  $res = mysqli_query($link, $sql);
   $now = time();
   //echo 'id, battery, age'.'<br />';
   $batteryInfo = array();
-  while ($r = mysql_fetch_array($res))
+  while ($r = mysqli_fetch_array($res))
   {
     //echo $r['idsender'].', '.$r['senderbattery'].', '.($now - strtotime($r['timestamp'])).'<br/>';
     $batteryInfo[] = '['.$r['idsender'].', '.$r['senderbattery'].', '.($now - strtotime($r['timestamp'])).', '.$r['status'].']';
   }
   //echo '<hr />';
   $sql = 'SELECT * FROM (SELECT * FROM resultradio ORDER BY timestamp DESC) x GROUP BY idsender, idreceiver';
-  $res = mysql_query($sql);
+  $res = mysqli_query($link, $sql);
   $now = time();
   //echo 'sender id, receiver id, rx level, age'.'<br />';
   $levelsInfo = array();
-  while ($r = mysql_fetch_array($res))
+  while ($r = mysqli_fetch_array($res))
   {
     //echo $r['idsender'].', '.$r['idreceiver'].', '.$r['rxlevel'].', '.($now - strtotime($r['timestamp'])).'<br/>';
     $levelsInfo[] = '['.$r['idsender'].', '.$r['idreceiver'].', '.$r['rxlevel'].', '.($now - strtotime($r['timestamp'])).']';

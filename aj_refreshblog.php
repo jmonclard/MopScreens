@@ -25,7 +25,7 @@
   header('Content-type: text/html;charset=utf-8');
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
   date_default_timezone_set('Europe/Paris');
 	
 	$rcid = ((isset($_GET['rcid'])) ? intval($_GET['rcid']) : 0);
@@ -38,17 +38,17 @@
   if(($sid > 0) && ($rcid > 0))
   {
     $sql = 'UPDATE resultscreen SET panel1lastrefresh='.$now.' WHERE rcid='.$rcid.' AND sid='.$sid;
-    mysql_query($sql);
+    mysqli_query($link, $sql);
   }
 	
 	if(($rcid > 0) && ($limit > 0))
 	{
 		$sql = 'SELECT * FROM resultblog WHERE rcid='.$rcid.' ORDER BY timestamp DESC LIMIT '.$limit;
-		$res = mysql_query($sql) or exit;
-		$num = mysql_num_rows($res);
+		$res = mysqli_query($link, $sql) or exit;
+		$num = mysqli_num_rows($res);
 		if($num)
 		{
-			while($current = mysql_fetch_assoc($res))
+			while($current = mysqli_fetch_assoc($res))
 			{
         $mytimestamp = strtotime($current['timestamp']);
         $mydate = date('H:i:s', $mytimestamp);

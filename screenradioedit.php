@@ -129,7 +129,7 @@
 <?php
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
-    ConnectToDB();
+    $link = ConnectToDB();
     
     $srcid = isset($_GET['srcid']) ? intval($_GET['srcid']) : 0;
     $action = isset($_GET['action']) ? strval($_GET['action']) : "";
@@ -157,13 +157,13 @@
   function AddNewRadio($srcid,$radioid,$x,$y)
   {
       $sql = "INSERT INTO resultradioposition SET srcid=$srcid, radioid=$radioid, radiox=$x, radioy=$y"; 
-      $ret=mysql_query($sql);
+      $ret=mysqli_query($link, $sql);
   }
 
   function DelRadio($srcid,$radioid)
   {
     $sql = "DELETE FROM resultradioposition WHERE srcid='$srcid' AND radioid='$radioid'";  
-    mysql_query($sql);
+    mysqli_query($link, $sql);
   }
 
   //---------- Actions ------------------------------------
@@ -171,7 +171,7 @@
   {
     $map = isset($_GET['map']) ? strval($_GET['map']) : "";
     $sql = "UPDATE resultradioconfig SET srcmap='".$map."' WHERE srcid=".$srcid;
-    $res = mysql_query($sql);
+    $res = mysqli_query($link, $sql);
   }
 
   if ($action==="mapcoordchange")
@@ -183,7 +183,7 @@
     if ($x0>$x1) $x1=$x0+1.0;
     if ($y0>$y1) $y1=$y0+1.0;
     $sql = "UPDATE resultradioconfig SET srcx0='".$x0."', srcy0='".$y0."', srcx1='".$x1."', srcy1='".$y1."'  WHERE srcid=".$srcid;
-    $res = mysql_query($sql);
+    $res = mysqli_query($link, $sql);
   }
 
   if ($action==="delradio")
@@ -220,11 +220,11 @@
   }
 
 
-  $res = mysql_query("SELECT * FROM resultradioconfig WHERE srcid=$srcid");
-  if (mysql_num_rows($res) > 0)
+  $res = mysqli_query($link, "SELECT * FROM resultradioconfig WHERE srcid=$srcid");
+  if (mysqli_num_rows($res) > 0)
   {
   
-    $r = mysql_fetch_array($res);
+    $r = mysqli_fetch_array($res);
 
     $srcname=$r['srcname'];
     $srcmap=$r['srcmap'];
@@ -239,10 +239,10 @@
     
     $arr_radio = array();
 
-    $res = mysql_query("SELECT * FROM resultradioposition WHERE srcid=$srcid");
-    if (mysql_num_rows($res) > 0)
+    $res = mysqli_query($link, "SELECT * FROM resultradioposition WHERE srcid=$srcid");
+    if (mysqli_num_rows($res) > 0)
     {
-      while ($r = mysql_fetch_array($res))
+      while ($r = mysqli_fetch_array($res))
       {
         $arr_radio[] = [$r['radioid'],$r['radiox'],$r['radioy']];
       }    

@@ -110,7 +110,7 @@
 <?php
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
-    ConnectToDB();
+    $link = ConnectToDB();
     
     $action = isset($_GET['action']) ? strval($_GET['action']) : "";
 
@@ -119,24 +119,24 @@
   function AddNewRadioConfiguration($srcid,$name)
   {
     $sql = "INSERT INTO resultradioconfig SET srcid=$srcid, srcname='$name'"; 
-    $ret=mysql_query($sql);
+    $ret=mysqli_query($link, $sql);
   }
   
   function DelRadioConfiguration($srcid)
   {
     $sql = "DELETE FROM resultradioconfig WHERE srcid='$srcid'";  
-    mysql_query($sql);
+    mysqli_query($link, $sql);
     $sql = "DELETE FROM resultradioposition WHERE srcid='$srcid'";  
-    mysql_query($sql);
+    mysqli_query($link, $sql);
   }
 
   function CloneRadioPosition($oldsrcid,$newsrcid)
   {
     $sql = 'SELECT * FROM resultradioposition WHERE srcid='.$oldsrcid;
-    $res = mysql_query($sql);
-    if (mysql_num_rows($res) > 0)
+    $res = mysqli_query($link, $sql);
+    if (mysqli_num_rows($res) > 0)
     {
-      while ($r = mysql_fetch_array($res))
+      while ($r = mysqli_fetch_array($res))
       {
         $str = "srcid=$newsrcid, ";
 
@@ -150,7 +150,7 @@
         $str = $str."radioy=".$radioy." ";
   
         $sql = "INSERT INTO resultradioposition SET $str";
-        $ret=mysql_query($sql);
+        $ret=mysqli_query($link, $sql);
       }
     }
   }
@@ -173,13 +173,13 @@
     {
       $srcid = intval($_GET['srcid']);
 
-      $res = mysql_query("SELECT srcid FROM resultradioconfig WHERE srcid=$srcid");
-      if (mysql_num_rows($res) > 0)
+      $res = mysqli_query($link, "SELECT srcid FROM resultradioconfig WHERE srcid=$srcid");
+      if (mysqli_num_rows($res) > 0)
       {
         $sql = "UPDATE resultradioconfig SET active=0";
-        $res = mysql_query($sql);
+        $res = mysqli_query($link, $sql);
         $sql = "UPDATE resultradioconfig SET active=1 WHERE srcid=$srcid";
-        $res = mysql_query($sql);
+        $res = mysqli_query($link, $sql);
         print "<script>window.open('screenradiodisplay.php')</script>";  // open view in a new window
       }
     }
@@ -192,15 +192,15 @@
       $srcid = intval($_GET['srcid']);
       $newname = urldecode(isset($_GET['name']) ? $_GET['name'] : "no name ".$srcid);
 
-      $res = mysql_query("SELECT srcid FROM resultradioconfig WHERE srcid=$srcid");
+      $res = mysqli_query($link, "SELECT srcid FROM resultradioconfig WHERE srcid=$srcid");
 
-      if (mysql_num_rows($res) > 0)
+      if (mysqli_num_rows($res) > 0)
       {
         $sql = "UPDATE resultradioconfig SET srcname='".$newname."' WHERE srcid=".$srcid;
-        $res = mysql_query($sql);
+        $res = mysqli_query($link, $sql);
       }
     }
-    mysql_query($sql);
+    mysqli_query($link, $sql);
   }
 
   if ($action==="clone")
@@ -228,11 +228,11 @@
   //-- Determine next available rcid for add or clone operations
     
   $sql = "SELECT srcid FROM resultradioconfig";
-  $res = mysql_query($sql);
+  $res = mysqli_query($link, $sql);
   $nextsrcid=1;
-  if (mysql_num_rows($res) > 0)
+  if (mysqli_num_rows($res) > 0)
   {
-    while ($r = mysql_fetch_array($res))
+    while ($r = mysqli_fetch_array($res))
     {
       $srcid=$r['srcid'];
       if ($srcid>=$nextsrcid)
@@ -249,10 +249,10 @@
   print "</tr>";
 
   $sql = "SELECT * FROM resultradioconfig";
-  $res = mysql_query($sql);
-  if (mysql_num_rows($res) > 0)
+  $res = mysqli_query($link, $sql);
+  if (mysqli_num_rows($res) > 0)
   {
-    while ($r = mysql_fetch_array($res))
+    while ($r = mysqli_fetch_array($res))
     {
       $srcid=$r['srcid'];
       $srcname=$r['srcname'];

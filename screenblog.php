@@ -60,15 +60,15 @@
 <?php
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
-  mysql_query("SET NAMES 'utf8';");
+  $link  = ConnectToDB();
+  mysqli_query($link , "SET NAMES 'utf8';");
   mb_internal_encoding('UTF-8');
   $rcid = 0;
   $sql = "SELECT rcid FROM resultconfig WHERE active=1";
-  $res = mysql_query($sql);
-  if (mysql_num_rows($res) > 0)
+  $res = mysqli_query($link, $sql);
+  if (mysqli_num_rows($res) > 0)
   {
-    $r = mysql_fetch_array($res);
+    $r = mysqli_fetch_array($res);
     $rcid = $r['rcid'];
   }
   $action = ((isset($_GET['action'])) ? trim($_GET['action']) : "");
@@ -76,8 +76,8 @@
   if((isset($_POST['blogsubmit'])) && (isset($_POST['blogcontent'])))
   {
 	  $content = trim($_POST['blogcontent']);
-	  $sql = 'INSERT INTO resultblog (rcid, text) VALUES ('.$rcid.', \''.mysql_real_escape_string($content).'\')';
-	  $res = mysql_query($sql);
+	  $sql = 'INSERT INTO resultblog (rcid, text) VALUES ('.$rcid.', \''.mysqli_real_escape_string($link, $content).'\')';
+	  $res = mysqli_query($link, $sql);
 	  if($res)
 	  {
 		  echo '<p><strong>Les données ont bien été envoyées</strong></p>';
@@ -87,7 +87,7 @@
   if($action == "clear")
   {
     $sql = 'DELETE FROM resultblog WHERE rcid='.$rcid;
-	  $res = mysql_query($sql);
+	  $res = mysqli_query($link, $sql);
     if($res)
 	  {
 		  echo '<p><strong>Les données ont bien été effacées</strong></p>';

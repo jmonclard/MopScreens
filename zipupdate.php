@@ -16,7 +16,7 @@
   */
 
 include_once("functions.php");
-ConnectToDB();
+$link = ConnectToDB();
 
 // Extract headers
 $password = '';

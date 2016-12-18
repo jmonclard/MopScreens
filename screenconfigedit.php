@@ -41,17 +41,17 @@
 <?php
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
-    ConnectToDB();
+     $link = ConnectToDB();
 
     $rcid = isset($_GET['rcid']) ? intval($_GET['rcid']) : 0;
     if ($rcid>0)
     {
       $sql = "SELECT rc.name rcname, c.name cname FROM mopcompetition c, resultconfig rc WHERE rc.rcid=$rcid";
-      $res = mysql_query($sql);
+      $res = mysqli_query($link , $sql);
 
       if (mysql_num_rows($res) > 0)
       {
-        $r = mysql_fetch_array($res);
+        $r = mysqli_fetch_array($res);
         $rcname=$r['rcname'];
 
         print "<form method=GET action='screenconfig.php'>";
