@@ -183,7 +183,7 @@
 <?php
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
 
   class Panel {
     var $numpanel;
@@ -475,7 +475,7 @@
           if (($cid>0)&&($panel>0))
           {
               $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
-              mysql_query($sql);
+              mysqli_query($link, $sql);
           }
       }
       
@@ -486,7 +486,7 @@
           if (($cid>0)&&($panel>0))
           {
               $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
-              mysql_query($sql);
+              mysqli_query($link, $sql);
               $selclasses = isset($_GET['selclasses']) ? $_GET['selclasses'] : null;
               if ($selclasses !== null)
               { 
@@ -498,23 +498,23 @@
                       $str = $str."'".$sid."', ";
                       $str = $str."'".$panel."'";
                       $sql = "INSERT INTO resultclass (rcid, cid, id, sid, panel) VALUES ($str)";
-                      $res = mysql_query($sql);
+                      $res = mysqli_query($link, $sql);
                   }
               }
           }
 
       }
       
-      $configname = GetConfigurationName($rcid);
+      $configname = GetConfigurationName($rcid,$link);
       print "<h2>$configname, ".MyGetText(24)." $sid</h2>\n"; // Screen
       
       $sql = "SELECT * FROM resultscreen WHERE rcid=$rcid AND sid=$sid";
-      $res = mysql_query($sql);
+      $res = mysqli_query($link, $sql);
       
-      if (mysql_num_rows($res) > 0)
+      if (mysqli_num_rows($res) > 0)
       {
       
-          $r = mysql_fetch_array($res);
+          $r = mysqli_fetch_array($res);
           $cid=$r['cid'];
           if (($action == "reload")||($action == "updateclasses"))
           {
@@ -533,7 +533,7 @@
           
           for ($i=1; $i<=NB_PANEL; $i++)
           {
-            $panels[$i-1]->Initialise($r, GetClasses($rcid, $cid, $sid,$i));
+            $panels[$i-1]->Initialise($r, GetClasses($rcid, $cid, $sid,$i,$link));
           }
 
           //---------- files lists creation ----
@@ -583,8 +583,8 @@
           print "<td><select name='cid' id='cid' size=1 onchange='Reload(".$rcid.",".$sid.");'>";
           $sql = "SELECT name, cid FROM mopcompetition";
           print "<option value=0> </option>";
-          $res = mysql_query($sql);
-          while ($r = mysql_fetch_array($res))
+          $res = mysqli_query($link, $sql);
+          while ($r = mysqli_fetch_array($res))
           {
               $competname=$r['name'];
               $competid=$r['cid'];

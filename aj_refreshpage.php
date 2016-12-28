@@ -24,26 +24,26 @@
     header('Content-type: text/html;charset=utf-8');
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
-    ConnectToDB();
+    $link = ConnectToDB();
 
 
     $sid = ((isset($_GET['sid'])) ? $_GET['sid'] : "");
     $rcid = ((isset($_GET['rcid'])) ? $_GET['rcid'] : "");
     
     $sql = 'UPDATE resultscreen SET panel1lastredraw='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
-    mysql_query($sql);
+    mysqli_query($link, $sql);
 
     $sql = "SELECT refresh FROM resultscreen WHERE rcid='$rcid' AND sid='$sid'";
-    $res = mysql_query($sql);
-    $cinfo = mysql_fetch_array($res);
+    $res = mysqli_query($link, $sql);
+    $cinfo = mysqli_fetch_array($res);
     $refresh = $cinfo['refresh'];
     $now = time();
     
     $sql = "SELECT rcid FROM resultconfig WHERE active=1";
-    $res = mysql_query($sql);
-    if (mysql_num_rows($res) > 0)
+    $res = mysqli_query($link, $sql);
+    if (mysqli_num_rows($res) > 0)
     {
-      $r = mysql_fetch_array($res);
+      $r = mysqli_fetch_array($res);
       $rcid_active = $r['rcid'];
       if($rcid_active != $rcid)
       {

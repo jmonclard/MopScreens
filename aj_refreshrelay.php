@@ -25,7 +25,7 @@
   header('Content-type: text/html;charset=utf-8');
   
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
   
   $cls = ((isset($_GET['cls'])) ? $_GET['cls'] : "0");
   $cmpId = ((isset($_GET['cmpId'])) ? $_GET['cmpId'] : "0");
@@ -37,13 +37,13 @@
   $rcid = ((isset($_GET['rcid'])) ? $_GET['rcid'] : "0");
   $sid = ((isset($_GET['sid'])) ? $_GET['sid'] : "0");
   $sql = 'UPDATE resultscreen SET panel1lastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
-  mysql_query($sql);
+  mysqli_query($link, $sql);
   $arr_radio = array();
   $sql = 'SELECT * FROM mopclasscontrol WHERE cid ='.$cmpId.' AND id='.$cls.' AND leg='.$leg.' ORDER BY ord ASC';
-  $res = mysql_query($sql);
-  if(mysql_num_rows($res) > 0)
+  $res = mysqli_query($link, $sql);
+  if(mysqli_num_rows($res) > 0)
   {
-    while($r = mysql_fetch_array($res))
+    while($r = mysqli_fetch_array($res))
     {
         $arr_radio[] = $r['ctrl'];
     }
@@ -65,15 +65,15 @@
             "AND tm.cid = '$cmpId' ".
             "AND tm.id = t.id ".
             " GROUP BY tm.id";
-  $res = mysql_query($sql);
-  $r = mysql_fetch_array($res);
+  $res = mysqli_query($link, $sql);
+  $r = mysqli_fetch_array($res);
   $numlegs = $r['nblegs'];
   
   $sql = 'SELECT panel1tm_count FROM resultscreen WHERE rcid='.$rcid.' AND sid='.$sid;
-  $res = mysql_query($sql);
-  if(mysql_num_rows($res) > 0)
+  $res = mysqli_query($link, $sql);
+  if(mysqli_num_rows($res) > 0)
   {
-    $r = mysql_fetch_array($res);
+    $r = mysqli_fetch_array($res);
     $numlegs = max($numlegs, $r['panel1tm_count']);
   }
 
@@ -90,11 +90,11 @@
                "AND cid = '$cmpId' ".
                "ORDER BY id ASC";
         $rname = "Finish";
-        $res = mysql_query($sql);
-        if(mysql_num_rows($res))
+        $res = mysqli_query($link, $sql);
+        if(mysqli_num_rows($res))
         {
             $relay_out = array();
-            while($d = mysql_fetch_array($res))
+            while($d = mysqli_fetch_array($res))
             {
                 $relay_out[$d['team_id']] = array("team_id" => $d['team_id'], "team_name" => $d['team_name'], "team_stat" => $d['team_stat'], "team_place" => '', "timestamp" => 0, 
                     "relay1" => $arr_relaytimes, "relay2" => $arr_relaytimes, "relay3" => $arr_relaytimes, "relay4" => $arr_relaytimes, "relay5" => $arr_relaytimes, 
@@ -105,8 +105,8 @@
                         "FROM mopclasscontrol AS cc ".
                         "WHERE cc.cid='$cmpId' ".
                         "AND cc.id='$cls' ";
-            $resexist = mysql_query($sql);
-            if(mysql_num_rows($resexist))
+            $resexist = mysqli_query($link, $sql);
+            if(mysqli_num_rows($resexist))
 	    {
 		$sql = "SELECT tm.id AS team_id, tm.leg, r.rt AS radio_time, r.timestamp AS radio_timestamp, cc.ord, c.timestamp, c.stat, c.rt, c.it, c.tstat, c.name ".
                         "FROM mopteammember AS tm, mopradio AS r, mopclasscontrol AS cc, mopcompetitor AS c ".
@@ -122,10 +122,10 @@
                         "AND c.id=tm.rid ".
                         "AND c.cls='$cls' ".
                         "ORDER BY tm.leg ASC";
-		    $res = mysql_query($sql);
-		    if(mysql_num_rows($res))
+		    $res = mysqli_query($link, $sql);
+		    if(mysqli_num_rows($res))
 		    {
-			while($d = mysql_fetch_array($res))
+			while($d = mysqli_fetch_array($res))
 			{
 			    $relay_out[$d['team_id']]['relay'.$d['leg']]['radio'.$d['ord']] = $d['radio_time'];
 			    $relay_out[$d['team_id']]['relay'.$d['leg']]['finish'] = $d['rt'];
@@ -153,10 +153,10 @@
                         "AND c.id=tm.rid ".
                         "AND c.cls='$cls' ".
                         "ORDER BY tm.leg ASC";
-		    $res = mysql_query($sql);
-		    if(mysql_num_rows($res))
+		    $res = mysqli_query($link, $sql);
+		    if(mysqli_num_rows($res))
 		    {
-			while($d = mysql_fetch_array($res))
+			while($d = mysqli_fetch_array($res))
 			{
 			    $relay_out[$d['team_id']]['relay'.$d['leg']]['finish'] = $d['rt'];
           if($d['rt'])

@@ -27,7 +27,7 @@
     
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
 
   $screenIndex = isset($_GET['p']) ? intval($_GET['p']) : 1;
 
@@ -95,18 +95,18 @@
 
   $arr_cls = array();
   $sql = "SELECT rcid FROM resultconfig WHERE active=1";
-  $res = mysql_query($sql);
-  if (mysql_num_rows($res) > 0)
+  $res = mysqli_query($link, $sql);
+  if (mysqli_num_rows($res) > 0)
   {
-    $r = mysql_fetch_array($res);
+    $r = mysqli_fetch_array($res);
     $rcid=$r['rcid'];
     
     $sql = "SELECT * FROM resultscreen WHERE rcid=$rcid AND sid=$screenIndex";
-    $res = mysql_query($sql);
-    if (mysql_num_rows($res) > 0)
+    $res = mysqli_query($link, $sql);
+    if (mysqli_num_rows($res) > 0)
     {
       // Recall user configuration
-      $r = mysql_fetch_array($res);
+      $r = mysqli_fetch_array($res);
       $cid=$r['cid'];
       $style=$r['style'];
       $title=stripslashes($r['title']);
@@ -135,19 +135,19 @@
           //-----------------------------------------------------------------
           // Class recollection
           $sql = "SELECT id FROM resultclass WHERE cid=$cid AND rcid=$rcid AND sid=$screenIndex AND panel=".($i+1);
-          $res = mysql_query($sql);
-          if (mysql_num_rows($res) > 0)
+          $res = mysqli_query($link, $sql);
+          if (mysqli_num_rows($res) > 0)
           {
-            while ($r = mysql_fetch_array($res))
+            while ($r = mysqli_fetch_array($res))
             {
               $myid = $r['id'];
               $classPanels[$i][] = $myid;
               
               $sql = "SELECT name FROM mopclass WHERE cid=$cid AND id=$myid";
-              $resname = mysql_query($sql);
-              if (mysql_num_rows($resname) > 0)
+              $resname = mysqli_query($link, $sql);
+              if (mysqli_num_rows($resname) > 0)
               {
-                if ($rname = mysql_fetch_array($resname))
+                if ($rname = mysqli_fetch_array($resname))
                 {
                   $classNamePanels[$i][] = $rname['name'];
                 }
@@ -170,8 +170,8 @@
       }
       
       $sql = 'SELECT cls, COUNT(*) AS nb FROM mopcompetitor WHERE cid='.$cid.' AND cls IN('.implode(', ', $sql_classes).') GROUP BY cid, cls';
-      $res = mysql_query($sql);
-      while($data = mysql_fetch_array($res))
+      $res = mysqli_query($link, $sql);
+      while($data = mysqli_fetch_array($res))
       {
         $arr_cls[$data['cls']] = $data['nb'];
       }
@@ -179,7 +179,6 @@
   }
 
 ?>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr" dir="ltr">
   <head>
@@ -2498,7 +2497,7 @@
         $wpanel = 99.0 / $panelscount;
         for($i=0;$i<$panelscount;$i++)
         {
-          echo '<div style="float:left;margin:1.2px;display:inline;min-width:'.$wpanel.'%;width:'.$wpanel.'%;">'."\n";
+          echo '<div class="panel'.$i.'" style="float:left;display:inline;min-width:'.$wpanel.'%;width:'.$wpanel.'%;">'."\n";
           switch($panels[$i]->content)
           {
             case CST_CONTENT_PICTURE:

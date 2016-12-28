@@ -176,13 +176,12 @@
     }
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
-    ConnectToDB();
-
+     $link = ConnectToDB();
 
     if (isset($_GET['rcid'])) 
     {
         //$rcid = intval($_GET['rcid']);
-        $configname = GetConfigurationName($rcid);
+        $configname = GetConfigurationName($rcid, $link);
         print "<h1>$configname</h1>\n";
     }
 
@@ -225,7 +224,6 @@
     
     $action = isset($_GET['action']) ? strval($_GET['action']) : "none";
 
-
    //================================== update screens configs================================================
         
     if ($action == "clearclasses")
@@ -237,7 +235,7 @@
         if (($rcid>0)&&($cid>0)&&($sid>0)&&($panel>0))
         {
             $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
-            mysql_query($sql);
+            mysqli_query($link, $sql);
         }
     }
     
@@ -250,7 +248,7 @@
         if (($cid>0)&&($panel>0))
         {
             $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
-            mysql_query($sql);
+            mysqli_query($link, $sql);
             $selclasses = isset($_GET['selclasses']) ? $_GET['selclasses'] : null;
             if ($selclasses !== null)
             { 
@@ -262,13 +260,13 @@
                     $str = $str."'".$sid."', ";
                     $str = $str."'".$panel."'";
                     $sql = "INSERT INTO resultclass (rcid, cid, id, sid, panel) VALUES ($str)";
-                    $res = mysql_query($sql);
+                    $res = mysqli_query($link, $sql);
                 }
             }
 	    $now = time();
 	    $str = "refresh=$now";
 	    $sql = "UPDATE resultscreen SET $str WHERE rcid=$rcid AND sid=$sid";
-	    $res = mysql_query($sql);
+	    $res = mysqli_query($link, $sql);
         }
 
     }
@@ -319,8 +317,8 @@
             
             $chkall = isset($_GET['chkall']) ? $_GET['chkall'] : null;
             
-            $res = mysql_query("SELECT rcid FROM resultscreen WHERE rcid=$rcid AND sid=$sid");
-            if (mysql_num_rows($res) > 0)
+            $res = mysqli_query($link,  "SELECT rcid FROM resultscreen WHERE rcid=$rcid AND sid=$sid");
+            if (mysqli_num_rows($res) > 0)
             {
                 $now = time();
                 
@@ -361,7 +359,7 @@
                 $str = $str."refresh=$now ";
 
                 $sql = "UPDATE resultscreen SET $str WHERE rcid=$rcid AND sid=$sid";
-                $res = mysql_query($sql);
+                $res = mysqli_query($link, $sql);
             
                 //-------- check all management ---------
                 
@@ -412,9 +410,9 @@
                     } // for each
                     $str = rtrim($str,", ");
                     $sql = "UPDATE resultscreen SET $str WHERE rcid=$rcid";
-                    $res = mysql_query($sql);
+                    $res = mysqli_query($link, $sql);
                 }  // chk all != null
-            } // mysql_num_rows>0
+            } // mysqli_num_rows>0
         } //rcid and cid defined
     } // update
 
@@ -426,9 +424,9 @@
         $rcid = intval($_GET['rcid']);
     
         $sql = "SELECT sid,title FROM resultscreen WHERE rcid=$rcid";
-        $res = mysql_query($sql);
-        $n=mysql_num_rows($res);
-
+        $res = mysqli_query($link, $sql);
+        $n=mysqli_num_rows($res);
+	
         if ($n < NB_SCREEN)
         {
             if ($n<1)
@@ -437,15 +435,16 @@
             }
             for ($i=$n; $i<=NB_SCREEN; $i++)
             {
-                AddNewScreen($rcid,$i);    
+                AddNewScreen($rcid,$i,$link);
             }
         }
+	
         $tablecid=array();
 
         $sql = "SELECT * FROM resultscreen WHERE rcid=$rcid";
-        $res = mysql_query($sql);
-        $n=mysql_num_rows($res);
-        while ($r = mysql_fetch_array($res))
+        $res = mysqli_query($link, $sql);
+        $n=mysqli_num_rows($res);
+        while ($r = mysqli_fetch_array($res))
         {
             $sid=$r['sid'];
             $cid=$r['cid'];
@@ -470,12 +469,10 @@
               $panels[$i-1]->slides=$r['panel'.$i.'slides'];
               $panels[$i-1]->txt=stripslashes($r['panel'.$i.'txt']);
               $panels[$i-1]->html=$r['panel'.$i.'html'];
-              $panels[$i-1]->classes=GetClassesAndEntries($rcid, $cid, $sid,$i);
-              $panels[$i-1]->firstClass=GetFirstClass($rcid, $cid, $sid,$i);
+              $panels[$i-1]->classes=GetClassesAndEntries($rcid, $cid, $sid,$i,$link);
+              $panels[$i-1]->firstClass=GetFirstClass($rcid, $cid, $sid,$i,$link);
               $panels[$i-1]->radioctrl=$r['panel'.$i.'radioctrl'];
             }
-
-            
 
             print '<tr>';
             print '<td>'.$sid.'</td>';
@@ -484,13 +481,14 @@
             print '<td><img src="img/edit.png" title="'.MyGetText(1).'" onclick="EditScreen('.$rcid.','.$sid.');"></img></td>';
 
             $sqlcname = "SELECT name FROM mopcompetition WHERE cid=$cid";
-            $rescname = mysql_query($sqlcname);
+            $rescname = mysqli_query($link, $sqlcname);
 	          $cname = "";
-            if($rcname = mysql_fetch_array($rescname))
+            if($rcname = mysqli_fetch_array($rescname))
             {
               $cname=$rcname['name'];
             }
             $tablecid[$cid]=$cname;
+
             print "<td>$cname</td>\n";
             print "<td class='screen_title'>$title</td>\n";
             print "<td>$subtitle</td>\n";
@@ -565,14 +563,15 @@
         print "<br/>\n";
 
    //================================== display classes statistics ================================================
+
         foreach ($tablecid as $cid => $cname)
         {
             // determines number of entries
             $sql3 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid";
-            $res3 = mysql_query($sql3);
-            if (mysql_num_rows($res3) > 0)
+            $res3 = mysqli_query($link, $sql3);
+            if (mysqli_num_rows($res3) > 0)
             {
-              if ($r3 = mysql_fetch_array($res3))
+              if ($r3 = mysqli_fetch_array($res3))
               {
                 $totalentry=$r3[0];
               }
@@ -584,8 +583,8 @@
             print "<table border>\n";
 
             $sql = "SELECT name,id FROM mopclass WHERE mopclass.cid=$cid ORDER BY name";
-            $res = mysql_query($sql);
-            if (mysql_num_rows($res) > 0)
+            $res = mysqli_query($link, $sql);
+            if (mysqli_num_rows($res) > 0)
             {
                 print "<tr>\n";
                 print "<th>".MyGetText(44)."</th>\n"; // Classes
@@ -597,7 +596,7 @@
                 print "<th>&nbsp;</th>\n";
                 print "</tr>\n";
                 
-                while ($r = mysql_fetch_array($res)) // for all classes
+                while ($r = mysqli_fetch_array($res)) // for all classes
                 {
                     print "<tr>\n";
                     $classname=$r['name'];
@@ -614,10 +613,10 @@
                         $sql2 = $sql2."rc.rcid=$rcid AND ";
                         $sql2 = $sql2."rc.cid=$cid AND ";
                         $sql2 = $sql2."rc.id=$classid;";
-                    $res2 = mysql_query($sql2);
-                    if (mysql_num_rows($res2) > 0)
+                    $res2 = mysqli_query($link, $sql2);
+                    if (mysqli_num_rows($res2) > 0)
                     {
-                      while ($r2 = mysql_fetch_array($res2))
+                      while ($r2 = mysqli_fetch_array($res2))
                       {
                         $screen2=$r2['sid'];
                         $panel2=$r2['panel'];
@@ -668,10 +667,10 @@
                     $heuremax="00:00:00";
                     date_default_timezone_set('Europe/Paris');
                     $sql2 = "SELECT MIN(st),MAX(st) FROM mopcompetitor WHERE cid=$cid AND cls=$classid";
-                    $res2 = mysql_query($sql2);
-                    if (mysql_num_rows($res2) > 0)
+                    $res2 = mysqli_query($link, $sql2);
+                    if (mysqli_num_rows($res2) > 0)
                     {
-                        if ($r2 = mysql_fetch_array($res2))
+                        if ($r2 = mysqli_fetch_array($res2))
                         {
                           $s=$r2[0]/10;
                           $heuremin=date("H:i:s",$s);
@@ -687,10 +686,10 @@
                     //--Entries
                     $nentry=0;
                     $sql2 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid AND cls=$classid";
-                    $res2 = mysql_query($sql2);
-                    if (mysql_num_rows($res2) > 0)
+                    $res2 = mysqli_query($link, $sql2);
+                    if (mysqli_num_rows($res2) > 0)
                     {
-                        if ($r2 = mysql_fetch_array($res2))
+                        if ($r2 = mysqli_fetch_array($res2))
                         {
                           $nentry=$r2[0];
                         }
@@ -702,10 +701,10 @@
                     //-- Done
                     $n=0;
                     $sql2 = "SELECT COUNT(*) FROM mopcompetitor WHERE cid=$cid AND cls=$classid AND stat>0";
-                    $res2 = mysql_query($sql2);
-                    if (mysql_num_rows($res2) > 0)
+                    $res2 = mysqli_query($link, $sql2);
+                    if (mysqli_num_rows($res2) > 0)
                     {
-                        if ($r2 = mysql_fetch_array($res2))
+                        if ($r2 = mysqli_fetch_array($res2))
                         {
                           $ndone=$r2[0];
                         }

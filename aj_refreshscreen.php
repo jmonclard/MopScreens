@@ -25,7 +25,7 @@
   header('Content-type: text/html;charset=utf-8');
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
 	
 	$rcid = ((isset($_GET['rcid'])) ? intval($_GET['rcid']) : 0);
 	$out = array();
@@ -34,11 +34,11 @@
 	if($rcid > 0)
 	{
 		$sql = 'SELECT panel1lastrefresh, panel1lastredraw, panel2lastrefresh, panel2lastredraw, panel3lastrefresh, panel3lastredraw, panel4lastrefresh, panel4lastredraw FROM resultscreen WHERE rcid='.$rcid.' ORDER BY sid ASC';
-		$res = mysql_query($sql) or exit;
-		$num = mysql_num_rows($res);
+		$res = mysqli_query($link, $sql) or exit;
+		$num = mysqli_num_rows($res);
 		if($num)
 		{
-			while($current = mysql_fetch_assoc($res))
+			while($current = mysqli_fetch_assoc($res))
 			{
 				$out[] = $current['panel1lastrefresh']; // max($current['panel1lastrefresh'], $current['panel2lastrefresh'], $current['panel3lastrefresh'], $current['panel4lastrefresh']);
 				$out[] = $current['panel1lastredraw']; // max($current['panel1lastredraw'], $current['panel2lastredraw'], $current['panel3lastredraw'], $current['panel4lastredraw']);

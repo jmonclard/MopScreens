@@ -14,7 +14,7 @@
   
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
   
   if(isset($_GET['action']))
   {
@@ -23,7 +23,7 @@
     {
       case 'clear':
         $sql = 'TRUNCATE resultradio';
-        mysql_query($sql);
+        mysqli_query($link, $sql);
         header('location: screenconfig.php');
       break;
       default:
@@ -44,5 +44,5 @@
     $status = intval($_GET['status']);
     
     $sql = 'INSERT INTO resultradio (idsender, idreceiver, senderbattery, rxlevel, status) VALUES ('.$idsender.', '.$idreceiver.', '.$senderbattery.', '.$rxlevel.', '.$status.')';
-    mysql_query($sql);
+    mysqli_query($link, $sql);
   }

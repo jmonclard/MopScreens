@@ -29,7 +29,7 @@
 
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
 
   if(isset($_GET['action']))
   {
@@ -38,7 +38,7 @@
     {
       case 'clear':
         $sql = 'TRUNCATE resultradio';
-        mysql_query($sql);
+        mysqli_query($link, $sql);
         header('Location: screenradiodisplay.php');
         exit;
       break;
@@ -74,22 +74,21 @@
   //var positionInfo = [];
 <?php
 
-
   $arr_radio = array();
   $radioconfig = array();
   $srcmap = '';
   $sizeX = 1000;
   $sizeY = 1000;
   $sql = 'SELECT * FROM resultradioconfig WHERE active=1';
-  $res = mysql_query($sql);
-  if(1 == mysql_num_rows($res))
+  $res = mysqli_query($link, $sql);
+  if(1 == mysqli_num_rows($res))
   {
-    $radioconfig = mysql_fetch_array($res);
+    $radioconfig = mysqli_fetch_array($res);
     $sql = 'SELECT * FROM resultradioposition WHERE srcid='.$radioconfig['srcid'].' ORDER BY radioid ASC';
-    $res = mysql_query($sql);
-    if(mysql_num_rows($res))
+    $res = mysqli_query($link, $sql);
+    if(mysqli_num_rows($res))
     {
-      while ($r = mysql_fetch_array($res))
+      while ($r = mysqli_fetch_array($res))
       {
         $arr_radio[] = '['.$r['radioid'].','.$r['radiox'].','.$r['radioy'].', 0]';
       }
@@ -769,7 +768,6 @@ function getPositionById(id)
             refX='0.1' refY='2'>
       <path d='M0,0 V4 L2,2 Z' fill='red' />
     </marker>
-
   </defs>
   <g id="background">
     <image xlink:href="<?php echo $srcmap; ?>" x="0" y="0" width="100%" height="100%"/>

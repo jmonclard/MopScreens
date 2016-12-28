@@ -43,18 +43,19 @@
 
 	/** Connecto to MySQL */
 	function ConnectToDB() {
-	  $link = mysql_connect(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD);
+	  $link =  mysqli_connect( mysqli_HOSTNAME,  mysqli_USERNAME,  mysqli_PASSWORD);
 	  if (!$link) {
-		die('Not connected : ' . mysql_error());
+		die('Not connected : ' .  mysqli_error());
 	  }
 
-	  $db_selected = mysql_select_db(MYSQL_DBNAME, $link);
+	  $db_selected =  mysqli_select_db( mysqli_DBNAME, $link);
 	  if (!$db_selected) {
-		die ("Can't use ". MYSQL_HOSTNAME. ' : ' . mysql_error());
+		die ("Can't use ".  mysqli_HOSTNAME. ' : ' .  mysqli_error());
 	  }    
 	  return $link;
 	}
 
+	$link = ConnectToDB();
 
 	/** Remove all data from a table related to an event. */
   $action = isset($_GET['action']) ? strval($_GET['action']) : "";
@@ -70,7 +71,7 @@
   			foreach($tables as $table)
   			{
   				$sql = "DELETE FROM $table WHERE cid=$cid";
-  				mysql_query($sql);
+  				 mysqli_query($link , $sql);
   			} 
   		}
   	
@@ -87,10 +88,10 @@
   print "</tr>\n";
 	ConnectToDB();
   $sql = "SELECT * FROM mopcompetition ORDER BY cid";
-  $res = mysql_query($sql);
-  //if (mysql_num_rows($res) > 0)
+  $res =  mysqli_query($link , $sql);
+  //if ( mysqli_num_rows($res) > 0)
   //{
-      while ($r = mysql_fetch_array($res))
+      while ($r =  mysqli_fetch_array($res))
       {
           $cid=$r['cid'];
           $name=$r['name'];

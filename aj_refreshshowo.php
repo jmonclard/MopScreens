@@ -25,7 +25,7 @@
   header('Content-type: text/html;charset=utf-8');
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
 
   $SERVER_JSON_IP_ADDRESSES = array();
   // Catégories et ip pour les sélections
@@ -50,14 +50,14 @@
   
   
   $sql = 'UPDATE resultscreen SET panel1lastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
-  mysql_query($sql);
+  mysqli_query($link, $sql);
 
   $sql = 'SELECT name FROM mopclass WHERE cid ='.$cmpId.' AND id='.$cls;
-  $res = mysql_query($sql);
+  $res = mysqli_query($link, $sql);
   $course = "";
-  if(mysql_num_rows($res) > 0)
+  if(mysqli_num_rows($res) > 0)
   {
-    $r = mysql_fetch_array($res);
+    $r = mysqli_fetch_array($res);
     $course = $r['name'];
   }
 
@@ -418,11 +418,11 @@ function formatShowOResults($showo_out, $limit = 99999)
 }
 
   $sql = 'SELECT panel1tm_count FROM resultscreen WHERE rcid='.$rcid.' AND sid='.$sid;
-  $res = mysql_query($sql);
+  $res = mysqli_query($link, $sql);
   $selectioncount = 0;
-  if(mysql_num_rows($res) > 0)
+  if(mysqli_num_rows($res) > 0)
   {
-    $r = mysql_fetch_array($res);
+    $r = mysqli_fetch_array($res);
     $selectioncount = $r['panel1tm_count'];
   }
 

@@ -18,17 +18,18 @@
 include_once("config.php");
 //include_once('lang.php');
 
+$link = ConnectToDB();
 
 /** Connecto to MySQL */
 function ConnectToDB() {
-  $link = mysql_connect(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD);
+  $link = mysqli_connect(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD);
   if (!$link) {
-    die('Not connected : ' . mysql_error());
+    die('Not connected : ' . mysqli_error($link));
   }
 
-  $db_selected = mysql_select_db(MYSQL_DBNAME, $link);
+  $db_selected = mysqli_select_db($link, MYSQL_DBNAME);
   if (!$db_selected) {
-    die ("Can't use ". MYSQL_HOSTNAME. ' : ' . mysql_error());
+    die ("Can't use ". MYSQL_HOSTNAME. ' : ' . mysqli_error($link));
   }
   return $link;
 }
@@ -45,20 +46,21 @@ function redirectSwitchUsers()
 }
 
 function query($sql) {
- $result = mysql_query($sql);
+$link = ConnectToDB();
+ $result = mysqli_query($link, $sql);
  if (!$result) {
-   die('Invalid query: ' . mysql_error());
+   die('Invalid query: ' . mysqli_error($link));
  }
  return $result;
 }
 
 /**
- * Détection automatique de la langue du navigateur
- * Les codes langues du tableau $aLanguages doivent obligatoirement être sur 2 caractères
+ * DÃ©tection automatique de la langue du navigateur
+ * Les codes langues du tableau $aLanguages doivent obligatoirement Ãªtre sur 2 caractÃ¨res
  * Utilisation : $langue = autoSelectLanguage(array('fr','en','es','it','de','cn'), 'en')
  * @param array $aLanguages Tableau 1D des langues du site disponibles (ex: array('fr','en','es','it','de','cn')).
- * @param string $sDefault Langue à choisir par défaut si aucune n'est trouvée
- * @return string La langue du navigateur ou bien la langue par défaut
+ * @param string $sDefault Langue Ã  choisir par dÃ©faut si aucune n'est trouvÃ©e
+ * @return string La langue du navigateur ou bien la langue par dÃ©faut
  * @author Hugo Hamon
  * @version 0.1
  */
@@ -135,7 +137,7 @@ function calculateResult($res, $nb_radio = 4)
   $totalResult = array();
   $hasTotal = false;
 
-  while ($r = mysql_fetch_array($res))
+  while ($r = mysqli_fetch_array($res))
   {
     if ($lastTeam == $r['id'])
     {
@@ -251,7 +253,7 @@ function addRadioResult($res, $results)
 
   $out = $results;
 
-  while ($r = mysql_fetch_array($res))
+  while ($r = mysqli_fetch_array($res))
   {
     $key = array_search($r['id'], $global_out);
     $key_radio = array_search($r['ctrl'], $arr_radio);
@@ -503,7 +505,6 @@ function formatResultScreen($result, $limit = 9999)
   global $lang;
   
   $head = true;
-
   print '[';
   $i = 0;
   foreach($result as $row)
@@ -988,16 +989,16 @@ function selectRadio($cls) {
          "WHERE mopcontrol.cid='$cmpId' AND mopclasscontrol.cid='$cmpId' ".
          "AND mopclasscontrol.id='$cls' AND mopclasscontrol.ctrl=mopcontrol.id ORDER BY leg ASC, ord ASC";
 
-
-  $res = mysql_query($sql);
-  $radios = mysql_num_rows($res);
+  $link = ConnectToDB();
+  $res = mysqli_query($link, $sql);
+  $radios = mysqli_num_rows($res);
 
   if ($radios > 0) {
     if (isset($_GET['radio'])) {
       $radio = $_GET['radio'];
     }
 
-    while ($r = mysql_fetch_array($res)) {
+    while ($r = mysqli_fetch_array($res)) {
       print '<a href="'."$PHP_SELF?cls=$cls&radio=$r[ctrl]".'">'.$r['name']."</a><br/>\n";
     }
     print '<a href="'."$PHP_SELF?cls=$cls&radio=finish".'">'.'Finish'."</a><br/>\n";
@@ -1016,13 +1017,13 @@ function selectLegRadio($cls, $leg, $ord) {
          "WHERE mopcontrol.cid='$cmpId' AND mopclasscontrol.cid='$cmpId' ".
          "AND mopclasscontrol.id='$cls' AND mopclasscontrol.ctrl=mopcontrol.id AND leg='$leg' AND ord='$ord'";
 
-
-  $res = mysql_query($sql);
-  $radios = mysql_num_rows($res);
+   $link = ConnectToDB();
+  $res = mysqli_query($link, $sql);
+  $radios = mysqli_num_rows($res);
   //print $sql;
   if ($radios > 0) {
 
-    while ($r = mysql_fetch_array($res)) {
+    while ($r = mysqli_fetch_array($res)) {
       print '<a href="'."$PHP_SELF?cls=$cls&leg=$leg&ord=$ord&radio=$r[ctrl]".'">'.$r['name']."</a>; \n";
     }
 
@@ -1037,10 +1038,11 @@ function selectLegRadio($cls, $leg, $ord) {
 
 /** Update or add a record to a table. */
 function updateTable($table, $cid, $id, $sqlupdate) {
+  $link = ConnectToDB();
   $ifc = "cid='$cid' AND id='$id'";
-  $res = mysql_query("SELECT id FROM `$table` WHERE $ifc");
+  $res = mysqli_query($link, "SELECT id FROM `$table` WHERE $ifc");
 
-  if (mysql_num_rows($res) > 0) {
+  if (mysqli_num_rows($res) > 0) {
     $sql = "UPDATE `$table` SET $sqlupdate WHERE $ifc";
   }
   else {
@@ -1048,13 +1050,14 @@ function updateTable($table, $cid, $id, $sqlupdate) {
   }
 
   //print "$sql\n";
-  mysql_query($sql);
+  mysqli_query($link, $sql);
 }
 
 /** Update a link with outer level over legs and other level over fieldName (controls, team members etc)*/
 function updateLinkTable($table, $cid, $id, $fieldName, $encoded) {
   $sql = "DELETE FROM $table WHERE cid='$cid' AND id='$id'";
-  mysql_query($sql);
+  $link = ConnectToDB();
+  mysqli_query($link, $sql);
   $legNumber = 1;
   $legs = explode(";", $encoded);
   foreach($legs as $leg) {
@@ -1062,7 +1065,7 @@ function updateLinkTable($table, $cid, $id, $fieldName, $encoded) {
     foreach($runners as $key => $runner) {
       $sql = "INSERT INTO $table SET cid='$cid', id='$id', leg=$legNumber, ord=$key, $fieldName=$runner";
       //print "$sql \n";
-      mysql_query($sql);
+      mysqli_query($link, $sql);
     }
     $legNumber++;
   }
@@ -1075,21 +1078,23 @@ function clearCompetition($cid) {
    // The table "resultclass" has been removed by JM from the list on 2015-09-09 in order to keep the classes selection when the MeOS service is restarted
    // may have side effects if some changes are made in MeOS classes for the competition, or if the cid is reused.
    // Well, wait and see...
+   $link = ConnectToDB();
    $tables = array(0=>"mopcontrol", "mopclass", "moporganization", "mopcompetition", "mopcompetitor",
                       "mopteam", "mopteammember", "mopclasscontrol", "mopradio");
 
    foreach($tables as $table) {
      $sql = "DELETE FROM $table WHERE cid=$cid";
-     mysql_query($sql);
+     mysqli_query($link, $sql);
    }
 }
 
 /** Update control table */
 function processCompetition($cid, $cmp) {
-  $name = mysql_real_escape_string($cmp);
-  $date = mysql_real_escape_string($cmp['date']);
-  $organizer = mysql_real_escape_string($cmp['organizer']);
-  $homepage = mysql_real_escape_string($cmp['homepage']);
+  $link = ConnectToDB();
+  $name = mysqli_real_escape_string($link, $cmp);
+  $date = mysqli_real_escape_string($link, $cmp['date']);
+  $organizer = mysqli_real_escape_string($link, $cmp['organizer']);
+  $homepage = mysqli_real_escape_string($link, $cmp['homepage']);
 
   $sqlupdate = "name='$name', date='$date', organizer='$organizer', homepage='$homepage'";
   updateTable("mopcompetition", $cid, 1, $sqlupdate);
@@ -1097,40 +1102,44 @@ function processCompetition($cid, $cmp) {
 
 /** Update control table */
 function processControl($cid, $ctrl) {
-  $id = mysql_real_escape_string($ctrl['id']);
-  $name = mysql_real_escape_string($ctrl);
+  $link = ConnectToDB();
+  $id = mysqli_real_escape_string($link, $ctrl['id']);
+  $name = mysqli_real_escape_string($link, $ctrl);
   $sqlupdate = "name='$name'";
   updateTable("mopcontrol", $cid, $id, $sqlupdate);
 }
 
 /** Update class table */
 function processClass($cid, $cls) {
-  $id = mysql_real_escape_string($cls['id']);
-  $ord = mysql_real_escape_string($cls['ord']);
-  $name = mysql_real_escape_string($cls);
+  $link = ConnectToDB();
+  $id = mysqli_real_escape_string($link , $cls['id']);
+  $ord = mysqli_real_escape_string($link , $cls['ord']);
+  $name = mysqli_real_escape_string($link , $cls);
   $sqlupdate = "name='$name', ord='$ord'";
   updateTable("mopclass", $cid, $id, $sqlupdate);
 
   if (isset($cls['radio'])) {
-    $radio = mysql_real_escape_string($cls['radio']);
+    $radio = mysqli_real_escape_string($link , $cls['radio']);
     updateLinkTable("mopclasscontrol", $cid, $id, "ctrl", $radio);
   }
 }
 
 /** Update organization table */
 function processOrganization($cid, $org) {
-  $id = mysql_real_escape_string($org['id']);
-  $name = mysql_real_escape_string($org);
+  $link = ConnectToDB();
+  $id = mysqli_real_escape_string($link , $org['id']);
+  $name = mysqli_real_escape_string($link , $org);
   $sqlupdate = "name='$name'";
   updateTable("moporganization", $cid, $id, $sqlupdate);
 }
 
 /** Update competitor table */
 function processCompetitor($cid, $cmp) {
+  $link = ConnectToDB();
   $base = $cmp->base;
-  $id = mysql_real_escape_string($cmp['id']);
+  $id = mysqli_real_escape_string($link, $cmp['id']);
 
-  $name = mysql_real_escape_string($base);
+  $name = mysqli_real_escape_string($link, $base);
   $org = (int)$base['org'];
   $cls = (int)$base['cls'];
   $stat = (int)$base['stat'];
@@ -1173,16 +1182,16 @@ function processCompetitor($cid, $cmp) {
       $radioId = (int)$tmp[0];
       $radioTime = (int)$tmp[1];
       $sql = "SELECT 1 FROM mopradio WHERE cid='$cid' AND id='$id' AND ctrl='$radioId'";
-      $res = mysql_query($sql);
-      if(mysql_num_rows($res))
+      $res = mysqli_query($link, $sql);
+      if(mysqli_num_rows($res))
       {
         $sql = "UPDATE mopradio SET rt='$radioTime' WHERE cid='$cid' AND id='$id' AND ctrl='$radioId'";
-        mysql_query($sql);
+        mysqli_query($link, $sql);
       }
       else
       {
         $sql = "INSERT INTO mopradio SET cid='$cid', id='$id', ctrl='$radioId', rt='$radioTime', timestamp=$now";
-        mysql_query($sql);
+        mysqli_query($link, $sql);
       }
     }
   }
@@ -1190,10 +1199,11 @@ function processCompetitor($cid, $cmp) {
 
 /** Update team table */
 function processTeam($cid, $team) {
+  $link = ConnectToDB();
   $base = $team->base;
-  $id = mysql_real_escape_string($team['id']);
+  $id = mysqli_real_escape_string($link, $team['id']);
 
-  $name = mysql_real_escape_string($base);
+  $name = mysqli_real_escape_string($link, $base);
   $org = (int)$base['org'];
   $cls = (int)$base['cls'];
   $stat = (int)$base['stat'];
@@ -1350,16 +1360,17 @@ function displayContentPicture($picture, $panel, $panelcount)
 
 function displayContentBlog($rcid, $nlines, $highlight, $panel)
 {
+  $link = ConnectToDB();
   $content = '';
   $highlight_s = $highlight * 60; 
   $sql = 'SELECT * FROM resultblog WHERE rcid='.$rcid.' ORDER BY timestamp DESC LIMIT '.$nlines;
-  $res = mysql_query($sql);
+  $res = mysqli_query($link, $sql);
   $content .= '<ul class="blogview" id="bloglist'.$panel.'">';
-  if(mysql_num_rows($res))
+  if(mysqli_num_rows($res))
   {
     $now = time();
     $arr_data = array();
-    while($r = mysql_fetch_assoc($res))
+    while($r = mysqli_fetch_assoc($res))
     {
       $mytimestamp = strtotime($r['timestamp']);
       $mytext = '';
@@ -1387,16 +1398,17 @@ function displayContentBlog($rcid, $nlines, $highlight, $panel)
 
 function displayContentRadio($rcid, $nlines, $highlight, $panel)
 {
+  $link = ConnectToDB();
   $content = '';
   $highlight_s = $highlight * 60; 
   //$sql = 'SELECT * FROM resultblog WHERE rcid='.$rcid.' ORDER BY timestamp DESC LIMIT '.$nlines;
-  //$res = mysql_query($sql);
+  //$res = mysqli_query($link, $sql);
   $content .= '<table class="radioview" cellspacing="0" cellpadding="0" id="radiolist'.$panel.'">';
-  /*if(mysql_num_rows($res))
+  /*if(mysqli_num_rows($res))
   {
     $now = time();
     $arr_data = array();
-    while($r = mysql_fetch_assoc($res))
+    while($r = mysqli_fetch_assoc($res))
     {
       $mytimestamp = strtotime($r['timestamp']);
       $mytext = '';
@@ -1427,6 +1439,7 @@ function displayTopPicture($picture, $hauteur)
     $retour = '';
     $arr_img = getimagesize ('pictures/'.$picture);
     $height_txt = '';
+    $maxheight_txt = '';
     if($arr_img[1] > $hauteur)
     {
         $height_txt = 'height="'.$hauteur.'px"';
@@ -1458,7 +1471,7 @@ function calculeStart($res) {
   $lastTeam = -1;
   $totalResult = array();
   $hasTotal = false;
-  while ($r = mysql_fetch_array($res)) {
+  while ($r = mysqli_fetch_array($res)) {
     if ($lastTeam == $r['id']) {
       $out[$count]['name'] .= " / " . $r['name'];
       continue;

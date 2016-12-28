@@ -153,7 +153,7 @@
 
   
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
 
   $rcid = isset($_GET['rcid']) ? intval($_GET['rcid']) : 0;
   $cid = isset($_GET['cid']) ? intval($_GET['cid']) : 0;
@@ -165,10 +165,10 @@
     // list of classes for this competition
     $availableclasslist= array();
     $sql = "SELECT id,name,ord FROM mopclass WHERE cid=$cid ORDER BY ord";
-    $res = mysql_query($sql);
-    if (mysql_num_rows($res) > 0)
+    $res = mysqli_query($link, $sql);
+    if (mysqli_num_rows($res) > 0)
     {
-      while($r = mysql_fetch_array($res))
+      while($r = mysqli_fetch_array($res))
       {
         $idtmp = $r['id'];
         $nametmp = $r['name'];
@@ -177,10 +177,10 @@
 
       $takenclasslist= array();
       $sqltmp = "SELECT resultclass.id, name, ord FROM resultclass, mopclass WHERE mopclass.cid=resultclass.cid AND mopclass.id=resultclass.id AND mopclass.cid=$cid AND resultclass.rcid=$rcid AND resultclass.panel=$panel AND resultclass.sid=$sid ORDER BY ord";
-      $restmp = mysql_query($sqltmp);
-      if (mysql_num_rows($restmp) > 0)
+      $restmp = mysqli_query($link, $sqltmp);
+      if (mysqli_num_rows($restmp) > 0)
       {
-        while ($rtmp = mysql_fetch_array($restmp))
+        while ($rtmp = mysqli_fetch_array($restmp))
         {
           $nametmp=$rtmp['name'];
           $idtmp=$rtmp['id'];

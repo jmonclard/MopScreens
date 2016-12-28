@@ -100,7 +100,7 @@
     
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
-    ConnectToDB();
+    $link = ConnectToDB();
 
     
     $action = isset($_GET['action']) ? strval($_GET['action']) : "";
@@ -148,15 +148,15 @@
             $rcid = intval($_GET['rcid']);
             $newname = urldecode(isset($_GET['configname']) ? $_GET['configname'] : "no name");
 
-            $res = mysql_query("SELECT rcid FROM resultconfig WHERE rcid=$rcid");
+            $res = mysqli_query($link , "SELECT rcid FROM resultconfig WHERE rcid=$rcid");
 
-            if (mysql_num_rows($res) > 0)
+            if (mysqli_num_rows($res) > 0)
             {
                 $sql = "UPDATE resultconfig SET name='$newname' WHERE rcid=$rcid";
-                $res = mysql_query($sql);
+                $res = mysqli_query($link , $sql);
             }
         }
-        mysql_query($sql);
+        mysqli_query($link , $sql);
   
     }
 
@@ -179,13 +179,13 @@
         {
             $rcid = intval($_GET['rcid']);
 
-            $res = mysql_query("SELECT rcid FROM resultconfig WHERE rcid=$rcid");
-            if (mysql_num_rows($res) > 0)
+            $res = mysqli_query($link , "SELECT rcid FROM resultconfig WHERE rcid=$rcid");
+            if (mysqli_num_rows($res) > 0)
             {
                 $sql = "UPDATE resultconfig SET active=0";
-                $res = mysql_query($sql);
+                $res = mysqli_query($link , $sql);
                 $sql = "UPDATE resultconfig SET active=1 WHERE rcid=$rcid";
-                $res = mysql_query($sql);
+                $res = mysqli_query($link , $sql);
             }
         }
     }
@@ -201,7 +201,7 @@
         foreach($tables as $table)
         {
           $sql = "DELETE FROM $table WHERE cid=$cid";
-          mysql_query($sql);
+          mysqli_query($link , $sql);
         } 
       }
     }
@@ -211,11 +211,11 @@
     //-- Determine next available rcid for add or clone operations
     
     $sql = "SELECT rcid FROM resultconfig";
-    $res = mysql_query($sql);
+    $res = mysqli_query($link , $sql);
     $nextrcid=1;
-    if (mysql_num_rows($res) > 0)
+    if (mysqli_num_rows($res) > 0)
     {
-        while ($r = mysql_fetch_array($res))
+        while ($r = mysqli_fetch_array($res))
         {
             $rcid=$r['rcid'];
             if ($rcid>=$nextrcid)
@@ -231,10 +231,10 @@
     print "</tr>";
 	
     $sql = "SELECT * FROM resultconfig";
-    $res = mysql_query($sql);
-    if (mysql_num_rows($res) > 0)
+    $res = mysqli_query($link , $sql);
+    if (mysqli_num_rows($res) > 0)
     {
-      while ($r = mysql_fetch_array($res))
+      while ($r = mysqli_fetch_array($res))
       {
         $rcid=$r['rcid'];
         $name=$r['name'];
@@ -253,7 +253,7 @@
         }
         print "<td><img src='img/rename.png' title='".MyGetText(4)."' onclick='EditConfig($rcid);'></img></td>\n";
         print "<td><img src='img/clone.png' title='".MyGetText(5)."' onclick='CloneConfig(\"".MyGetText(13)."\",$rcid,$nextrcid);'></img></td>\n";
-        print "<td><img src='img/suppr.png' title='".MyGetText(6)."' onclick='DelConfig(\"".MyGetText(14)."\",$rcid,\"$rcname\");'></img></td>\n";
+        print "<td><img src='img/suppr.png' title='".MyGetText(6)."' onclick='DelConfig(\"".MyGetText(14)."\",$rcid,\"$name\");'></img></td>\n";
         print "</tr>\n";
       } 
     }
@@ -272,10 +272,10 @@
     print "</tr>\n";
 	
     $sql = "SELECT * FROM mopcompetition ORDER BY cid";
-    $res = mysql_query($sql);
-    if (mysql_num_rows($res) > 0)
+    $res = mysqli_query($link , $sql);
+    if (mysqli_num_rows($res) > 0)
     {
-      while ($r = mysql_fetch_array($res))
+      while ($r = mysqli_fetch_array($res))
       {
         $cid=$r['cid'];
         $name=$r['name'];

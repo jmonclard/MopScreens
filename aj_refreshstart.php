@@ -23,7 +23,7 @@
     header('Content-type: text/html;charset=utf-8');
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
-    ConnectToDB();
+    $link = ConnectToDB();
 
     $cls = ((isset($_GET['cls'])) ? $_GET['cls'] : "0");
     $cmpId = ((isset($_GET['cmpId'])) ? $_GET['cmpId'] : "0");
@@ -34,15 +34,15 @@
     $rcid = ((isset($_GET['rcid'])) ? $_GET['rcid'] : "0");
     $sid = ((isset($_GET['sid'])) ? $_GET['sid'] : "0");
     $sql = 'UPDATE resultscreen SET panel1lastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
-    mysql_query($sql);
+    mysqli_query($sql);
   
   date_default_timezone_set('Europe/Paris');
   if ($numlegs > 1) {
     for ($k = 1; $k <= $numlegs; $k++) {
       $sql = "SELECT max(ord) FROM mopteammember tm, mopteam t WHERE t.cls = '$cls' AND tm.leg=$k AND ".
               "tm.cid = '$cmpId' AND t.cid = '$cmpId' AND tm.id = t.id";
-      $res = mysql_query($sql);
-      $r = mysql_fetch_array($res);
+      $res = mysqli_query($sql);
+      $r = mysqli_fetch_array($res);
       $numparallel = $r[0];
       
       if ($numparallel == 0) {
@@ -69,8 +69,8 @@
       else {
         $rid = (int)$radio;
         $sql = "SELECT name FROM mopcontrol WHERE cid='$cmpId' AND id='$rid'";
-        $res = mysql_query($sql);
-        $rinfo = mysql_fetch_array($res);
+        $res = mysqli_query($sql);
+        $rinfo = mysqli_fetch_array($res);
         $rname = $rinfo['name'];
    
         $sql = "SELECT team.id AS id, cmp.name AS name, team.name AS team, radio.rt AS time, 1 AS status, ".
@@ -97,9 +97,9 @@
                  "ORDER BY cmp.name ASC, cmp.st ASC, radio.rt ASC ";
         }
 
-        $res = mysql_query($sql);
+        $res = mysqli_query($sql);
         $results = calculeStart($res);
-        $res2 = mysql_query($sql2);
+        $res2 = mysqli_query($sql2);
         $results2 = calculeStart($res2);
         $results3 = null;
         foreach($results as $i => $v)
@@ -128,8 +128,8 @@
         else {
           $rid = (int)$radio;
           $sql = "SELECT name FROM mopcontrol WHERE cid='$cmpId' AND id='$rid'";
-          $res = mysql_query($sql);
-          $rinfo = mysql_fetch_array($res);
+          $res = mysqli_query($sql);
+          $rinfo = mysqli_fetch_array($res);
           $rname = $rinfo['name'];
                     
           $sql = "SELECT cmp.id AS id, cmp.name AS name, cmp.st, org.name AS team, radio.rt AS time, 1 AS status ".
@@ -149,9 +149,9 @@
                  "AND cmp.cid = '$cmpId' AND radio.cid = '$cmpId' ".
                  "ORDER BY cmp.name ASC, cmp.st ASC, radio.st ASC ";
         }
-        $res = mysql_query($sql);
+        $res = mysqli_query($sql);
         $results = calculeStart($res);
-        $res2 = mysql_query($sql2);
+        $res2 = mysqli_query($sql2);
         $results2 = calculeStart($res2);  
         
         $results3 = null;
@@ -181,8 +181,8 @@
        else {
          $rid = (int)$radio;
          $sql = "SELECT name FROM mopcontrol WHERE cid='$cmpId' AND id='$rid'";
-         $res = mysql_query($sql);
-         $rinfo = mysql_fetch_array($res);
+         $res = mysqli_query($sql);
+         $rinfo = mysqli_fetch_array($res);
          $rname = $rinfo['name'];
                     
          $sql = "SELECT team.id AS id, cmp.name AS name, cmp.st, team.name AS team, radio.rt AS time, 1 AS status ".
@@ -207,9 +207,9 @@
                  "ORDER BY cmp.name ASC, cmp.st ASC, radio.rt ASC ";
        }
                 
-       $res = mysql_query($sql);
+       $res = mysqli_query($sql);
        $results = calculeStart($res);
-	   $res2 = mysql_query($sql2);
+	   $res2 = mysqli_query($sql2);
        $results2 = calculeStart($res2);         
        $results3 = null;
         foreach($results as $i => $v)

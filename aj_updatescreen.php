@@ -25,7 +25,7 @@
   header('Content-type: text/html;charset=utf-8');
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
 	
 	$rcid = ((isset($_GET['rcid'])) ? intval($_GET['rcid']) : 0);
   $sid = ((isset($_GET['sid'])) ? intval($_GET['sid']) : 0);
@@ -35,7 +35,7 @@
     $now = time();
     $str = "refresh=$now";
     $sql = "UPDATE resultscreen SET $str WHERE rcid=$rcid AND sid=$sid";
-    $res = mysql_query($sql);
+    $res = mysqli_query($link, $sql);
     echo 'OK';
 	}
   else

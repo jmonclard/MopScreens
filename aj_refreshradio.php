@@ -25,7 +25,7 @@
   header('Content-type: text/html;charset=utf-8');
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+  $link = ConnectToDB();
   date_default_timezone_set('Europe/Paris');
 	
 	$rcid = ((isset($_GET['rcid'])) ? intval($_GET['rcid']) : 0);
@@ -40,7 +40,7 @@
 	$now = time();
   
   $sql = 'UPDATE resultscreen SET panel1lastrefresh='.$now.' WHERE rcid='.$rcid.' AND sid='.$sid;
-  mysql_query($sql);
+  mysqli_query($link, $sql);
   
   if(($mode != CST_MODE_INDIVIDUAL) && ($mode != CST_MODE_RELAY))
   {
@@ -59,11 +59,11 @@
     {
       $sql = 'SELECT mr.*, mc.name, mo.name AS orgname FROM mopradio AS mr INNER JOIN mopcompetitor AS mc ON mc.cid=mr.cid AND mr.id=mc.id INNER JOIN moporganization AS mo ON mo.cid=mc.cid AND mo.id=mc.org WHERE mc.cls='.$cls.' AND mr.cid='.$cmpId.' AND mr.ctrl='.$radioid.' ORDER BY mr.timestamp DESC LIMIT '.$limit;
     }
-		$res = mysql_query($sql) or exit;
-		$num = mysql_num_rows($res);
+		$res = mysqli_query($link, $sql) or exit;
+		$num = mysqli_num_rows($res);
 		if($num)
 		{
-			while($current = mysql_fetch_assoc($res))
+			while($current = mysqli_fetch_assoc($res))
 			{
         //print_r($current);
         $mytimestamp = ($now - $current['timestamp']);
