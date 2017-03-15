@@ -87,7 +87,7 @@
                "AND tm.leg='$leg' AND tm.ord='$ord' ORDER BY t.stat ASC, cmp.rt ASC, t.id";
         $rname = "Finish";
         $res = mysqli_query($link, $sql);
-        $results = calculateResult($res, $nb_radio);
+        $results = newCalculateResult($res, $nb_radio);
       }
       /*else*/
         if($arr_radio != null)
@@ -126,7 +126,7 @@
             $rname = "Finish";
           
             $res = mysqli_query($link, $sql);
-            $results = calculateResult($res, $nb_radio);
+            $results = newCalculateResult($res, $nb_radio);
             
         }
         /*else*/
@@ -163,7 +163,7 @@
             $rname = "Finish";
            
             $res = mysqli_query($link, $sql);
-            $results = calculateResult($res, $nb_radio);
+            $results = newCalculateResult($res, $nb_radio);
          }
        /*else*/
         if($arr_radio != null)

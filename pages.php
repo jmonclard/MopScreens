@@ -217,10 +217,10 @@
       switch($panelscount)
       {
         case 1:
-          echo '15';
+          echo CST_NBRADIO_ONEPANEL;
         break;
         default:
-          echo '4';
+          echo CST_NBRADIO_PANELS;
         break;
       }
       ?>;
@@ -259,25 +259,25 @@
   defineVariable("tm_count", $panels[0]->tm_count);
 ?>
         tm_count = parseInt(tm_count, 10);
-        var inc = 0;
-        for(inc=0;inc<<?php echo NB_PANEL; ?>;inc++)
+        var panel = 0;
+        for(panel=0;panel<<?php echo NB_PANEL; ?>;panel++)
         {
-          phpmode[inc] = parseInt(phpmode[inc], 10);
-          phpfirstline[inc] = parseInt(phpfirstline[inc], 10);
-          phpscrolledlines[inc] = parseInt(phpscrolledlines[inc], 10);
-          phpfixedlines[inc] = parseInt(phpfixedlines[inc], 10);
-          phpscrolltime[inc] = parseInt(phpscrolltime[inc], 10);
-          phpscrollbeforetime[inc] = parseInt(phpscrollbeforetime[inc], 10);
-          phpscrollaftertime[inc] = parseInt(phpscrollaftertime[inc], 10);
-          if(phpscrolltime[inc] <= 0)
-            phpscrolltime[inc] = 10;
-          if(phpscrollaftertime[inc] <= 0)
-            phpscrollaftertime[inc] = 50;
-          if(phpscrollbeforetime[inc] <= 0)
-            phpscrollbeforetime[inc] = 50;
+          phpmode[panel] = parseInt(phpmode[panel], 10);
+          phpfirstline[panel] = parseInt(phpfirstline[panel], 10);
+          phpscrolledlines[panel] = parseInt(phpscrolledlines[panel], 10);
+          phpfixedlines[panel] = parseInt(phpfixedlines[panel], 10);
+          phpscrolltime[panel] = parseInt(phpscrolltime[panel], 10);
+          phpscrollbeforetime[panel] = parseInt(phpscrollbeforetime[panel], 10);
+          phpscrollaftertime[panel] = parseInt(phpscrollaftertime[panel], 10);
+          if(phpscrolltime[panel] <= 0)
+            phpscrolltime[panel] = 10;
+          if(phpscrollaftertime[panel] <= 0)
+            phpscrollaftertime[panel] = 50;
+          if(phpscrollbeforetime[panel] <= 0)
+            phpscrollbeforetime[panel] = 50;
           
-          after_decrement_counter[inc] = phpscrollaftertime[inc] / phpscrolltime[inc];
-          before_decrement_counter[inc] = phpscrollbeforetime[inc] / phpscrolltime[inc];
+          after_decrement_counter[panel] = phpscrollaftertime[panel] / phpscrolltime[panel];
+          before_decrement_counter[panel] = phpscrollbeforetime[panel] / phpscrolltime[panel];
         }
 
         displayScrollIndex = [phpfixedlines[0] + phpfirstline[0] - 1, phpfixedlines[1] + phpfirstline[1] - 1, phpfixedlines[2] + phpfirstline[2] - 1, phpfixedlines[3] + phpfirstline[3] - 1];

@@ -44,5 +44,7 @@ define("CST_REFRESHRATE",50); // time in 0.1 s
 define("NB_SCREEN",23);
 define("NB_PANEL",4);
 
+define("CST_NBRADIO_ONEPANEL", 15);
+define("CST_NBRADIO_PANELS", 4);
 
 ?>

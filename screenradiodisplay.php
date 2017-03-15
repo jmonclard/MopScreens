@@ -68,7 +68,7 @@
   var xlinkNS = "http://www.w3.org/1999/xlink";
 
   var RAYON_BATTERIE = 20;
-  var RAYON_ACCROCHE = 40;
+  var RAYON_ACCROCHE = 30;
   var previousElems = [];
   var previousData = "";
   //var positionInfo = [];
@@ -145,7 +145,7 @@
 
   var totalInfo = null;//[batteryInfo, levelsInfo];
 
-/* usage des logs, Ã  visualiser avec F12 dans
+/* usage des logs, à visualiser avec F12 dans
 _log("Je suis un log");
 _loginfo("Je suis un log info");
 _logwarn("Je suis un log warn");
@@ -394,24 +394,18 @@ function getPositionById(id)
 
         // choix de la couleur de la batterie en fonction du niveau (en mV), on convertit en %
         var status_pc = 0.0;
-        if (elementLevel>=3800.0)
-        {
-            status_pc = 100;
-        }
-        else
-        if (elementLevel>=3500.0)
-        {
-            status_pc = 100.0 * (elementLevel-3500.0) / (3800.0 - 3500.0);
-        }
+        status_pc = 100.0 * (elementLevel-3300.0) / (3750.0 - 3300.0);
+        if (status_pc>100) status_pc=100.0;
+        if (status_pc<0) status_pc=0.0;
 
         var qual,qualfill;
-        if (status_pc >= 66)
+        if (status_pc >= 30)
         {
             qual = "stroke-width:2;stroke:green;fill:none;"
             qualfill = "stroke-width:2;stroke:green;fill:green;"
         }
         else
-        if (status_pc >= 33)
+        if (status_pc >= 15)
         {
             qual = "stroke-width:2;stroke:orange;fill:none;"
             qualfill = "stroke-width:2;stroke:orange;fill:orange;"
@@ -615,14 +609,14 @@ function getPositionById(id)
         var newelemA3 = document.createElementNS(svgNS,"text");
         newelemA3.appendChild(document.createTextNode(elementLevel + " dB"));
         newelemA3.setAttributeNS(null,"id",elementName);
-        newelemA3.setAttributeNS(null,"y",(1.2*elementS.y + 0.8*elementR.y)/2);
-        newelemA3.setAttributeNS(null,"x",(1.2*elementS.x + 0.8*elementR.x)/2 + 12);
+        newelemA3.setAttributeNS(null,"y",(1.8*elementS.y + 0.2*elementR.y)/2);
+        newelemA3.setAttributeNS(null,"x",(1.8*elementS.x + 0.2*elementR.x)/2 + 12);
         svg.appendChild(newelemA3);
         newelemA3 = document.createElementNS(svgNS,"text");
         newelemA3.appendChild(document.createTextNode(ToHMSstring(elementAge)));
         newelemA3.setAttributeNS(null,"id",elementName);
-        newelemA3.setAttributeNS(null,"y",(1.2*elementS.y + 0.8*elementR.y)/2 +12);
-        newelemA3.setAttributeNS(null,"x",(1.2*elementS.x + 0.8*elementR.x)/2 + 12);
+        newelemA3.setAttributeNS(null,"y",(1.8*elementS.y + 0.2*elementR.y)/2 +12);
+        newelemA3.setAttributeNS(null,"x",(1.8*elementS.x + 0.2*elementR.x)/2 + 12);
         svg.appendChild(newelemA3);
     }
     else

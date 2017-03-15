@@ -41,6 +41,14 @@
           location.replace("screenfiles.php?action=delimage&name=\""+name+"\"");
         }
       }
+      
+      function DelLogFile(prompt_text,name)
+      {
+        if(confirm(prompt_text+name+" ?"))
+        {
+          location.replace("screenfiles.php?action=dellog&name=\""+name+"\"");
+        }
+      }
 
       function DelHtmlFile(prompt_text,name)
       {
@@ -64,36 +72,41 @@
 <?php
   include_once('screenfunctions.php');
   
-
-	if (is_uploaded_file ($_FILES['imagefilename']['tmp_name']))
-	{
-	  $file_type = explode('/',$_FILES['imagefilename']['type']);
-	  if ($file_type[0]=='image')
-	  {
-      $dest_filepathname="./pictures/".$_FILES['imagefilename']['name'];
-      copy($_FILES['imagefilename']['tmp_name'],$dest_filepathname);
-	  }
-	  else
-	  {
-		  echo MyGetText(15).$_FILES['imagefilename']['type']." <br/>\n"; // Bad file type
-		  echo MyGetText(16)."<br/><br/>\n";
-	  }
-	}
+  if(isset($_FILES['imagefilename']))
+  {
+    if (is_uploaded_file ($_FILES['imagefilename']['tmp_name']))
+    {
+      $file_type = explode('/',$_FILES['imagefilename']['type']);
+      if ($file_type[0]=='image')
+      {
+        $dest_filepathname="./pictures/".$_FILES['imagefilename']['name'];
+        copy($_FILES['imagefilename']['tmp_name'],$dest_filepathname);
+      }
+      else
+      {
+        echo MyGetText(15).$_FILES['imagefilename']['type']." <br/>\n"; // Bad file type
+        echo MyGetText(16)."<br/><br/>\n";
+      }
+    }
+  }
   
-	if (is_uploaded_file ($_FILES['htmlfilename']['tmp_name']))
-	{
-	  $file_type = $_FILES['htmlfilename']['type'];
-	  if ($file_type=='text/html')
-	  {
-      $dest_filepathname="./htmlfiles/".$_FILES['htmlfilename']['name'];
-      copy($_FILES['htmlfilename']['tmp_name'],$dest_filepathname);
-	  }
-	  else
-	  {
-		  echo MyGetText(15).$_FILES['htmlfilename']['type']." <br/>\n";  // Bad file type
-		  echo MyGetText(16)."<br/><br/>\n";
-	  }
-	}	
+  if(isset($_FILES['htmlfilename']))
+  {
+    if (is_uploaded_file ($_FILES['htmlfilename']['tmp_name']))
+    {
+      $file_type = $_FILES['htmlfilename']['type'];
+      if ($file_type=='text/html')
+      {
+        $dest_filepathname="./htmlfiles/".$_FILES['htmlfilename']['name'];
+        copy($_FILES['htmlfilename']['tmp_name'],$dest_filepathname);
+      }
+      else
+      {
+        echo MyGetText(15).$_FILES['htmlfilename']['type']." <br/>\n";  // Bad file type
+        echo MyGetText(16)."<br/><br/>\n";
+      }
+    }
+  }
 
   if(isset($_FILES['slidefoldername']))
   {
@@ -138,6 +151,16 @@
           unlink($pathname);
         }
     }
+    
+    if ($action==="dellog")
+    {
+        $name = isset($_GET['name']) ? strval($_GET['name']) : "";
+        if ($name!="")
+        {
+          $pathname = "./pictures/".substr($name,1,-1);
+          unlink($pathname);
+        }
+    }
 
     if ($action==="delhtml")
     {
@@ -163,10 +186,14 @@
 
     //---------- files lists creation ----
     $picturefilelist= array();
+    $logfilelist= array();
     $tmp_picturefilelist=array_diff(scandir("./pictures"), array('..', '.','index.php','index.html','serverip.txt','radiolog.txt'));
     foreach ($tmp_picturefilelist as $name)
     {
-      $picturefilelist[$name]=$name;
+      if(strpos($name, '.txt') === false)
+        $picturefilelist[$name]=$name;
+      else
+        $logfilelist[$name]=$name;
     }
 
     $htmlfilelist= array();
@@ -307,6 +334,32 @@
     print "<br/>\n";
 	  print "<hr/><br/>\n";
     
+    /* logs */
+    print "<table border>\n";
+    print "<tr>\n";
+    print "<th colspan=3>".MyGetText(72)."</th>\n"; // Log files
+    print "<th colspan=2>&nbsp;</th>\n";
+    print "</tr>\n";
+	
+    foreach ($logfilelist as $id => $name)
+    {
+      $pathname = "./pictures/".$name;
+      if (file_exists($pathname))
+      {
+        $filesize = round(filesize($pathname)/1024,1);
+        $filedate = date("Y-m-d H:i:s", filemtime($pathname));
+      }
+      
+      print "<tr>\n";
+      print "<td>".$name."</td>\n";
+      print "<td align='right'>".$filesize." k</td>\n";
+      print "<td align='right'>".$filedate."</td>\n";
+      print "<td><a href='".$pathname."' target='_blank'><img src='img/radio.png' title='".MyGetText(18)."'></img></a></td>\n";  // show
+      print "<td><img src='img/suppr.png' title='".MyGetText(6)."' onclick='DelLogFile(\"".MyGetText(14)."\",\"".$name."\");'></img></td>\n";
+      print "</tr>\n";
+    }
+    print "</table>\n";
+	  print "<br/>\n";
     
 	  print "<hr/><br/>\n";
     print "<a href='screenconfig.php'>".MyGetText(19)."</a>&nbsp;&nbsp;&nbsp;";

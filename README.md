@@ -1,11 +1,27 @@
 # MopScreens
 Large event results display for MeOS
 
+###2017-03-15 Version planned to be used for Nationale Sud Est orienteering race on 2017 march the 18th
+####What's New ?
+[x] Fix bugs introduced in original results display show.php (still used for public WiFi diffusion of results on the arena)
+
+[x] Fix undefined variables in different php files avoiding Apache error/warning generation in Apache error log file. The error file could grow as large as many hundreds of mega bytes due to warning generation during races ! That slow seriousely the server down for large events.
+
+[x] Separate log files from picture file in file management lists
+
+[x] Some other cosmetic changes in code.
+
+####Known bugs
+See below.
+
+####Missing features
+See below.
+
 ###2016-11-07 Version planned to be used for PACA night orienteering on November the 19th
 ####What's New ?
 [x] Better support of 1, 2, 3 and 4 panels modes
 
-[x] Up to 15 radio control supported (in 1 panel mode individual race)
+[x] Up to 15 radio controls supported (in 1 panel mode individual race)
 
 [x] Better suport for homemade radio system (based on LoRa technology) with real time radio quality and battery level display superimposed on map. Ask for details.
 
