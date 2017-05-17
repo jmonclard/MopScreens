@@ -135,7 +135,7 @@
           }
 			    $relay_out[$d['team_id']]['relay'.$d['leg']]['stat'] = $d['stat'];
 			    $relay_out[$d['team_id']]['relay'.$d['leg']]['tstat'] = $d['tstat'];
-			    $relay_out[$d['team_id']]['relay'.$d['leg']]['name'] = addslashes($d['name']);
+			    $relay_out[$d['team_id']]['relay'.$d['leg']]['name'] = $d['name'];
 			    $relay_out[$d['team_id']]['timestamp'] = max($relay_out[$d['team_id']]['timestamp'], $d['timestamp'], $d['radio_timestamp']);
 			}
 			
@@ -165,7 +165,7 @@
           }
 			    $relay_out[$d['team_id']]['relay'.$d['leg']]['stat'] = $d['stat'];
 			    $relay_out[$d['team_id']]['relay'.$d['leg']]['tstat'] = $d['tstat'];
-			    $relay_out[$d['team_id']]['relay'.$d['leg']]['name'] = addslashes($d['name']);
+			    $relay_out[$d['team_id']]['relay'.$d['leg']]['name'] = $d['name'];
 			    $relay_out[$d['team_id']]['timestamp'] = max($relay_out[$d['team_id']]['timestamp'], $d['timestamp']);
 			}
 			

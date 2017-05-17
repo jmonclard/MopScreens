@@ -16,7 +16,8 @@
   */
   
   session_start();
-  date_default_timezone_set('Europe/Paris');
+  //  date_default_timezone_set('Europe/Paris');
+  date_default_timezone_set('UTC');
   include_once('functions.php');
   redirectSwitchUsers();
   
@@ -291,7 +292,7 @@ function getPositionById(id)
     // x1,y1 un point ailleurs
     // r le rayon
     // on retourne le point qui intersecte le cercle sur le segment [P0:P1]
-    // attention, si les cercles sont proches le rÃ©sultat est vrai mais Ã©trange
+    // attention, si les cercles sont proches le résultat est vrai mais étrange
     var theta = Math.atan2(y1-y0, x1-x0);
     var x = x0 + r * Math.cos(theta);
     var y = y0 + r * Math.sin(theta);
@@ -552,7 +553,7 @@ function getPositionById(id)
         var elementLevel = rxlevel;
         var elementAge = age;
 
-        // gestion de la couleur et pointillÃ©s en fonction de l'age
+        // gestion de la couleur et pointillés en fonction de l'age
         // style="stroke-dasharray: 5, 5"
         var color = "red";
         var dsh = "2,6";
@@ -639,10 +640,10 @@ function getPositionById(id)
   {
     try
     {
-        // svg pour accÃ©der aux Ã©lÃ©ments graphiques
+        // svg pour accéder aux éléments graphiques
         var svg = document.getElementById("map");
         
-        // EffaÃ§ons les Ã©lÃ©ments existants
+        // Effaçons les éléments existants
         /*while(previousElems.length > 0)
         {
             var lastElem = previousElems.pop();
@@ -680,7 +681,7 @@ function getPositionById(id)
         svg.appendChild(elem);
 
         
-        // Et ajoutons de nouveaux Ã©lÃ©ments
+        // Et ajoutons de nouveaux éléments
         if (dataInfos.length == 2)
         {
             try

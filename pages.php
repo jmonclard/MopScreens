@@ -15,7 +15,8 @@
   limitations under the License.
   */
   session_start();
-  date_default_timezone_set('Europe/Paris');
+  date_default_timezone_set('UTC');
+  //date_default_timezone_set('Europe/Paris');
   include_once('functions.php');
   include_once('lang.php');
   redirectSwitchUsers();
@@ -1508,8 +1509,9 @@
         if(identifiant === 'start')
         {
           prefix_class = 'tdi_'+panelscount + '_';
-          phpscrolledlines[panelIndex] = phpfixedlines[panelIndex] + phpscrolledlines[panelIndex];
-          phpfixedlines[panelIndex] = 0;
+          // 20170517 -- 2 following lines commented out
+          //phpscrolledlines[panelIndex] = phpfixedlines[panelIndex] + phpscrolledlines[panelIndex];
+          //phpfixedlines[panelIndex] = 0;
           count = 6;
         }
         else

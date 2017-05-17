@@ -36,7 +36,8 @@
     $sql = 'UPDATE resultscreen SET panel1lastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
     mysqli_query($sql);
   
-  date_default_timezone_set('Europe/Paris');
+  //date_default_timezone_set('Europe/Paris');
+  date_default_timezone_set('UTC');
   if ($numlegs > 1) {
     for ($k = 1; $k <= $numlegs; $k++) {
       $sql = "SELECT max(ord) FROM mopteammember tm, mopteam t WHERE t.cls = '$cls' AND tm.leg=$k AND ".

@@ -1322,32 +1322,46 @@ function returnStatus($stat) {
   die('<?xml version="1.0"?><MOPStatus status="'.$stat.'"></MOPStatus>');
 }
 /* MW */
+
+function doJsFormat($val)
+{
+  return addslashes($val); // addslashes(addslashes($val)); // $val;//
+}
+
 function defineVariable($variable, $value)
 {
-    print $variable." = eval('".$value."');";
+    print $variable." = eval('".doJsFormat($value)."');";
 }
 function defineVariableArr($variable, $value1, $value2, $value3 = null, $value4 = null)
 {
   if(($value3 !== null) && ($value4 !== null))
-    print $variable." = eval(['".$value1."', '".$value2."', '".$value3."', '".$value4."']);\r\n";
+  {
+    print $variable." = eval(['".doJsFormat($value1)."', '".doJsFormat($value2)."', '".doJsFormat($value3)."', '".doJsFormat($value4)."']);\r\n";
+  }
   else
   if($value3 !== null)
-    print $variable." = eval(['".$value1."', '".$value2."', '".$value3."']);\r\n";
+  {
+    print $variable." = eval(['".doJsFormat($value1)."', '".doJsFormat($value2)."', '".doJsFormat($value3)."']);\r\n";
+  }
   else
-    print $variable." = eval(['".$value1."', '".$value2."']);\r\n";
+  {
+    print $variable." = eval(['".doJsFormat($value1)."', '".doJsFormat($value2)."']);\r\n";
+  }
 }
 function defineVariableArrFromArr($variable, $arr)
 {
     print $variable." = Array;";
     foreach($arr as $k => $v)
     {
-        print $variable."[".$k."] = eval('".$v."');\r\n";
+        print $variable."[".$k."] = eval('".doJsFormat($v)."');\r\n";
     }
 }
 function defineVariableArr2x($variable, $arr1, $arr2)
 {
-    $em1 = '[\''.implode('\', \'', $arr1).'\']';
-    $em2 = '[\''.implode('\', \'', $arr2).'\']';
+    $arr1tmp = array_map("doJsFormat", $arr1);
+    $arr2tmp = array_map("doJsFormat", $arr2);
+    $em1 = '[\''.implode('\', \'', $arr1tmp).'\']';
+    $em2 = '[\''.implode('\', \'', $arr2tmp).'\']';
     print $variable." = eval([".$em1.", ".$em2."]);\r\n";
 }
 function defineVariableArrNx($variable, $arrMultiDimension, $nbVoulu)
@@ -1356,10 +1370,16 @@ function defineVariableArrNx($variable, $arrMultiDimension, $nbVoulu)
   for($i=0;$i<$nbVoulu;$i++)
   {
     if(isset($arrMultiDimension[$i]))
-      $em[] = '[\''.implode('\', \'', $arrMultiDimension[$i]).'\']';
+    {
+      $arrtmp = array_map("doJsFormat", $arrMultiDimension[$i]);
+      $em[] = '[\''.implode('\', \'', $arrtmp).'\']';
+    }
     else
     if(isset($arrMultiDimension[0]))
-      $em[] = '[\''.implode('\', \'', $arrMultiDimension[0]).'\']';
+    {
+      $arrtmp = array_map("doJsFormat", $arrMultiDimension[0]);
+      $em[] = '[\''.implode('\', \'', $arrtmp).'\']';
+    }
     else
       $em[] = '[\''.implode('\', \'', array(-1)).'\']';
   }
