@@ -21,7 +21,7 @@ It is provided "as is" as open source code and can be freely used, modified, enh
 
 [x] Fix start list number of fixed lines
 
-[x] Change sin Readme organisation
+[x] Changes in Readme organisation and merge bugfix branch into master
 
 ### 2017-03-15 Version planned to be used for Nationale Sud Est orienteering race on 2017 march the 18th
 [x] Fix bugs introduced in original results display show.php (still used for public WiFi diffusion of results on the arena)
