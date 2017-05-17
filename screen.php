@@ -16,7 +16,8 @@
   */
   
   session_start();
-  date_default_timezone_set('Europe/Paris');
+  //date_default_timezone_set('Europe/Paris');
+  date_default_timezone_set('UTC');
   include_once('functions.php');
   redirectSwitchUsers();
     
@@ -665,7 +666,8 @@
                     //-- 1st Start
                     $heuremin="00:00:00";
                     $heuremax="00:00:00";
-                    date_default_timezone_set('Europe/Paris');
+                    //date_default_timezone_set('Europe/Paris');
+                    date_default_timezone_set('UTC');
                     $sql2 = "SELECT MIN(st),MAX(st) FROM mopcompetitor WHERE cid=$cid AND cls=$classid";
                     $res2 = mysqli_query($link, $sql2);
                     if (mysqli_num_rows($res2) > 0)

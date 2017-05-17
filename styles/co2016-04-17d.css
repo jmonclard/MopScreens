@@ -229,7 +229,7 @@
 
 
 
-            td.td_1_1, td.td_1_2, td.td_1_3, td.td_1_4, td.td_1_5, td.td_1_6, td.td_1_7, td.td_1_8,
+            td.td_1_1, td.td_1_2, td.td_1_3, td.td_1_4, td.td_1_5, td.td_1_6, td.td_1_7, td.td_1_8, td.td_1_9, td.td_1_10, td.td_1_11, td.td_1_12, td.td_1_13, td.td_1_14, td.td_1_15, td.td_1_16, td.td_1_17,
 			td.td_2_1, td.td_2_2, td.td_2_3, td.td_2_4, td.td_2_5, td.td_2_6, td.td_2_7, td.td_2_8,
 			td.td_3_1, td.td_3_2, td.td_3_3, td.td_3_4, td.td_3_5, td.td_3_6, td.td_3_7, td.td_3_8,
 			td.td_4_1, td.td_4_2, td.td_4_3, td.td_4_4, td.td_4_5, td.td_4_6, td.td_4_7, td.td_4_8,
@@ -309,9 +309,9 @@
 
             td.td_1_1
             {
-                width:	125px;
-				max-width:	125px;
-                min-width:	125px;
+                width:	160px;
+				max-width:	160px;
+                min-width:	160px;
             }
 			td.td_2_1
             {
@@ -334,9 +334,9 @@
 
             td.td_1_2
             {
-                width:	85px;
-				max-width:	85px;
-                min-width:	85px;
+                width:	135px;
+				max-width:	135px;
+                min-width:	135px;
                 font-size: 8px;
             }
 			td.td_2_2
@@ -505,7 +505,7 @@
 			
 			
 
-			td.td_1_3, td.td_1_4, td.td_1_5, td.td_1_6, td.td_1_7, td.td_1_8, td.td_1_9, td.td_1_10
+			td.td_1_3, td.td_1_4, td.td_1_5, td.td_1_6, td.td_1_7, td.td_1_8, td.td_1_9, td.td_1_10, td.td_1_11, td.td_1_12, td.td_1_13, td.td_1_14, td.td_1_15, td.td_1_16, td.td_1_17 
 			{
 				width:	28px;
 				max-width:	28px;
@@ -1633,7 +1633,7 @@
 	}
 	
 	
-	.mySlides, .mySlides0, .mySlides1
+	.mySlides0, .mySlides1, .mySlides2, .mySlides3
 	{
 		display:none;
 	}

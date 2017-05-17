@@ -25,7 +25,9 @@
   if (isset($_GET['cmp']))
     $_SESSION['competition'] = 1 * (int)$_GET['cmp'];
 
-  $cmpId = $_SESSION['competition'];
+  $cmpId = 0;
+  if(isset($_SESSION['competition']))
+    $cmpId = $_SESSION['competition'];
 
 ?>
 
@@ -60,9 +62,13 @@ td {padding-right:1em;}
 <body>
 
 <?php
-  if ($_GET['select'] == 1 || $cmpId == 0) {
+  $select = (isset($_GET['select']) ? intval($_GET['select']) : 0);
+  if ($select == 1 || $cmpId == 0) {
     print "<h1>$lang[selectcmp]</h1>";
-    $sql = "SELECT name, date, cid FROM mopcompetition ORDER BY date DESC";     
+    $date_now = time();
+    $date_lastweek = $date_now - 20*24*3600; // TODO replace 20 par 7
+    $sql_lastweek = date('Y-m-d', $date_lastweek);
+    $sql = "SELECT name, date, cid FROM mopcompetition WHERE date>='".$sql_lastweek."' ORDER BY date DESC";
     $res = mysqli_query($link, $sql);
     
     while ($r = mysqli_fetch_array($res)) {
@@ -203,7 +209,7 @@ td {padding-right:1em;}
           }
           $res = mysqli_query($link, $sql);
           $results = calculateResult($res);
-          print "<h3>$rname</h3>\n";         
+          print "<h3>$rname</h3>\n";
           formatResult($results); 
         }
       }
@@ -241,7 +247,7 @@ td {padding-right:1em;}
                   
          $res = mysqli_query($link, $sql);
          $results = calculateResult($res);         
-         print "<h3>$rname</h3>\n";         
+         print "<h3>$rname</h3>\n";
          formatResult($results);
         }
       }
@@ -249,7 +255,7 @@ td {padding-right:1em;}
   }
   print '</div>';
 ?> 
-<div style="clear:both;padding-top:3em;color: grey;">
+<!--<div style="clear:both;padding-top:3em;color: grey;">
  Results provided by <a href="http://www.melin.nu/meos" target="_blank">MeOS Online Results</a>.
-</div>
+</div>-->
 </body></html>

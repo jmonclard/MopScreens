@@ -1,6 +1,7 @@
 <?php
   session_start();
-  date_default_timezone_set('Europe/Paris');
+  //date_default_timezone_set('Europe/Paris');
+  date_default_timezone_set('UTC');
   include_once('functions.php');
   redirectSwitchUsers();
   
