@@ -5,8 +5,7 @@ Large event results display for MeOS
 MopScreens is a set of php files to be used on a web server (mainly a local one) to display large event results in real time in an O'Ringen like style.
 It uses MeOS Online Protocol for data updating, and reuse part of the Mop example provided with MeOS.
 
-Currently it can handle 12 screens, but can be extended to more screens very easily. Main limitation concerns relay : currently the team is limited to 3 members and to 3 radio controls per leg.
-The limitation in team size will be increased to 10 members before June 2016.
+Currently it can handle 18 screens, but can be extended to more screens very easily.
 
 To get a better idea of what it looks like, have a look to the english documentation MeOSScreensEn.pdf
 
