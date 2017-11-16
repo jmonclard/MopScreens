@@ -730,7 +730,7 @@
         return r;
       }
 
-      function generateResultCells(line, count, prefix_class,panelscount)
+      function generateResultCells(line, count, prefix_class,panelscount,alternate)
       {
         r = '';
         switch (panelscount)
@@ -780,6 +780,39 @@
             }
             break;
           case 3:
+            if(alternate)
+            {
+              for(var e in line)
+              {
+                cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+                if(e > 1)
+                {
+                  if ((e == 2) || (e == 3) || (e == 5) || (e == 6) || (e > 8)) // do not display club, display 2 radios
+                  {
+                    if(e == (count - 1))
+                    {
+                      r += '<td class="tdtimediff">' + line[e] + '</td>\r\n';
+                    }
+                    else
+                    if(e == (count - 2))
+                    {
+                      r += '<td class="tdtimeresult">' + cell + '</td>\r\n';
+                    }
+                    else
+                    if(e == 3)
+                    {
+                      r += '<td class="'+ prefix_class + (e-2) +'alt">' + cell + '</td>\r\n';
+                    }
+                    else
+                    {
+                      r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
+                    }
+                  }
+                }
+              }
+            }
+            else
+            {
             for(var e in line)
             {
               cell = ((line[e] === '') ? "&nbsp;" : line[e]);
@@ -802,6 +835,7 @@
                   }
                 }
               }
+            }
             }
             break;
           case 4:
@@ -947,7 +981,7 @@
       {
         if(identifiant === 'result')
         {
-          r = generateResultCells(line, count, prefix_class,panelscount);
+          r = generateResultCells(line, count, prefix_class,panelscount, alternate);
         }
         else
         if(identifiant === 'showo')
@@ -1973,7 +2007,7 @@
             {
               count = count;
             }
-            while(position < startline + (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
+            while(position < startline - 1 + (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
             {
               position++;
               var cl = ((position % 2) ? 'alternateRow' : 'normalRow');
@@ -2018,7 +2052,14 @@
           nf = '';
           if(identifiant === 'result')
           {
-            count = count - 2;
+            if((panelscount == 3) && (alternate))
+            {
+              //count = count - 1;
+            }
+            else
+            {
+              //count = count - 2;
+            }
           }
           else
           if(identifiant === 'relay')

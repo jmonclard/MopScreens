@@ -1,0 +1,2004 @@
+
+/* Terence Ordona, portal[AT]imaputz[DOT]com */
+			/* http://creativecommons.org/licenses/by-sa/2.0/ */
+			/* begin some basic styling here */
+			body {
+			background: #F0F0F0;
+			color: #000000;
+			font: normal normal 12px Verdana, Geneva, Arial, Helvetica, sans-serif;
+			margin: 0;
+			padding: 0
+			}
+			table, td, a {
+			color: #000000;
+			line-height: 1.5em;
+			font: normal normal 12px Verdana, Geneva, Arial, Helvetica, sans-serif
+			}
+			h1 {
+			font: normal normal 18px Verdana, Geneva, Arial, Helvetica, sans-serif;
+			margin: 0 0 5px 0
+			}
+			h2 {
+			font: normal normal 16px Verdana, Geneva, Arial, Helvetica, sans-serif;
+			margin: 0 0 5px 0
+			}
+			h3 {
+			font: normal normal 13px Verdana, Geneva, Arial, Helvetica, sans-serif;
+			color: #008000;
+			margin: 0 0 15px 0
+			}
+			/* end basic styling */
+			/* define height and width of scrollable area. Add 16px to width for scrollbar */
+			/* allow WinIE to scale 100% width of browser by not defining a width */
+			/* WARNING: applying a background here may cause problems with scrolling in WinIE 5.x */
+			div.tableContainer {
+			/*clear: both;*/
+			border: 1px solid #906030;
+			height: 100%;/*285px;*/
+			overflow: auto;
+			/*width: 756px;*/
+			}
+			/* WinIE 6.x needs to re-account for it's scrollbar. Give it some padding */
+			\html div.tableContainer/* */ {
+			padding: 0 16px 0 0;
+			/*width: 740px;*/
+			}
+			/* clean up for allowing display Opera 5.x/6.x and MacIE 5.x */
+			html>body div.tableContainer {
+			height: auto;
+			padding: 0;
+			}
+			/* Reset overflow value to hidden for all non-IE browsers. */
+			/* Filter out Opera 5.x/6.x and MacIE 5.x */
+			head:first-child+body div[class].tableContainer {
+			height: 100%;/*285px;*/
+			overflow: hidden;
+			/*width: 756px*/
+			}
+			/* define width of table. IE browsers only */
+			/* if width is set to 100%, you can remove the width */
+			/* property from div.tableContainer and have the div scale */
+			div.tableContainer table {
+			float: left;
+            width: 100%;
+			}
+			/* WinIE 6.x needs to re-account for padding. Give it a negative margin */
+			\html div.tableContainer table/* */ {
+			margin: 0 -16px 0 0;
+            width: 100%;
+			}
+			/* define width of table. Opera 5.x/6.x and MacIE 5.x */
+			html>body div.tableContainer table {
+			float: none;
+			margin: 0;
+            width: 100%;
+			/*width: 740px*/
+			}
+			/* define width of table. Add 16px to width for scrollbar. */
+			/* All other non-IE browsers. Filter out Opera 5.x/6.x and MacIE 5.x */
+			head:first-child+body div[class].tableContainer table {
+			/*width: 756px*/
+            width: 100%;
+			}
+			/* set table header to a fixed position. WinIE 6.x only */
+			/* In WinIE 6.x, any element with a position property set to relative and is a child of */
+			/* an element that has an overflow property set, the relative value translates into fixed. */
+			/* Ex: parent element DIV with a class of tableContainer has an overflow property set to auto */
+			thead#fixedHeader0 tr {
+			position: relative;
+			/* expression is for WinIE 5.x only. Remove to validate and for pure CSS solution */
+			top: expression(document.getElementById("tableContainer0").scrollTop);
+			}
+			thead#fixedHeader1 tr {
+			position: relative;
+			/* expression is for WinIE 5.x only. Remove to validate and for pure CSS solution */
+			top: expression(document.getElementById("tableContainer1").scrollTop);
+			}
+			thead#fixedHeader2 tr {
+			position: relative;
+			/* expression is for WinIE 5.x only. Remove to validate and for pure CSS solution */
+			top: expression(document.getElementById("tableContainer3").scrollTop);
+			}
+			/* set THEAD element to have block level attributes. All other non-IE browsers */
+			/* this enables overflow to work on TBODY element. All other non-IE, non-Mozilla browsers */
+			/* Filter out Opera 5.x/6.x and MacIE 5.x */
+			head:first-child+body thead[class].fixedHeader tr {
+			display: block;
+			}
+			/* make the TH elements pretty */
+			thead.fixedHeader th {
+			background: #C09060;
+			border-left: 1px solid #E0B080;
+			border-right: 1px solid #B07040;
+			border-top: 1px solid #E0B080;
+			font-weight: normal;
+			/*padding: 4px 3px;*/
+			text-align: left
+			}
+			/* make the A elements pretty. makes for nice clickable headers */
+			thead.fixedHeader a, thead.fixedHeader a:link, thead.fixedHeader a:visited {
+			color: #F0F0F0;
+			display: block;
+			text-decoration: none;
+			width: 100%
+			}
+			/* make the A elements pretty. makes for nice clickable headers */
+			/* WARNING: swapping the background on hover may cause problems in WinIE 6.x */
+			thead.fixedHeader a:hover {
+			color: #F0F0F0;
+			display: block;
+			text-decoration: underline;
+			width: 100%
+			}
+			/* define the table content to be scrollable */
+			/* set TBODY element to have block level attributes. All other non-IE browsers */
+			/* this enables overflow to work on TBODY element. All other non-IE, non-Mozilla browsers */
+			/* induced side effect is that child TDs no longer accept width: auto */
+			/* Filter out Opera 5.x/6.x and MacIE 5.x */
+			head:first-child+body tbody[class].scrollContent {
+			display: block;
+
+			overflow: auto;
+			width: 100%
+			}
+
+			#scroll1, #scroll2, #scroll3 {
+				height: 400px;
+			}
+
+			/* make TD elements pretty. Provide alternating classes for striping the table */
+			/* http://www.alistapart.com/articles/zebratables/ */
+			tbody.scrollContent td, tbody.scrollContent tr.normalRow td
+			{
+				background: #F0F0F0;
+				border-bottom: none;
+				border-left: none;
+				border-right: 1px solid #C0C0C0;
+				border-top: 1px solid #D0D0D0;
+				padding: 0px 3px 0px 4px;/*2px 3px 3px 4px*/
+			}
+			tbody.scrollContent tr.alternateRow td
+			{
+				background: #E0E0E0;
+				border-bottom: none;
+				border-left: none;
+				border-right: 1px solid #C0C0C0;
+				border-top: 1px solid #D0D0D0;
+				padding: 0px 3px 0px 4px;/*2px 3px 3px 4px*/
+			}
+			/* define width of TH elements: 1st, 2nd, and 3rd respectively. */
+			/* All other non-IE browsers. Filter out Opera 5.x/6.x and MacIE 5.x */
+			/* Add 16px to last TH for scrollbar padding */
+			/* http://www.w3.org/TR/REC-CSS2/selector.html#adjacent-selectors */
+			head:first-child+body thead[class].fixedHeader th {
+			width: 200px
+			}
+			/*head:first-child+body thead[class].fixedHeader th + th {
+			width: 240px
+			}
+			head:first-child+body thead[class].fixedHeader th + th + th {
+			border-right: none;
+			padding: 4px 4px 4px 3px;
+			width: 316px
+			}*/
+			/* define width of TH elements: 1st, 2nd, and 3rd respectively. */
+			/* All other non-IE browsers. Filter out Opera 5.x/6.x and MacIE 5.x */
+			/* Add 16px to last TH for scrollbar padding */
+			/* http://www.w3.org/TR/REC-CSS2/selector.html#adjacent-selectors */
+			/*head:first-child+body tbody[class].scrollContent td {
+                width: 200px;
+			}
+
+			head:first-child+body tbody[class].scrollContent td + td {
+			width: 240px
+			}
+			head:first-child+body tbody[class].scrollContent td + td + td  {
+			border-right: none;
+			padding: 2px 4px 2px 3px;
+			width: 100%;
+			}*/
+            /*
+            head:first-child+body tbody[class].scrollContent td {
+                width: 30px;
+                min-width: 30px;
+                max-width: 30px;
+			}
+
+            head:first-child+body tbody[class].scrollContent td +td{
+                width: 50%;
+			}
+            head:first-child+body tbody[class].scrollContent td +td+td{
+                width: 50%;
+			}
+            head:first-child+body tbody[class].scrollContent td +td+td+td{
+                width:	80px;
+				max-width:	80px;
+                min-width:	80px;
+			}
+            head:first-child+body tbody[class].scrollContent td +td+td+td+td{
+                width:	80px;
+				max-width:	80px;
+                min-width:	80px;
+			}*/
+
+            table.fixedTable, table.scrollTable
+			{
+                width: 100%;
+                min-width: 100%;
+            }
+
+
+
+            td.td_1_1, td.td_1_2, td.td_1_3, td.td_1_4, td.td_1_5, td.td_1_6, td.td_1_7, td.td_1_8, td.td_1_9, td.td_1_10, td.td_1_11, td.td_1_12, td.td_1_13, td.td_1_14, td.td_1_15, td.td_1_16, td.td_1_17,
+			td.td_2_1, td.td_2_2, td.td_2_3, td.td_2_4, td.td_2_5, td.td_2_6, td.td_2_7, td.td_2_8,
+			td.td_3_1, td.td_3_2, td.td_3_3, td.td_3_4, td.td_3_5, td.td_3_6, td.td_3_7, td.td_3_8, td.td_3_1alt, 
+			td.td_4_1, td.td_4_2, td.td_4_3, td.td_4_4, td.td_4_5, td.td_4_6, td.td_4_7, td.td_4_8,
+            td.tdi_1_1, td.tdi_1_2, td.tdi_1_3, td.tdi_1_4, td.tdi_1_5, td.tdi_1_6, td.tdi_1_7, td.tdi_1_8,
+			td.tdi_2_1, td.tdi_2_2, td.tdi_2_3, td.tdi_2_4, td.tdi_2_5, td.tdi_2_6, td.tdi_2_7, td.tdi_2_8,
+			td.tdi_3_1, td.tdi_3_2, td.tdi_3_3, td.tdi_3_4, td.tdi_3_5, td.tdi_3_6, td.tdi_3_7, td.tdi_3_8,
+			td.tdi_4_1, td.tdi_4_2, td.tdi_4_3, td.tdi_4_4, td.tdi_4_5, td.tdi_4_6, td.tdi_4_7, td.tdi_4_8,
+            td.tdtimediff, td.tdtimeresult, td.tdtimeresultshowo,
+			td.td_showo1_1, td.td_showo1_2,
+			td.td_showo2_1, td.td_showo2_2,
+			td.relay_tm_name, td.radio_tm_name,
+			td.td_showo2_4, td.td_showo2_7, td.td_showo2_10, td.td_showo2_13, td.td_showo2_16,
+			td.td_showo2_5, td.td_showo2_8, td.td_showo2_11, td.td_showo2_14, td.td_showo2_17,
+			td.td1relay1, td.td2relay1, td.td3relay1, td.td4relay1, td.td5relay1, td.td6relay1, td.td7relay1, td.td8relay1, td.td9relay1, td.td10relay1
+            {
+                white-space:    nowrap;
+                overflow:   hidden;
+            }
+
+            td.td_1_0
+			{
+				width:	26px;
+				max-width:	26px;
+                min-width:	26px;
+                text-align: center;
+			}
+			td.td_2_0
+			{
+				width:	26px;
+				max-width:	26px;
+                min-width:	26px;
+                text-align: center;
+			}
+			td.td_3_0
+			{
+				width:	24px;
+				max-width:	24px;
+                min-width:	24px;
+                text-align: center;
+			}
+			td.td_4_0
+			{
+				width:	24px;
+				max-width:	24px;
+                min-width:	24px;
+                text-align: center;
+			}
+
+			td.tdi_1_0, td.tdi_1_5
+			{
+				width:	26px;
+				max-width:	26px;
+                min-width:	26px;
+                text-align: center;
+			}
+			td.tdi_2_0, td.tdi_2_5
+			{
+				width:	26px;
+				max-width:	26px;
+                min-width:	26px;
+                text-align: center;
+			}
+			td.tdi_3_0, td.tdi_3_5
+			{
+				width:	26px;
+				max-width:	26px;
+                min-width:	26px;
+                text-align: center;
+			}
+			td.tdi_4_0, td.tdi_4_5
+			{
+				width:	26px;
+				max-width:	26px;
+                min-width:	26px;
+                text-align: center;
+			}
+
+            td.td_1_1
+            {
+                width:	160px;
+				max-width:	160px;
+                min-width:	160px;
+            }
+			td.td_2_1
+            {
+                width:	125px;
+				max-width:	125px;
+                min-width:	125px;
+            }
+			td.td_3_1
+            {
+                width:	118px;
+				max-width:	118px;
+                min-width:	118px;
+            }
+			td.td_3_1alt
+			{
+                width:	126px;
+				max-width:	126px;
+                min-width:	126px;
+            }
+			td.td_4_1
+            {
+                width:	118px;
+				max-width:	118px;
+                min-width:	118px;
+            }
+
+            td.td_1_2
+            {
+                width:	135px;
+				max-width:	135px;
+                min-width:	135px;
+                font-size: 8px;
+            }
+			td.td_2_2
+            {
+                width:	85px;
+				max-width:	85px;
+                min-width:	85px;
+                font-size: 8px;
+            }
+			td.td_3_2
+            {
+                width:	72px;
+				max-width:	72px;
+                min-width:	72px;
+                font-size: 8px;
+            }
+			td.td_4_2
+            {
+                width:	85px;
+				max-width:	85px;
+                min-width:	85px;
+                font-size: 8px;
+            }
+
+            td.tdi_1_2, td.tdi_1_4
+            {
+                width: 60px;
+                max-width: 60px;
+                min-width: 60px;
+            }
+			td.tdi_2_2, td.tdi_2_4
+            {
+                width: 68px;
+                max-width: 68px;
+                min-width: 68px;
+            }
+			td.tdi_3_2, td.tdi_3_4
+            {
+                width: 114px;
+                max-width: 114px;
+                min-width: 114px;
+            }
+			td.tdi_4_2, td.tdi_4_4
+            {
+                width: 64px;
+                max-width: 64px;
+                min-width: 64px;
+            }
+			
+
+            td.tdi_1_1, td.tdi_1_3
+            {
+                width: 125px;
+                max-width: 125px;
+                min-width: 125px;
+            }
+			td.tdi_2_1, td.tdi_2_3
+            {
+                width: 126px;
+                max-width: 126px;
+                min-width: 126px;
+            }
+			td.tdi_3_1, td.tdi_3_3
+            {
+                width: 160px;
+                max-width: 160px;
+                min-width: 160px;
+            }
+			td.tdi_4_1, td.tdi_4_3
+            {
+                width: 130px;
+                max-width: 130px;
+                min-width: 130px;
+            }
+
+            td.tdi_1_0, td.tdi_1_5, td.tdi_1_6, td.tdi_1_7, td.tdi_1_8
+            {
+                font-size: 10px;
+            }
+			td.tdi_2_0, td.tdi_2_5, td.tdi_2_6, td.tdi_2_7, td.tdi_2_8
+            {
+                font-size: 10px;
+            }
+			td.tdi_3_0, td.tdi_3_5, td.tdi_3_6, td.tdi_3_7, td.tdi_3_8
+            {
+                font-size: 10px;
+            }
+			td.tdi_4_0, td.tdi_4_5, td.tdi_4_6, td.tdi_4_7, td.tdi_4_8
+            {
+                font-size: 10px;
+            }
+
+            td.tdi_1_1, td.tdi_1_3
+            {
+                font-size: 12px;
+            }
+			td.tdi_2_1, td.tdi_2_3
+            {
+                font-size: 12px;
+            }
+			td.tdi_3_1, td.tdi_3_3
+            {
+                font-size: 12px;
+            }
+			td.tdi_4_1, td.tdi_4_3
+            {
+                font-size: 12px;
+            }
+
+            td.tdi_1_2, td.tdi_1_4
+            {
+                font-size: 8px;
+            }
+			td.tdi_2_2, td.tdi_2_4
+            {
+                font-size: 8px;
+            }
+			td.tdi_3_2, td.tdi_3_4
+            {
+                font-size: 8px;
+            }
+			td.tdi_4_2, td.tdi_4_4
+            {
+                font-size: 8px;
+            }
+			
+            tbody.scrollContent tr.normalRow td.tdi_1_2, tbody.scrollContent tr.alternateRow td.tdi_1_2,
+			tbody.scrollContent tr.normalRow td.tdi_2_2, tbody.scrollContent tr.alternateRow td.tdi_2_2,
+			tbody.scrollContent tr.normalRow td.tdi_3_2, tbody.scrollContent tr.alternateRow td.tdi_3_2,
+			tbody.scrollContent tr.normalRow td.tdi_4_2, tbody.scrollContent tr.alternateRow td.tdi_4_2
+            {
+            border-right: 3px solid #000000;
+            }
+			
+			td.tdtimeresult
+            {
+                font-size: 12px;
+            }
+			
+			
+
+            td.td_1_0, td.td_1_1
+            {
+                font-size: 12px;
+            }
+			td.td_2_0, td.td_2_1
+            {
+                font-size: 12px;
+            }
+			td.td_3_0, td.td_3_1, td.td_3_1alt
+            {
+                font-size: 12px;
+            }
+			td.td_4_0, td.td_4_1
+            {
+                font-size: 12px;
+            }
+
+			td.tdtimeresult
+			{
+				text-align:	right;
+				width:	40px;
+				max-width:	40px;
+                min-width:	40px;
+			}
+			
+			
+
+			td.td_1_3, td.td_1_4, td.td_1_5, td.td_1_6, td.td_1_7, td.td_1_8, td.td_1_9, td.td_1_10, td.td_1_11, td.td_1_12, td.td_1_13, td.td_1_14, td.td_1_15, td.td_1_16, td.td_1_17 
+			{
+				width:	28px;
+				max-width:	28px;
+                min-width:	28px;
+                font-size: 8px;
+                text-align: right;
+            }
+			td.td_2_3, td.td_2_4, td.td_2_5, td.td_2_6, td.td_2_7, td.td_2_8, td.td_2_9, td.td_2_10
+			{
+				width:	28px;
+				max-width:	28px;
+                min-width:	28px;
+                font-size: 8px;
+                text-align: right;
+            }
+			td.td_3_3, td.td_3_4, td.td_3_5, td.td_3_6, td.td_3_7, td.td_3_8, td.td_3_9, td.td_3_10
+			{
+				width:	28px;
+				max-width:	28px;
+                min-width:	28px;
+                font-size: 8px;
+                text-align: right;
+            }
+			td.td_4_3, td.td_4_4, td.td_4_5, td.td_4_6, td.td_4_7, td.td_4_8, td.td_4_9, td.td_4_10
+			{
+				width:	28px;
+				max-width:	28px;
+                min-width:	28px;
+                font-size: 8px;
+                text-align: right;
+            }
+
+            td.tdtimediff
+			{
+				width:	30px;
+				max-width:	30px;
+                min-width:	30px;
+                font-size: 8px;
+                text-align: right;
+            }
+
+			thead.fixedHeader th.activeOnglet
+			{
+				background-color:	#FFFF00;
+				font-weight:	bold;
+			}
+
+			thead.fixedHeader th.inactiveOnglet
+			{
+				background-color:	#B0B0B0;
+                font-size: 0.8em;
+				font-weight:	normal;
+			}
+
+            hr
+            {
+                padding:0;
+                margin:0;
+            }
+            span.number_class
+            {
+                font-size: 0.75em;
+                font-weight: normal;
+            }
+
+            tr.nonfini td
+            {
+                /*color: #999999;*/
+                opacity:0.5;
+            }
+            tr.updated td
+            {
+                color: #333399;
+            }
+
+            td.td1relay0, td.td2relay0, td.td3relay0, td.td4relay0, td.td5relay0, td.td6relay0, td.td7relay0, td.td8relay0, td.td9relay0, td.td10relay0
+            {
+                text-align: center;
+            }
+
+			td.td1relay0
+            {
+                width: 28px;
+                min-width: 28px;
+                max-width: 28px;
+                font-size: 12px;
+            }
+			td.td2relay0
+            {
+                width: 32px;
+                min-width: 32px;
+                max-width: 32px;
+                font-size: 12px;
+            }
+			td.td3relay0
+            {
+                width: 28px;
+                min-width: 28px;
+                max-width: 28px;
+                font-size: 12px;
+            }
+			td.td4relay0
+            {
+                width: 20px;
+                min-width: 20px;
+                max-width: 20px;
+                font-size: 12px;
+            }
+			td.td5relay0
+            {
+                width: 20px;
+                min-width: 20px;
+                max-width: 20px;
+                font-size: 12px;
+            }
+			td.td6relay0
+            {
+                width: 20px;
+                min-width: 20px;
+                max-width: 20px;
+                font-size: 12px;
+            }
+			td.td7relay0
+            {
+                width: 20px;
+                min-width: 20px;
+                max-width: 20px;
+                font-size: 12px;
+            }
+			td.td8relay0
+            {
+                width: 20px;
+                min-width: 20px;
+                max-width: 20px;
+                font-size: 12px;
+            }
+			td.td9relay0
+            {
+                width: 20px;
+                min-width: 20px;
+                max-width: 20px;
+                font-size: 12px;
+            }
+			td.td10relay0
+            {
+                width: 20px;
+                min-width: 20px;
+                max-width: 20px;
+                font-size: 12px;
+            }
+
+            td.td1relay1, td.td2relay1, td.td3relay1, td.td4relay1, td.td5relay1, td.td6relay1, td.td7relay1, td.td8relay1, td.td9relay1, td.td10relay1
+            {
+				text-align: left;
+            }
+
+			td.td1relay1
+            {
+				min-width: 168px;
+				max-width: 168px;
+				width: 168px;
+				font-size: 12px;
+            }
+			td.td2relay1
+            {
+				min-width: 260px;
+				max-width: 260px;
+				width: 260px;
+				font-size: 12px;
+            }
+			td.td3relay1
+            {
+				min-width: 168px;
+				max-width: 168px;
+				width: 168px;
+				font-size: 12px;
+            }
+			td.td4relay1
+            {
+				min-width: 184px;
+				max-width: 184px;
+				width: 184px;
+				font-size: 12px;
+            }
+			td.td5relay1
+            {
+				min-width: 179px;
+				max-width: 179px;
+				width: 179px;
+				font-size: 12px;
+            }
+			td.td6relay1
+            {
+				min-width: 200px;
+				max-width: 200px;
+				width: 200px;
+				font-size: 12px;
+            }
+			td.td7relay1
+            {
+				min-width: 118px;
+				max-width: 118px;
+				width: 118px;
+				font-size: 12px;
+            }
+			td.td8relay1
+            {
+				min-width: 164px;
+				max-width: 164px;
+				width: 164px;
+				font-size: 12px;
+            }
+			td.td9relay1
+            {
+				min-width: 197px;
+				max-width: 197px;
+				width: 197px;
+				font-size: 12px;
+            }
+			td.td10relay1
+            {
+				min-width: 114px;
+				max-width: 114px;
+				width: 114px;
+				font-size: 12px;
+            }
+
+			td.td1relay2, td.td1relay8, td.td1relay14,
+			td.td1relay20, td.td1relay26, td.td1relay32,
+			td.td1relay38, td.td1relay44, td.td1relay50,
+			td.td1relay56, td.td1relay62,
+            td.td1relay3, td.td1relay4, td.td1relay5,
+            td.td1relay9, td.td1relay10, td.td1relay11,
+			td.td1relay15, td.td1relay16, td.td1relay17,
+			td.td1relay21, td.td1relay22, td.td1relay23,
+			td.td1relay27, td.td1relay28, td.td1relay29,
+			td.td1relay33, td.td1relay34, td.td1relay35,
+			td.td1relay39, td.td1relay40, td.td1relay41,
+			td.td1relay45, td.td1relay46, td.td1relay47,
+			td.td1relay51, td.td1relay52, td.td1relay53,
+			td.td1relay57, td.td1relay58, td.td1relay59,
+			td.td1relay63, td.td1relay64, td.td1relay65,
+			td.td2relay2, td.td2relay8, td.td2relay14,
+			td.td2relay20, td.td2relay26, td.td2relay32,
+			td.td2relay38, td.td2relay44, td.td2relay50,
+			td.td2relay56, td.td2relay62,
+            td.td2relay3, td.td2relay4, td.td2relay5,
+            td.td2relay9, td.td2relay10, td.td2relay11,
+			td.td2relay15, td.td2relay16, td.td2relay17,
+			td.td2relay21, td.td2relay22, td.td2relay23,
+			td.td2relay27, td.td2relay28, td.td2relay29,
+			td.td2relay33, td.td2relay34, td.td2relay35,
+			td.td2relay39, td.td2relay40, td.td2relay41,
+			td.td2relay45, td.td2relay46, td.td2relay47,
+			td.td2relay51, td.td2relay52, td.td2relay53,
+			td.td2relay57, td.td2relay58, td.td2relay59,
+			td.td2relay63, td.td2relay64, td.td2relay65,
+			td.td3relay2, td.td3relay8, td.td3relay14,
+			td.td3relay20, td.td3relay26, td.td3relay32,
+			td.td3relay38, td.td3relay44, td.td3relay50,
+			td.td3relay56, td.td3relay62,
+            td.td3relay3, td.td3relay4, td.td3relay5,
+            td.td3relay9, td.td3relay10, td.td3relay11,
+			td.td3relay15, td.td3relay16, td.td3relay17,
+			td.td3relay21, td.td3relay22, td.td3relay23,
+			td.td3relay27, td.td3relay28, td.td3relay29,
+			td.td3relay33, td.td3relay34, td.td3relay35,
+			td.td3relay39, td.td3relay40, td.td3relay41,
+			td.td3relay45, td.td3relay46, td.td3relay47,
+			td.td3relay51, td.td3relay52, td.td3relay53,
+			td.td3relay57, td.td3relay58, td.td3relay59,
+			td.td3relay63, td.td3relay64, td.td3relay65,
+			td.td4relay2, td.td4relay8, td.td4relay14,
+			td.td4relay20, td.td4relay26, td.td4relay32,
+			td.td4relay38, td.td4relay44, td.td4relay50,
+			td.td4relay56, td.td4relay62,
+            td.td4relay3, td.td4relay4, td.td4relay5,
+            td.td4relay9, td.td4relay10, td.td4relay11,
+			td.td4relay15, td.td4relay16, td.td4relay17,
+			td.td4relay21, td.td4relay22, td.td4relay23,
+			td.td4relay27, td.td4relay28, td.td4relay29,
+			td.td4relay33, td.td4relay34, td.td4relay35,
+			td.td4relay39, td.td4relay40, td.td4relay41,
+			td.td4relay45, td.td4relay46, td.td4relay47,
+			td.td4relay51, td.td4relay52, td.td4relay53,
+			td.td4relay57, td.td4relay58, td.td4relay59,
+			td.td4relay63, td.td4relay64, td.td4relay65,
+			td.td5relay2, td.td5relay8, td.td5relay14,
+			td.td5relay20, td.td5relay26, td.td5relay32,
+			td.td5relay38, td.td5relay44, td.td5relay50,
+			td.td5relay56, td.td5relay62,
+            td.td5relay3, td.td5relay4, td.td5relay5,
+            td.td5relay9, td.td5relay10, td.td5relay11,
+			td.td5relay15, td.td5relay16, td.td5relay17,
+			td.td5relay21, td.td5relay22, td.td5relay23,
+			td.td5relay27, td.td5relay28, td.td5relay29,
+			td.td5relay33, td.td5relay34, td.td5relay35,
+			td.td5relay39, td.td5relay40, td.td5relay41,
+			td.td5relay45, td.td5relay46, td.td5relay47,
+			td.td5relay51, td.td5relay52, td.td5relay53,
+			td.td5relay57, td.td5relay58, td.td5relay59,
+			td.td5relay63, td.td5relay64, td.td5relay65,
+			td.td6relay2, td.td6relay8, td.td6relay14,
+			td.td6relay20, td.td6relay26, td.td6relay32,
+			td.td6relay38, td.td6relay44, td.td6relay50,
+			td.td6relay56, td.td6relay62,
+            td.td6relay3, td.td6relay4, td.td6relay5,
+            td.td6relay9, td.td6relay10, td.td6relay11,
+			td.td6relay15, td.td6relay16, td.td6relay17,
+			td.td6relay21, td.td6relay22, td.td6relay23,
+			td.td6relay27, td.td6relay28, td.td6relay29,
+			td.td6relay33, td.td6relay34, td.td6relay35,
+			td.td6relay39, td.td6relay40, td.td6relay41,
+			td.td6relay45, td.td6relay46, td.td6relay47,
+			td.td6relay51, td.td6relay52, td.td6relay53,
+			td.td6relay57, td.td6relay58, td.td6relay59,
+			td.td6relay63, td.td6relay64, td.td6relay65,
+			td.td7relay2, td.td7relay8, td.td7relay14,
+			td.td7relay20, td.td7relay26, td.td7relay32,
+			td.td7relay38, td.td7relay44, td.td7relay50,
+			td.td7relay56, td.td7relay62,
+            td.td7relay3, td.td7relay4, td.td7relay5,
+            td.td7relay9, td.td7relay10, td.td7relay11,
+			td.td7relay15, td.td7relay16, td.td7relay17,
+			td.td7relay21, td.td7relay22, td.td7relay23,
+			td.td7relay27, td.td7relay28, td.td7relay29,
+			td.td7relay33, td.td7relay34, td.td7relay35,
+			td.td7relay39, td.td7relay40, td.td7relay41,
+			td.td7relay45, td.td7relay46, td.td7relay47,
+			td.td7relay51, td.td7relay52, td.td7relay53,
+			td.td7relay57, td.td7relay58, td.td7relay59,
+			td.td7relay63, td.td7relay64, td.td7relay65,
+			td.td8relay2, td.td8relay8, td.td8relay14,
+			td.td8relay20, td.td8relay26, td.td8relay32,
+			td.td8relay38, td.td8relay44, td.td8relay50,
+			td.td8relay56, td.td8relay62,
+            td.td8relay3, td.td8relay4, td.td8relay5,
+            td.td8relay9, td.td8relay10, td.td8relay11,
+			td.td8relay15, td.td8relay16, td.td8relay17,
+			td.td8relay21, td.td8relay22, td.td8relay23,
+			td.td8relay27, td.td8relay28, td.td8relay29,
+			td.td8relay33, td.td8relay34, td.td8relay35,
+			td.td8relay39, td.td8relay40, td.td8relay41,
+			td.td8relay45, td.td8relay46, td.td8relay47,
+			td.td8relay51, td.td8relay52, td.td8relay53,
+			td.td8relay57, td.td8relay58, td.td8relay59,
+			td.td8relay63, td.td8relay64, td.td8relay65,
+			td.td9relay2, td.td9relay8, td.td9relay14,
+			td.td9relay20, td.td9relay26, td.td9relay32,
+			td.td9relay38, td.td9relay44, td.td9relay50,
+			td.td9relay56, td.td9relay62,
+            td.td9relay3, td.td9relay4, td.td9relay5,
+            td.td9relay9, td.td9relay10, td.td9relay11,
+			td.td9relay15, td.td9relay16, td.td9relay17,
+			td.td9relay21, td.td9relay22, td.td9relay23,
+			td.td9relay27, td.td9relay28, td.td9relay29,
+			td.td9relay33, td.td9relay34, td.td9relay35,
+			td.td9relay39, td.td9relay40, td.td9relay41,
+			td.td9relay45, td.td9relay46, td.td9relay47,
+			td.td9relay51, td.td9relay52, td.td9relay53,
+			td.td9relay57, td.td9relay58, td.td9relay59,
+			td.td9relay63, td.td9relay64, td.td9relay65,
+			td.td10relay2, td.td10relay8, td.td10relay14,
+			td.td10relay20, td.td10relay26, td.td10relay32,
+			td.td10relay38, td.td10relay44, td.td10relay50,
+			td.td10relay56, td.td10relay62,
+            td.td10relay3, td.td10relay4, td.td10relay5,
+            td.td10relay9, td.td10relay10, td.td10relay11,
+			td.td10relay15, td.td10relay16, td.td10relay17,
+			td.td10relay21, td.td10relay22, td.td10relay23,
+			td.td10relay27, td.td10relay28, td.td10relay29,
+			td.td10relay33, td.td10relay34, td.td10relay35,
+			td.td10relay39, td.td10relay40, td.td10relay41,
+			td.td10relay45, td.td10relay46, td.td10relay47,
+			td.td10relay51, td.td10relay52, td.td10relay53,
+			td.td10relay57, td.td10relay58, td.td10relay59,
+			td.td10relay63, td.td10relay64, td.td10relay65
+            {
+				text-align: right;
+            }
+
+			td.td1relay2, td.td1relay8, td.td1relay14,
+			td.td1relay20, td.td1relay26, td.td1relay32,
+			td.td1relay38, td.td1relay44, td.td1relay50,
+			td.td1relay56, td.td1relay62,
+            td.td1relay3, td.td1relay4, td.td1relay5,
+            td.td1relay9, td.td1relay10, td.td1relay11,
+			td.td1relay15, td.td1relay16, td.td1relay17,
+			td.td1relay21, td.td1relay22, td.td1relay23,
+			td.td1relay27, td.td1relay28, td.td1relay29,
+			td.td1relay33, td.td1relay34, td.td1relay35,
+			td.td1relay39, td.td1relay40, td.td1relay41,
+			td.td1relay45, td.td1relay46, td.td1relay47,
+			td.td1relay51, td.td1relay52, td.td1relay53,
+			td.td1relay57, td.td1relay58, td.td1relay59,
+			td.td1relay63, td.td1relay64, td.td1relay65
+            {
+				width: 36px;
+				min-width: 36px;
+				max-width: 36px;
+				font-size: 8px;
+            }
+			td.td2relay2, td.td2relay8, td.td2relay14,
+			td.td2relay20, td.td2relay26, td.td2relay32,
+			td.td2relay38, td.td2relay44, td.td2relay50,
+			td.td2relay56, td.td2relay62,
+            td.td2relay3, td.td2relay4, td.td2relay5,
+            td.td2relay9, td.td2relay10, td.td2relay11,
+			td.td2relay15, td.td2relay16, td.td2relay17,
+			td.td2relay21, td.td2relay22, td.td2relay23,
+			td.td2relay27, td.td2relay28, td.td2relay29,
+			td.td2relay33, td.td2relay34, td.td2relay35,
+			td.td2relay39, td.td2relay40, td.td2relay41,
+			td.td2relay45, td.td2relay46, td.td2relay47,
+			td.td2relay51, td.td2relay52, td.td2relay53,
+			td.td2relay57, td.td2relay58, td.td2relay59,
+			td.td2relay63, td.td2relay64, td.td2relay65
+            {
+				width: 50px;
+				min-width: 50px;
+				max-width: 50px;
+				font-size: 8px;
+            }
+			td.td3relay2, td.td3relay8, td.td3relay14,
+			td.td3relay20, td.td3relay26, td.td3relay32,
+			td.td3relay38, td.td3relay44, td.td3relay50,
+			td.td3relay56, td.td3relay62,
+            td.td3relay3, td.td3relay4, td.td3relay5,
+            td.td3relay9, td.td3relay10, td.td3relay11,
+			td.td3relay15, td.td3relay16, td.td3relay17,
+			td.td3relay21, td.td3relay22, td.td3relay23,
+			td.td3relay27, td.td3relay28, td.td3relay29,
+			td.td3relay33, td.td3relay34, td.td3relay35,
+			td.td3relay39, td.td3relay40, td.td3relay41,
+			td.td3relay45, td.td3relay46, td.td3relay47,
+			td.td3relay51, td.td3relay52, td.td3relay53,
+			td.td3relay57, td.td3relay58, td.td3relay59,
+			td.td3relay63, td.td3relay64, td.td3relay65
+            {
+				width: 36px;
+				min-width: 36px;
+				max-width: 36px;
+				font-size: 8px;
+            }
+			td.td4relay2, td.td4relay8, td.td4relay14,
+			td.td4relay20, td.td4relay26, td.td4relay32,
+			td.td4relay38, td.td4relay44, td.td4relay50,
+			td.td4relay56, td.td4relay62,
+            td.td4relay3, td.td4relay4, td.td4relay5,
+            td.td4relay9, td.td4relay10, td.td4relay11,
+			td.td4relay15, td.td4relay16, td.td4relay17,
+			td.td4relay21, td.td4relay22, td.td4relay23,
+			td.td4relay27, td.td4relay28, td.td4relay29,
+			td.td4relay33, td.td4relay34, td.td4relay35,
+			td.td4relay39, td.td4relay40, td.td4relay41,
+			td.td4relay45, td.td4relay46, td.td4relay47,
+			td.td4relay51, td.td4relay52, td.td4relay53,
+			td.td4relay57, td.td4relay58, td.td4relay59,
+			td.td4relay63, td.td4relay64, td.td4relay65
+            {
+				width: 27px;
+				min-width: 27px;
+				max-width: 27px;
+				font-size: 8px;
+            }
+			td.td5relay2, td.td5relay8, td.td5relay14,
+			td.td5relay20, td.td5relay26, td.td5relay32,
+			td.td5relay38, td.td5relay44, td.td5relay50,
+			td.td5relay56, td.td5relay62,
+            td.td5relay3, td.td5relay4, td.td5relay5,
+            td.td5relay9, td.td5relay10, td.td5relay11,
+			td.td5relay15, td.td5relay16, td.td5relay17,
+			td.td5relay21, td.td5relay22, td.td5relay23,
+			td.td5relay27, td.td5relay28, td.td5relay29,
+			td.td5relay33, td.td5relay34, td.td5relay35,
+			td.td5relay39, td.td5relay40, td.td5relay41,
+			td.td5relay45, td.td5relay46, td.td5relay47,
+			td.td5relay51, td.td5relay52, td.td5relay53,
+			td.td5relay57, td.td5relay58, td.td5relay59,
+			td.td5relay63, td.td5relay64, td.td5relay65
+            {
+				width: 27px;
+				min-width: 27px;
+				max-width: 27px;
+				font-size: 8px;
+            }
+			td.td6relay2, td.td6relay8, td.td6relay14,
+			td.td6relay20, td.td6relay26, td.td6relay32,
+			td.td6relay38, td.td6relay44, td.td6relay50,
+			td.td6relay56, td.td6relay62,
+            td.td6relay3, td.td6relay4, td.td6relay5,
+            td.td6relay9, td.td6relay10, td.td6relay11,
+			td.td6relay15, td.td6relay16, td.td6relay17,
+			td.td6relay21, td.td6relay22, td.td6relay23,
+			td.td6relay27, td.td6relay28, td.td6relay29,
+			td.td6relay33, td.td6relay34, td.td6relay35,
+			td.td6relay39, td.td6relay40, td.td6relay41,
+			td.td6relay45, td.td6relay46, td.td6relay47,
+			td.td6relay51, td.td6relay52, td.td6relay53,
+			td.td6relay57, td.td6relay58, td.td6relay59,
+			td.td6relay63, td.td6relay64, td.td6relay65
+            {
+				width: 30px;
+				min-width: 30px;
+				max-width: 30px;
+				font-size: 8px;
+            }
+			td.td7relay2, td.td7relay8, td.td7relay14,
+			td.td7relay20, td.td7relay26, td.td7relay32,
+			td.td7relay38, td.td7relay44, td.td7relay50,
+			td.td7relay56, td.td7relay62,
+            td.td7relay3, td.td7relay4, td.td7relay5,
+            td.td7relay9, td.td7relay10, td.td7relay11,
+			td.td7relay15, td.td7relay16, td.td7relay17,
+			td.td7relay21, td.td7relay22, td.td7relay23,
+			td.td7relay27, td.td7relay28, td.td7relay29,
+			td.td7relay33, td.td7relay34, td.td7relay35,
+			td.td7relay39, td.td7relay40, td.td7relay41,
+			td.td7relay45, td.td7relay46, td.td7relay47,
+			td.td7relay51, td.td7relay52, td.td7relay53,
+			td.td7relay57, td.td7relay58, td.td7relay59,
+			td.td7relay63, td.td7relay64, td.td7relay65
+            {
+				width: 27px;
+				min-width: 27px;
+				max-width: 27px;
+				font-size: 8px;
+            }
+			td.td8relay2, td.td8relay8, td.td8relay14,
+			td.td8relay20, td.td8relay26, td.td8relay32,
+			td.td8relay38, td.td8relay44, td.td8relay50,
+			td.td8relay56, td.td8relay62,
+            td.td8relay3, td.td8relay4, td.td8relay5,
+            td.td8relay9, td.td8relay10, td.td8relay11,
+			td.td8relay15, td.td8relay16, td.td8relay17,
+			td.td8relay21, td.td8relay22, td.td8relay23,
+			td.td8relay27, td.td8relay28, td.td8relay29,
+			td.td8relay33, td.td8relay34, td.td8relay35,
+			td.td8relay39, td.td8relay40, td.td8relay41,
+			td.td8relay45, td.td8relay46, td.td8relay47,
+			td.td8relay51, td.td8relay52, td.td8relay53,
+			td.td8relay57, td.td8relay58, td.td8relay59,
+			td.td8relay63, td.td8relay64, td.td8relay65
+            {
+				width: 27px;
+				min-width: 27px;
+				max-width: 27px;
+				font-size: 8px;
+            }
+			td.td9relay2, td.td9relay8, td.td9relay14,
+			td.td9relay20, td.td9relay26, td.td9relay32,
+			td.td9relay38, td.td9relay44, td.td9relay50,
+			td.td9relay56, td.td9relay62,
+            td.td9relay3, td.td9relay4, td.td9relay5,
+            td.td9relay9, td.td9relay10, td.td9relay11,
+			td.td9relay15, td.td9relay16, td.td9relay17,
+			td.td9relay21, td.td9relay22, td.td9relay23,
+			td.td9relay27, td.td9relay28, td.td9relay29,
+			td.td9relay33, td.td9relay34, td.td9relay35,
+			td.td9relay39, td.td9relay40, td.td9relay41,
+			td.td9relay45, td.td9relay46, td.td9relay47,
+			td.td9relay51, td.td9relay52, td.td9relay53,
+			td.td9relay57, td.td9relay58, td.td9relay59,
+			td.td9relay63, td.td9relay64, td.td9relay65
+            {
+				width: 27px;
+				min-width: 27px;
+				max-width: 27px;
+				font-size: 8px;
+            }
+			td.td10relay2, td.td10relay8, td.td10relay14,
+			td.td10relay20, td.td10relay26, td.td10relay32,
+			td.td10relay38, td.td10relay44, td.td10relay50,
+			td.td10relay56, td.td10relay62,
+            td.td10relay3, td.td10relay4, td.td10relay5,
+            td.td10relay9, td.td10relay10, td.td10relay11,
+			td.td10relay15, td.td10relay16, td.td10relay17,
+			td.td10relay21, td.td10relay22, td.td10relay23,
+			td.td10relay27, td.td10relay28, td.td10relay29,
+			td.td10relay33, td.td10relay34, td.td10relay35,
+			td.td10relay39, td.td10relay40, td.td10relay41,
+			td.td10relay45, td.td10relay46, td.td10relay47,
+			td.td10relay51, td.td10relay52, td.td10relay53,
+			td.td10relay57, td.td10relay58, td.td10relay59,
+			td.td10relay63, td.td10relay64, td.td10relay65
+            {
+				width: 27px;
+				min-width: 27px;
+				max-width: 27px;
+				font-size: 8px;
+            }
+
+			td.td1relay6, td.td1relay12, td.td1relay18,
+			td.td1relay24, td.td1relay30, td.td1relay36,
+			td.td1relay42, td.td1relay48, td.td1relay54,
+			td.td1relay60, td.td1relay66,
+            td.td2relay6, td.td2relay12, td.td2relay18,
+			td.td2relay24, td.td2relay30, td.td2relay36,
+			td.td2relay42, td.td2relay48, td.td2relay54,
+			td.td2relay60, td.td2relay66,
+			td.td3relay6, td.td3relay12, td.td3relay18,
+			td.td3relay24, td.td3relay30, td.td3relay36,
+			td.td3relay42, td.td3relay48, td.td3relay54,
+			td.td3relay60, td.td3relay66,
+			td.td4relay6, td.td4relay12, td.td4relay18,
+			td.td4relay24, td.td4relay30, td.td4relay36,
+			td.td4relay42, td.td4relay48, td.td4relay54,
+			td.td4relay60, td.td4relay66,
+			td.td5relay6, td.td5relay12, td.td5relay18,
+			td.td5relay24, td.td5relay30, td.td5relay36,
+			td.td5relay42, td.td5relay48, td.td5relay54,
+			td.td5relay60, td.td5relay66,
+			td.td6relay6, td.td6relay12, td.td6relay18,
+			td.td6relay24, td.td6relay30, td.td6relay36,
+			td.td6relay42, td.td6relay48, td.td6relay54,
+			td.td6relay60, td.td6relay66,
+			td.td7relay6, td.td7relay12, td.td7relay18,
+			td.td7relay24, td.td7relay30, td.td7relay36,
+			td.td7relay42, td.td7relay48, td.td7relay54,
+			td.td7relay60, td.td7relay66,
+			td.td8relay6, td.td8relay12, td.td8relay18,
+			td.td8relay24, td.td8relay30, td.td8relay36,
+			td.td8relay42, td.td8relay48, td.td8relay54,
+			td.td8relay60, td.td8relay66,
+			td.td9relay6, td.td9relay12, td.td9relay18,
+			td.td9relay24, td.td9relay30, td.td9relay36,
+			td.td9relay42, td.td9relay48, td.td9relay54,
+			td.td9relay60, td.td9relay66,
+			td.td10relay6, td.td10relay12, td.td10relay18,
+			td.td10relay24, td.td10relay30, td.td10relay36,
+			td.td10relay42, td.td10relay48, td.td10relay54,
+			td.td10relay60, td.td10relay66
+            {
+				text-align: center;
+            }
+
+			td.td1relay6, td.td1relay12, td.td1relay18,
+			td.td1relay24, td.td1relay30, td.td1relay36,
+			td.td1relay42, td.td1relay48, td.td1relay54,
+			td.td1relay60, td.td1relay66
+            {
+				width: 22px;
+				min-width: 22px;
+				max-width: 22px;
+				font-size: 8px;
+            }
+            td.td2relay6, td.td2relay12, td.td2relay18,
+			td.td2relay24, td.td2relay30, td.td2relay36,
+			td.td2relay42, td.td2relay48, td.td2relay54,
+			td.td2relay60, td.td2relay66
+            {
+				width: 30px;
+				min-width: 30px;
+				max-width: 30px;
+				font-size: 8px;
+            }
+			td.td3relay6, td.td3relay12, td.td3relay18,
+			td.td3relay24, td.td3relay30, td.td3relay36,
+			td.td3relay42, td.td3relay48, td.td3relay54,
+			td.td3relay60, td.td3relay66
+            {
+				width: 22px;
+				min-width: 22px;
+				max-width: 22px;
+				font-size: 8px;
+            }
+			td.td4relay6, td.td4relay12, td.td4relay18,
+			td.td4relay24, td.td4relay30, td.td4relay36,
+			td.td4relay42, td.td4relay48, td.td4relay54,
+			td.td4relay60, td.td4relay66
+            {
+				width: 20px;
+				min-width: 20px;
+				max-width: 20px;
+				font-size: 8px;
+            }
+			td.td5relay6, td.td5relay12, td.td5relay18,
+			td.td5relay24, td.td5relay30, td.td5relay36,
+			td.td5relay42, td.td5relay48, td.td5relay54,
+			td.td5relay60, td.td5relay66
+            {
+				width: 20px;
+				min-width: 20px;
+				max-width: 20px;
+				font-size: 8px;
+            }
+			td.td6relay6, td.td6relay12, td.td6relay18,
+			td.td6relay24, td.td6relay30, td.td6relay36,
+			td.td6relay42, td.td6relay48, td.td6relay54,
+			td.td6relay60, td.td6relay66
+            {
+				width: 20px;
+				min-width: 20px;
+				max-width: 20px;
+				font-size: 8px;
+            }
+			td.td7relay6, td.td7relay12, td.td7relay18,
+			td.td7relay24, td.td7relay30, td.td7relay36,
+			td.td7relay42, td.td7relay48, td.td7relay54,
+			td.td7relay60, td.td7relay66
+            {
+				width: 20px;
+				min-width: 20px;
+				max-width: 20px;
+				font-size: 8px;
+            }
+			td.td8relay6, td.td8relay12, td.td8relay18,
+			td.td8relay24, td.td8relay30, td.td8relay36,
+			td.td8relay42, td.td8relay48, td.td8relay54,
+			td.td8relay60, td.td8relay66
+            {
+				width: 20px;
+				min-width: 20px;
+				max-width: 20px;
+				font-size: 8px;
+            }
+			td.td9relay6, td.td9relay12, td.td9relay18,
+			td.td9relay24, td.td9relay30, td.td9relay36,
+			td.td9relay42, td.td9relay48, td.td9relay54,
+			td.td9relay60, td.td9relay66
+            {
+				width: 20px;
+				min-width: 20px;
+				max-width: 20px;
+				font-size: 8px;
+            }
+			td.td10relay6, td.td10relay12, td.td10relay18,
+			td.td10relay24, td.td10relay30, td.td10relay36,
+			td.td10relay42, td.td10relay48, td.td10relay54,
+			td.td10relay60, td.td10relay66
+            {
+				width: 20px;
+				min-width: 20px;
+				max-width: 20px;
+				font-size: 8px;
+            }
+
+			td.td1relay7, td.td1relay13, td.td1relay19,
+			td.td1relay25, td.td1relay31, td.td1relay37,
+			td.td1relay43, td.td1relay49, td.td1relay55,
+			td.td1relay61, td.td1relay67,
+			td.td2relay7, td.td2relay13, td.td2relay19,
+			td.td2relay25, td.td2relay31, td.td2relay37,
+			td.td2relay43, td.td2relay49, td.td2relay55,
+			td.td2relay61, td.td2relay67,
+			td.td3relay7, td.td3relay13, td.td3relay19,
+			td.td3relay25, td.td3relay31, td.td3relay37,
+			td.td3relay43, td.td3relay49, td.td3relay55,
+			td.td3relay61, td.td3relay67,
+			td.td4relay7, td.td4relay13, td.td4relay19,
+			td.td4relay25, td.td4relay31, td.td4relay37,
+			td.td4relay43, td.td4relay49, td.td4relay55,
+			td.td4relay61, td.td4relay67,
+			td.td5relay7, td.td5relay13, td.td5relay19,
+			td.td5relay25, td.td5relay31, td.td5relay37,
+			td.td5relay43, td.td5relay49, td.td5relay55,
+			td.td5relay61, td.td5relay67,
+			td.td6relay7, td.td6relay13, td.td6relay19,
+			td.td6relay25, td.td6relay31, td.td6relay37,
+			td.td6relay43, td.td6relay49, td.td6relay55,
+			td.td6relay61, td.td6relay67,
+			td.td7relay7, td.td7relay13, td.td7relay19,
+			td.td7relay25, td.td7relay31, td.td7relay37,
+			td.td7relay43, td.td7relay49, td.td7relay55,
+			td.td7relay61, td.td7relay67,
+			td.td8relay7, td.td8relay13, td.td8relay19,
+			td.td8relay25, td.td8relay31, td.td8relay37,
+			td.td8relay43, td.td8relay49, td.td8relay55,
+			td.td8relay61, td.td8relay67,
+			td.td9relay7, td.td9relay13, td.td9relay19,
+			td.td9relay25, td.td9relay31, td.td9relay37,
+			td.td9relay43, td.td9relay49, td.td9relay55,
+			td.td9relay61, td.td9relay67,
+			td.td10relay7, td.td10relay13, td.td10relay19,
+			td.td10relay25, td.td10relay31, td.td10relay37,
+			td.td10relay43, td.td10relay49, td.td10relay55,
+			td.td10relay61, td.td10relay67
+            {
+				text-align: right;
+            }
+
+            td.td1relay7, td.td1relay13, td.td1relay19,
+			td.td1relay25, td.td1relay31, td.td1relay37,
+			td.td1relay43, td.td1relay49, td.td1relay55,
+			td.td1relay61, td.td1relay67
+            {
+				width: 42px;
+				min-width: 42px;
+				max-width: 42px;
+				font-size: 12px;
+            }
+			td.td2relay7, td.td2relay13, td.td2relay19,
+			td.td2relay25, td.td2relay31, td.td2relay37,
+			td.td2relay43, td.td2relay49, td.td2relay55,
+			td.td2relay61, td.td2relay67
+            {
+				width: 58px;
+				min-width: 58px;
+				max-width: 58px;
+				font-size: 12px;
+            }
+			td.td3relay7, td.td3relay13, td.td3relay19,
+			td.td3relay25, td.td3relay31, td.td3relay37,
+			td.td3relay43, td.td3relay49, td.td3relay55,
+			td.td3relay61, td.td3relay67
+            {
+				width: 42px;
+				min-width: 42px;
+				max-width: 42px;
+				font-size: 12px;
+            }
+			td.td4relay7, td.td4relay13, td.td4relay19,
+			td.td4relay25, td.td4relay31, td.td4relay37,
+			td.td4relay43, td.td4relay49, td.td4relay55,
+			td.td4relay61, td.td4relay67
+            {
+				width: 42px;
+				min-width: 42px;
+				max-width: 42px;
+				font-size: 12px;
+            }
+			td.td5relay7, td.td5relay13, td.td5relay19,
+			td.td5relay25, td.td5relay31, td.td5relay37,
+			td.td5relay43, td.td5relay49, td.td5relay55,
+			td.td5relay61, td.td5relay67
+            {
+				width: 40px;
+				min-width: 40px;
+				max-width: 40px;
+				font-size: 12px;
+            }
+			td.td6relay7, td.td6relay13, td.td6relay19,
+			td.td6relay25, td.td6relay31, td.td6relay37,
+			td.td6relay43, td.td6relay49, td.td6relay55,
+			td.td6relay61, td.td6relay67
+            {
+				width: 40px;
+				min-width: 40px;
+				max-width: 40px;
+				font-size: 12px;
+            }
+			td.td7relay7, td.td7relay13, td.td7relay19,
+			td.td7relay25, td.td7relay31, td.td7relay37,
+			td.td7relay43, td.td7relay49, td.td7relay55,
+			td.td7relay61, td.td7relay67
+            {
+				width: 40px;
+				min-width: 40px;
+				max-width: 40px;
+				font-size: 12px;
+            }
+			td.td8relay7, td.td8relay13, td.td8relay19,
+			td.td8relay25, td.td8relay31, td.td8relay37,
+			td.td8relay43, td.td8relay49, td.td8relay55,
+			td.td8relay61, td.td8relay67
+            {
+				width: 40px;
+				min-width: 40px;
+				max-width: 40px;
+				font-size: 12px;
+            }
+			td.td9relay7, td.td9relay13, td.td9relay19,
+			td.td9relay25, td.td9relay31, td.td9relay37,
+			td.td9relay43, td.td9relay49, td.td9relay55,
+			td.td9relay61, td.td9relay67
+            {
+				width: 40px;
+				min-width: 40px;
+				max-width: 40px;
+				font-size: 12px;
+            }
+			td.td10relay7, td.td10relay13, td.td10relay19,
+			td.td10relay25, td.td10relay31, td.td10relay37,
+			td.td10relay43, td.td10relay49, td.td10relay55,
+			td.td10relay61, td.td10relay67
+            {
+				width: 40px;
+				min-width: 40px;
+				max-width: 40px;
+				font-size: 12px;
+            }
+
+			td.relay_tm_name
+			{
+				font-size: 8px;
+				text-align: left;
+				max-width: 67px;
+            }
+
+			td.radio_tm_name
+			{
+				font-size: 8px;
+				text-align: left;
+				max-width: 54px;
+            }
+
+            th.entete_relay
+			{
+                background: #C09060;
+                border-left: 1px solid #E0B080;
+                border-right: 1px solid #B07040;
+                border-top: 1px solid #E0B080;
+                font-weight: normal;
+                /*padding: 4px 3px;*/
+                text-align: center
+            }
+			
+			th.entete_showo
+			{
+                background: #C09060;
+                border-left: 1px solid #E0B080;
+                border-right: 1px solid #B07040;
+                border-top: 1px solid #E0B080;
+                font-weight: normal;
+                /*padding: 4px 3px;*/
+                text-align: center
+            }
+
+			th.entete_relay_radio
+			{
+                background: #C09060;
+                border-left: 1px solid #E0B080;
+                border-right: 1px solid #B07040;
+                border-top: 1px solid #E0B080;
+                font-weight: normal;
+                /*padding: 4px 3px;*/
+                text-align: center;
+				font-size: 8px;
+            }
+
+			th.entete_radio0,th.entete_radio1,th.entete_radio2,th.entete_radio3,
+			th.entete_radio0_6alt
+			{
+				background: #C09060;
+                border-left: 1px solid #E0B080;
+                border-right: 1px solid #B07040;
+                border-top: 1px solid #E0B080;
+                font-weight: normal;
+                /*padding: 4px 3px;*/
+                text-align: center;
+				font-size: 8px;
+			}
+			th.entete_radio0
+			{
+				width:2px;
+				min-width:2px;
+				max-width:2px;
+			}
+			th.entete_radio0_6alt
+			{
+				width:115px;
+				min-width:115px;
+				max-width:115px;
+			}
+			th.entete_radio1, th.entete_radio2, th.entete_radio3
+			{
+				width: 27px;
+				min-width: 27px;
+				max-width: 27px;
+			}
+			td.radio0
+			{
+				/* */
+				width:2px;
+				min-width:2px;
+				max-width:2px;
+			}
+			td.radio0_6alt
+			{
+				/* */
+				width:115px;
+				min-width:115px;
+				max-width:115px;
+			}
+
+			td.radio1, td.radio2, td.radio3
+			{
+				text-align: right;
+				font-size: 8px;
+				width: 27px;
+				min-width: 27px;
+				max-width: 27px;
+			}
+
+            th.entete_relayvide
+                        {
+            }
+			
+			/* BLOG */
+      span.blogtime
+      {
+        font-size: 9px;
+        margin-right: 8px;
+      }
+      
+      ul.blogview
+      {
+        list-style: none;
+      }
+      
+      ul.blogview li
+      {
+        padding-bottom: 6px;
+        font-size: 16px;
+      }
+      
+      li.blogrecent
+      {
+        color: #333399;
+      }
+	  
+	  
+	  td.td_showo1_0
+	  {
+			min-width: 20px;
+			max-width: 20px;
+			width: 20px;
+			text-align:center;
+	  }
+	  td.td_showo1_1
+	  {
+			min-width: 200px;
+			max-width: 200px;
+			width: 200px;
+	  }
+	  td.td_showo1_2
+	  {
+			min-width: 170px;
+			max-width: 170px;
+			width: 170px;
+	  }
+	  
+	
+	td.td_showo1_3, td.td_showo1_6, td.td_showo1_9, td.td_showo1_12, td.td_showo1_15
+	{
+		font-size: 10px;
+		min-width: 50px;
+		max-width: 50px;
+		width: 50px;
+		text-align: right;
+	}
+	td.td_showo1_4, td.td_showo1_7, td.td_showo1_10, td.td_showo1_13, td.td_showo1_16
+	{
+		font-size: 10px;
+		min-width: 20px;
+		max-width: 20px;
+		width: 20px;
+		text-align: right;
+	}
+	td.td_showo1_5, td.td_showo1_8, td.td_showo1_11, td.td_showo1_14, td.td_showo1_17
+	{
+		font-size: 12px;
+		min-width: 60px;
+		max-width: 60px;
+		width: 60px;
+		text-align: right;
+	}
+	
+	td.tdtimeresult1showo
+	{
+		text-align:	right;
+		width:	80px;
+		max-width:	80px;
+		min-width:	80px;
+		font-size: 12px;
+		font-weight: bold;
+	}
+	
+	td.td_showo2_0
+	  {
+			min-width: 20px;
+			max-width: 20px;
+			width: 20px;
+			font-size: 10px;
+			text-align:center;
+	  }
+	  td.td_showo2_1
+	  {
+			min-width: 110px;
+			max-width: 110px;
+			width: 110px;
+			font-size: 10px;
+	  }
+	  td.td_showo2_2
+	  {
+			min-width: 80px;
+			max-width: 80px;
+			width: 80px;
+	  }
+	  
+	
+	td.td_showo2_3, td.td_showo2_6, td.td_showo2_9, td.td_showo2_12, td.td_showo2_15
+	{
+		font-size: 10px;
+		min-width: 22px;
+		max-width: 22px;
+		width: 22px;
+		text-align: right;
+	}
+	td.td_showo2_4, td.td_showo2_7, td.td_showo2_10, td.td_showo2_13, td.td_showo2_16
+	{
+		font-size: 6px;
+		min-width: 6px;
+		max-width: 6px;
+		width: 10px;
+		text-align: right;
+	}
+	td.td_showo2_5, td.td_showo2_8, td.td_showo2_11, td.td_showo2_14, td.td_showo2_17
+	{
+		font-size: 10px;
+		min-width: 49px;
+		max-width: 49px;
+		width: 49px;
+		text-align: right;
+	}
+	
+	td.tdtimeresult2showo
+	{
+		text-align:	right;
+		width:	30px;
+		max-width:	30px;
+		min-width:	30px;
+		font-size: 11px;
+		font-weight: bold;
+	}
+	
+	
+	.mySlides0, .mySlides1, .mySlides2, .mySlides3
+	{
+		display:none;
+	}
+	
+	/* result summary */
+	td.tdsum_1_1, td.tdsum_1_2, td.tdsum_1_3, td.tdsum_1_4, td.tdsum_1_5, td.tdsum_1_6, td.tdsum_1_7, td.tdsum_1_8,
+	td.tdsum_2_1, td.tdsum_2_2, td.tdsum_2_3, td.tdsum_2_4, td.tdsum_2_5, td.tdsum_2_6, td.tdsum_2_7, td.tdsum_2_8,
+	td.tdsum_3_1, td.tdsum_3_2, td.tdsum_3_3, td.tdsum_3_4, td.tdsum_3_5, td.tdsum_3_6, td.tdsum_3_7, td.tdsum_3_8,
+	td.tdsum_4_1, td.tdsum_4_2, td.tdsum_4_3, td.tdsum_4_4, td.tdsum_4_5, td.tdsum_4_6, td.tdsum_4_7, td.tdsum_4_8
+	{
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.tdsum_1_0
+	{
+		width:	8px;
+		max-width:	8px;
+		min-width:	8px;
+		text-align: center;
+		font-size: 10px;
+	}
+	td.tdsum_2_0
+	{
+		width:	8px;
+		max-width:	8px;
+		min-width:	8px;
+		text-align: center;
+		font-size: 10px;
+	}
+	td.tdsum_3_0
+	{
+		width:	8px;
+		max-width:	8px;
+		min-width:	8px;
+		text-align: center;
+		font-size: 10px;
+	}
+	td.tdsum_4_0
+	{
+		width:	8px;
+		max-width:	8px;
+		min-width:	8px;
+		text-align: center;
+		font-size: 10px;
+	}
+
+	td.tdsum_1_1
+	{
+		width:	125px;
+		max-width:	125px;
+		min-width:	125px;
+		font-size: 10px;
+	}
+	td.tdsum_2_1
+	{
+		width:	150px;
+		max-width:	150px;
+		min-width:	150px;
+		font-size: 10px;
+	}
+	td.tdsum_3_1
+	{
+		width:	141px;
+		max-width:	141px;
+		min-width:	141px;
+		font-size: 10px;
+	}
+	td.tdsum_4_1
+	{
+		width:	118px;
+		max-width:	118px;
+		min-width:	118px;
+		font-size: 10px;
+	}
+
+	td.tdsum_1_2
+	{
+		width:	85px;
+		max-width:	85px;
+		min-width:	85px;
+		font-size: 8px;
+	}
+	td.tdsum_2_2
+	{
+		width:	140px;
+		max-width:	140px;
+		min-width:	140px;
+		font-size: 8px;
+	}
+	td.tdsum_3_2
+	{
+		width:	110px;
+		max-width:	110px;
+		min-width:	110px;
+		font-size: 8px;
+	}
+	td.tdsum_4_2
+	{
+		width:	53px;
+		max-width:	53px;
+		min-width:	53px;
+		font-size: 8px;
+	}
+	
+	td.tdsumtimeresult
+	{
+		text-align:	right;
+		width:	32px;
+		max-width:	32px;
+		min-width:	32px;
+		font-size: 10px;
+	}
+	
+	td.tdsumtimediff
+	{
+		width:	30px;
+		max-width:	30px;
+		min-width:	30px;
+		font-size: 8px;
+		text-align: right;
+	}
+
+	/* summary relay */
+	td.tdsum1relay1, td.tdsum2relay1, td.tdsum3relay1, td.tdsum4relay1, td.tdsum5relay1, td.tdsum6relay1, td.tdsum7relay1, td.tdsum8relay1, td.tdsum9relay1, td.tdsum10relay1
+	{
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+	
+	td.tdsum8relay0
+	{
+		width:	8px;
+		max-width:	8px;
+		min-width:	8px;
+		text-align: center;
+		font-size: 10px;
+	}
+	td.tdsum8relay1
+	{
+		min-width: 177px;
+		max-width: 177px;
+		width: 177px;
+		font-size: 10px;
+		text-align: left;
+	}
+	td.tdsum8relay2, td.tdsum8relay8, td.tdsum8relay14,
+	td.tdsum8relay20, td.tdsum8relay26, td.tdsum8relay32,
+	td.tdsum8relay38, td.tdsum8relay44, td.tdsum8relay50,
+	td.tdsum8relay56, td.tdsum8relay62,
+	td.tdsum8relay3, td.tdsum8relay4, td.tdsum8relay5,
+	td.tdsum8relay9, td.tdsum8relay10, td.tdsum8relay11,
+	td.tdsum8relay15, td.tdsum8relay16, td.tdsum8relay17,
+	td.tdsum8relay21, td.tdsum8relay22, td.tdsum8relay23,
+	td.tdsum8relay27, td.tdsum8relay28, td.tdsum8relay29,
+	td.tdsum8relay33, td.tdsum8relay34, td.tdsum8relay35,
+	td.tdsum8relay39, td.tdsum8relay40, td.tdsum8relay41,
+	td.tdsum8relay45, td.tdsum8relay46, td.tdsum8relay47,
+	td.tdsum8relay51, td.tdsum8relay52, td.tdsum8relay53,
+	td.tdsum8relay57, td.tdsum8relay58, td.tdsum8relay59,
+	td.tdsum8relay63, td.tdsum8relay64, td.tdsum8relay65
+	{
+		width: 27px;
+		min-width: 27px;
+		max-width: 27px;
+		font-size: 8px;
+		text-align: right;
+	}
+	
+	td.tdsum8relay7, td.tdsum8relay13, td.tdsum8relay19,
+	td.tdsum8relay25, td.tdsum8relay31, td.tdsum8relay37,
+	td.tdsum8relay43, td.tdsum8relay49, td.tdsum8relay55,
+	td.tdsum8relay61, td.tdsum8relay67
+	{
+		width: 40px;
+		min-width: 40px;
+		max-width: 40px;
+		font-size: 10px;
+		text-align: right;
+	}
+	
+	th.entete_sumrelay
+	{
+		background: #C09060;
+		border-left: 1px solid #E0B080;
+		border-right: 1px solid #B07040;
+		border-top: 1px solid #E0B080;
+		font-weight: normal;
+		/*padding: 4px 3px;*/
+		text-align: center;
+		font-size: 8px;
+	}
+	
+	/* RADIO */
+	table.radioview
+	{
+		/*width: 100%;
+		min-width: 100%;*/
+	}
+
+
+	tr.radiorecent td
+	{
+		color: #333399;
+	}
+		
+	td.radiotime_1
+	{
+		width:	30px;
+		max-width:	30px;
+		min-width:	30px;
+		text-align: left;
+		font-size: 10px;
+	}
+	td.radioorgname_1
+	{
+		width:	700px;
+		max-width:	700px;
+		min-width:	700px;
+		text-align: left;
+		font-size: 10px;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+	td.radiorunnername_1
+	{
+		min-width: 200px;
+		max-width: 200px;
+		width: 200px;
+		font-size: 12px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+	
+	td.radiotime_2
+	{
+		width:	30px;
+		max-width:	30px;
+		min-width:	30px;
+		text-align: left;
+		font-size: 10px;
+	}
+	td.radioorgname_2
+	{
+		width:	200px;
+		max-width:	200px;
+		min-width:	200px;
+		text-align: left;
+		font-size: 10px;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+	td.radiorunnername_2
+	{
+		min-width: 200px;
+		max-width: 200px;
+		width: 200px;
+		font-size: 12px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+	
+	td.radiotime_3
+	{
+		width:	30px;
+		max-width:	30px;
+		min-width:	30px;
+		text-align: left;
+		font-size: 10px;
+	}
+	td.radioorgname_3
+	{
+		width:	130px;
+		max-width:	130px;
+		min-width:	130px;
+		text-align: left;
+		font-size: 10px;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+	td.radiorunnername_3
+	{
+		min-width: 140px;
+		max-width: 140px;
+		width: 140px;
+		font-size: 12px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+	
+	td.radiotime_4
+	{
+		width:	24px;
+		max-width:	24px;
+		min-width:	24px;
+		text-align: left;
+		font-size: 10px;
+	}
+	td.radioorgname_4
+	{
+		width:	86px;
+		max-width:	86px;
+		min-width:	86px;
+		text-align: left;
+		font-size: 10px;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+	td.radiorunnername_4
+	{
+		min-width: 110px;
+		max-width: 110px;
+		width: 110px;
+		font-size: 12px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+	
+	table.radioview tr.normalRow td
+	{
+		background: #F0F0F0;
+		border-bottom: none;
+		border-left: none;
+		border-right: 1px solid #C0C0C0;
+		border-top: 1px solid #D0D0D0;
+		padding: 0px 3px 0px 4px;/*2px 3px 3px 4px*/
+	}
+	table.radioview tr.alternateRow td
+	{
+		background: #E0E0E0;
+		border-bottom: none;
+		border-left: none;
+		border-right: 1px solid #C0C0C0;
+		border-top: 1px solid #D0D0D0;
+		padding: 0px 3px 0px 4px;/*2px 3px 3px 4px*/
+	}
+	
+	table.radioview
+	{
+		border: 1px solid #C09060;
+		width: 100%;
+		min-width: 100%;
+	}
+	
+	th.entete_listradio
+	{
+		background: #C09060;
+		border-left: 1px solid #E0B080;
+		border-right: 1px solid #B07040;
+		border-top: 1px solid #E0B080;
+		font-weight: normal;
+		/*padding: 4px 3px;*/
+		text-align: center;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+

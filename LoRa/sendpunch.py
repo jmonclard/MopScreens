@@ -55,10 +55,24 @@ import serial
 import time
 import socket
 import random
+import shutil
+import queue
+import signal
 
 def signal_handler(signal, frame):
     print(termcolor.colored("Ctrl+C !!!",'red'))
     sys.exit(4)
+
+"""
+#pour la gestion des pertes de periph usb
+class ExitCommand(Exception):
+  pass
+
+def signal_handler(signal, frame):
+  raise ExitCommand()
+
+signal.signal(signal.SIGUSR1, signal_handler)
+"""
 
 class logger(object):
     """
@@ -244,12 +258,14 @@ class MyApplication(object):
         self.commandToDo = ["INSTSTART"]
         self.installMode = False
         self.punchMemory = []
-        
+
+        self.receptionQueue = queue.Queue()
+
         try:
           os.remove(self.args.commandfile)
         except Exception as e:
           pass
-        
+
     def docommand(self):
         try:
             if self.args.commandfile is not None:
@@ -341,7 +357,25 @@ class MyApplication(object):
                 self.decodeSignalInfo(r_str[decal+2:decal+8])
             elif tag == 'DE':
                 # potentiellement un DEADBEEF
-                decalinc = 8
+                tagcomplet = r_str[decal:decal+8]
+                if tagcomplet == 'DEADBEEF':
+                  decalinc = 8
+                else:
+                  raise Exception("Cannot decode after DE " + str(r_str))
+            elif tag == '54':
+                # potentiellement un TOPNOW qui revient depuis un relais
+                tagcomplet = r_str[decal:decal+12]
+                if tagcomplet == '544F504E4F57':
+                  decalinc = 12
+                else:
+                  raise Exception("Cannot decode after 54 " + str(r_str))
+            elif tag == '49':
+                # potentiellement un INSTDONE** qui revient depuis un relais
+                tagcomplet = r_str[decal:decal+20]
+                if tagcomplet == '494E5354444F4E452A2A':
+                  decalinc = 20
+                else:
+                  raise Exception("Cannot decode after 49 " + str(r_str))
             else:
                 raise Exception("Cannot decode " + str(r_str))
             decal += decalinc
@@ -350,121 +384,207 @@ class MyApplication(object):
         if not error:
             self.updateInfo(self.localBatPoste, 0, self.localBatLevel, self.localRSSI, self.localStatus)
 
+    def waitReply(self, ser):
+      test = 3
+      done = False
+      r_str = ""
+      try:
+        while test > 0 and not done:
+          r = ser.readline() # ok ou erreur
+          r_str = r.decode('utf-8').strip()
+          #self.log.debug("reception de " + r_str)
+          if r_str.startswith("+RFRX"):
+            self.receptionQueue.put(r_str)
+          done = r_str.startswith("OK") or r_str.startswith("ERROR")
+          test -= 1
+      except serial.SerialException as e:
+        pass
+      return r_str
+
+    def loraTransact(self, ser, cmd):
+      self.log.debug("Sending:" + cmd)
+      ser.write((cmd + "\n").encode())
+      self.log.debug("Waiting reply")
+      r_str = self.waitReply(ser)
+      self.log.debug(" => " + r_str)
+
+    def rxEnabler(self, ser, enable):
+      if enable:
+        self.loraTransact(ser, "AT+RFRX=CONTRX")# OK Start a Continuous RX
+      else:
+        self.loraTransact(ser, "AT+RFRX=STOP")
+
+    """ pas utile
+    def watchdogThread(self, params):
+      self.log.debug("Dans le WATCHDOG THREAD " + str(params))
+      localser = params
+      self.log.debug("Surveillance du port " + localser.port)
+
+      while True:
+        if not os.path.exists(localser.port):
+          self.dumpInfo("E\tPerte du port " + localser.port)
+          self.dumpInfo("E\tReboot")
+          time.sleep(1)
+          os.kill(os.getpid(), signal.SIGUSR1)
+        self.log.debug(".")
+
+        time.sleep(5)
+    """
+
     def comportThread(self):
-        self.log.debug("Com mode")
+        self.log.debug("Lora Thread")
         # serial server
 
-        self.log.debug("Trying to open com port " + str(self.args.comport))
-        ser = serial.Serial\
-                (
-                    port=self.args.comport,# '/dev/ttyUSB1',
-                    baudrate=38400,
-                    parity=serial.PARITY_NONE,
-                    stopbits=serial.STOPBITS_ONE,
-                    bytesize=serial.EIGHTBITS,
-                    timeout=5
-                )
+        while True:
+          try:
+            self.log.debug("Trying to open com port " + str(self.args.comport))
+            ser = serial.Serial\
+                    (
+                        port=self.args.comport,# '/dev/ttyUSB1',
+                        baudrate=38400,
+                        parity=serial.PARITY_NONE,
+                        stopbits=serial.STOPBITS_ONE,
+                        bytesize=serial.EIGHTBITS,
+                        timeout=5
+                    )
 
-        # ser.open()
-        if not ser.isOpen():
-            raise Exception("Cannot open port " + str(self.args.comport))
+            # ser.open()
+            if not ser.isOpen():
+                raise Exception("Cannot open port " + str(self.args.comport))
 
-        time.sleep(.3)
-        ser.write("AT+RF=ON\n".encode()) # OK Set the RF ON
-        time.sleep(.3)
-        ser.write("AT+RFRX=SET,LORA,,125000,7\n".encode()) # OK Set some RX parameters. Let the channel to default frequency
-        time.sleep(.3)
-        ser.write("AT+RFRX=CONTRX\n".encode()) # OK Start a Continuous RX
-        time.sleep(.3)
+            self.dumpInfo("L\tConnected to " + ser.port)
 
-        ser.flushOutput()
-        ser.flushInput()
+            time.sleep(.3)
 
-        # …..  Wait RX (set module B)
-        # +RFRX: -78.00,3.00,0,152987007,CAFE
-        # receive 0xCAFE hexa frame, rssi -78, snr 3, at timestamp 152987007 ms
-        # A la fin éventuellement, AT+RFRX=STOP  Stop continuous Rx
+            """
+            self.thwatchdog = threading.Thread(target=self.watchdogThread, args=[ser])
+            self.thwatchdog.daemon = True
+            self.thwatchdog.start()
+            """
 
-        before = time.time()
-        self.log.debug("Waiting data from comport")
-        while 1:
-            r = ser.readline()
-            r_str = r.decode('utf-8').strip()
-            if r_str == "OK" or r_str == "ERROR":
-              r_str = ""
-              
-            if r_str:
-                self.log.debug("Just receiving >" + r_str)
-                if r_str.startswith("+RFRX:") :
-                    #eliminons le +RFRX
-                    r_str = r_str[6:].strip()
-                    try:
-                        # cherchons la dernière ,
-                        datas = r_str.split(',')
-                        self.log.debug("RSSI:" + datas[0])
-                        self.localRSSI = datas[0]
-                        self.localSigPoste = 0
-                        self.localSigLevel = self.localRSSI
+            ser.flushOutput()
+            ser.flushInput()
 
-                        self.log.debug("SNR:" + datas[1])
-                        self.log.debug("CRCerror:" + datas[2])
-                        self.log.debug("Timestamp:" + datas[3] + " ms")
-                        self.log.debug("Content:" + datas[4])
+            time.sleep(.3)
 
-                        info = "\t".join(datas)
-                        
-                        
-                        if datas[4][0:8] == '4C4F473A':
-                          # cherchons le \r\n
-                          ip = datas[4].find('0D0A')
-                          if ip > -1:
-                            self.log.info(binascii.unhexlify(datas[4][0:ip]).decode().strip())
-                        else:
-                          self.workWithReceivedData(datas[4], info)
+            self.loraTransact(ser, "AT+RF=ON") # OK Set the RF ON
+            self.loraTransact(ser, "AT+RFRX=SET,LORA,,125000,7") # OK Set some RX parameters. Let the channel to default frequency
+            self.loraTransact(ser, "AT+RFTX=SET,LORA,868100000,14,125000,7")
 
-                        # print(termcolor.colored(str(datatosend),'green'))
-                    except Exception as e:
-                        self.dumpInfo("E\t" + str(e))
-                        self.log.error(str(e))
+            time.sleep(.5)
 
-                else:
-                    self.log.error("Don't start with +RFRX: !")
-            else:
-                maintenant = time.time()
-                if maintenant - before > 10:
-                  before = maintenant
-                  self.docommand()
-                  tosend = None
-                  if len(self.commandToDo) > 0:
-                    cmd = self.commandToDo.pop(0)
-                    self.log.info("Running command " + cmd)
-                    if cmd == 'INSTSTART':
-                      self.installMode = True
-                    elif cmd.startswith('INSTDONE'):
-                      if cmd == 'INSTDONE**':
-                        self.installMode = False
-                      tosend = cmd
+            self.rxEnabler(ser, False)
+            self.rxEnabler(ser, True)
+
+            ser.flushOutput()
+            ser.flushInput()
+
+            # …..  Wait RX (set module B)
+            # +RFRX: -78.00,3.00,0,152987007,CAFE
+            # receive 0xCAFE hexa frame, rssi -78, snr 3, at timestamp 152987007 ms
+            # A la fin éventuellement, AT+RFRX=STOP  Stop continuous Rx
+
+            before = time.time()
+            self.log.debug("Waiting data from comport")
+            while True and os.path.exists(ser.port):
+                r_str = ""
+                try:
+                  if self.receptionQueue.empty():
+                    r = ser.readline()
+                    if r:
+                      r_str = r.decode('utf-8').strip()
+                  else:
+                    self.log.info("****************** saved by comm queue")
+                    r_str = self.receptionQueue.get()
+                except serial.SerialException as e:
+                  pass
+                except Exception as e:
+                    self.dumpInfo("E\t" + str(e))
+                    self.log.error(str(e))
+
+                """
+                if r_str == "OK" or r_str == "ERROR":
+                  r_str = ""
+                """
+
+                if r_str:
+                    self.log.debug("Just receiving >" + r_str)
+                    if r_str.startswith("+RFRX:") :
+                        #eliminons le +RFRX
+                        r_str = r_str[6:].strip()
+                        try:
+                            # cherchons la dernière ,
+                            datas = r_str.split(',')
+                            self.log.debug("RSSI:" + datas[0])
+                            self.localRSSI = datas[0]
+                            self.localSigPoste = 0
+                            self.localSigLevel = self.localRSSI
+
+                            self.log.debug("SNR:" + datas[1])
+                            self.log.debug("CRCerror:" + datas[2])
+                            self.log.debug("Timestamp:" + datas[3] + " ms")
+                            self.log.debug("Content:" + datas[4])
+
+                            info = "\t".join(datas)
+
+                            if datas[4][0:8] == '4C4F473A':
+                              # cherchons le \r\n
+                              ip = datas[4].find('0D0A')
+                              if ip > -1:
+                                self.log.info(binascii.unhexlify(datas[4][0:ip]).decode().strip())
+                            else:
+                              self.workWithReceivedData(datas[4], info)
+
+                            # print(termcolor.colored(str(datatosend),'green'))
+                        except Exception as e:
+                            self.dumpInfo("E\t" + str(e))
+                            self.log.error(str(e))
                     else:
-                      tosend = cmd
-                    
-                  if not tosend and self.installMode:
-                    tosend = 'TOPNOW'
-                  
-                  if tosend:
-                    self.log.debug("Message:" + tosend)
-                    ser.write("AT+RFRX=STOP\n".encode())#on bloque la reception sinon on la prend en retour
-                    #time.sleep(.3)
+                        self.log.error("Don't start with +RFRX: !")
+                else:
+                    maintenant = time.time()
+                    if maintenant - before > 10:
+                      before = maintenant
+                      self.docommand()
+                      tosend = None
+                      if len(self.commandToDo) > 0:
+                        cmd = self.commandToDo.pop(0)
+                        self.log.info("Running command " + cmd)
+                        if cmd == 'INSTSTART':
+                          self.installMode = True
+                        elif cmd.startswith('INSTDONE'):
+                          if cmd == 'INSTDONE**':
+                            self.installMode = False
+                          tosend = cmd
+                        else:
+                          tosend = cmd
 
-                    ser.write("AT+RFTX=7,LORA,868100000,14,125000,7\n".encode())
-                    #time.sleep(.3)
-                    #ser.write("AT+RFTX=SNDBIN,544F504E4F57,1\n".encode())
-                    ser.write(("AT+RFTX=SNDTXT," + tosend + ",1\n").encode())#sndtxt code en hexa tout seul
-                    time.sleep(.3)
-                    
-                    ser.write("AT+RFRX=CONTRX\n".encode())#et on remet la reception
-                    time.sleep(.1)
+                      if not tosend and self.installMode:
+                        tosend = 'TOPNOW'
 
-        ser.close()
+                      if tosend:
+                        self.log.debug("Message:" + tosend)
+
+                        self.rxEnabler(ser, False)
+
+                        self.loraTransact(ser, "AT+RFTX=SNDTXT," + tosend + ",1")#sndtxt code en hexa tout seul
+
+                        self.rxEnabler(ser, True)
+          except Exception as e:
+            self.log.error(str(e) + "\nWaiting...before retrying")
+            time.sleep(5)
+          else:
+            self.log.debug("End of LoRa")
+            try:
+              ser.close()
+              self.log.debug("closed !")
+            except Exception as e:
+              pass
+
+        try:
+          ser.close()
+        except Exception as e:
+          pass
 
     def mreadline(self, ser):
         done = False
@@ -521,6 +641,7 @@ class MyApplication(object):
         except Exception as e:
             self.dumpInfo("E\t" + str(e))
             self.log.error(str(e))
+
     def srrportThread(self):
         self.log.debug("Srr mode")
         # serial server
@@ -627,7 +748,19 @@ class MyApplication(object):
             exit(1)
 
         if self.args.debugfile and os.path.exists(self.args.debugfile):
+          try:
+            ftime_sec = os.path.getmtime(self.args.debugfile)
+            ftime_str = time.strftime("%Y%m%d@%H%M%S",time.localtime(ftime_sec))
+
+            filename, file_extension = os.path.splitext(self.args.debugfile)
+
+
+            self.log.info("Copy " + self.args.debugfile + " to " + filename + ftime_str + file_extension)
+            shutil.copy2(self.args.debugfile, filename + ftime_str + file_extension)
             os.remove(self.args.debugfile)
+          except Exception as e:
+            self.log.error(str(e))
+            pass
 
         self.dumpInfo("L\tSendpunch started")
 
@@ -904,10 +1037,10 @@ class MyApplication(object):
         self.log.debug("decoding signal info:" + r_str)
         poste = int(r_str[0:2], 16)
         level = -int(r_str[2:6], 16)
-        
+
         self.log.info("id:" + str(poste) + " SignalLevel:" + str(level) + " dB")
-        
-        self.localSigPoste = poste 
+
+        self.localSigPoste = poste
         self.localSigLevel = level
 
         self.updateInfo(self.localBatPoste, self.localSigPoste, self.localBatLevel, self.localSigLevel, self.localStatus)
@@ -1010,6 +1143,8 @@ def main(argvs=None):
     except SystemExit:
         # gestion de l'exception 'normale' quand on fait un -h (pour l'aide) dans la ligne de commande
         return 0
+    except ExitCommand:
+        return 1
     except Exception as e:
         print(termcolor.colored(str(e),'red'))
         # print(colored(str(e), 'red'))
