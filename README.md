@@ -5,13 +5,31 @@ Large event results display for MeOS
 MopScreens is a set of php files to be used on a web server (mainly a local one) to display large event results in real time in an O'Ringen like style.
 It uses MeOS Online Protocol for data updating, and reuse part of the Mop example provided with MeOS.
 
-Currently it can handle 18 screens, but can be extended to more screens very easily.
+Currently it can handle 18 screens, but can be extended to more screens very easily, just modifying a constant.
 
-To get a better idea of what it looks like, have a look to the english documentation MeOSScreensEn.pdf
+To get a better idea of what it looks like, have a look to the (obsolete) english documentation MeOSScreensEn.pdf
 
 It is provided "as is" as open source code and can be freely used, modified, enhenced and distributed. It is licensed in the same conditions as MeOS.
 
 ## What's new ?
+### 2017-12-21 Small fixes
+[x] On GitHub, pdf.png in img directory is now in lowercase
+
+[x] Replacing 192.168.0.10 by <ToBeDefined> in index.html and index.php in all subdirectories
+
+[x] Add index.html and index.php in slides subdirectory in order for this directory to be created on download from GitHub
+
+[x] Improve recovering from bad situations in case of LoRa receiver unexpected disconnect
+
+[x] Add first competition ID display on index page
+
+### 2017-11-16 Alternate 3 panels display
+[x] Add an alternate display format for 3 panels results display with radio replacing club names.
+
+[x] Radio sendpunch Python script improvement : automatic restart if radio is disconnected and replugged
+
+### 2017-07-23 Start time bug fix
+[x] Fix bug in start time display (use of mysqli instead of mysql with newer version of php)
 
 ### 2017-05-17 Quote bug fixed
 [x] Fix bug dealing with quotes in names (mainly in class names and team names).
@@ -127,13 +145,13 @@ NOTE : Database tables structure have been altered. If you are updating an exist
 
 [ ] Allow course based instead of class based display (may require some changes in MeOS)
 
-[ ] Display first available competition ID (to be entered in MeOS Services/Online results)
+[Done] Display first available competition ID (to be entered in MeOS Services/Online results)
 
-[Done] Relay must be extended up to 10 team members (work in progress)
+[Done] Relay must be extended up to 10 team members
 
-[Done] Screens should be dividable in three and four panels (work in progress)
+[Done] Screens should be dividable in three and four panels
 
-[Done] Add MP, DNF etc... translation (work in progress)
+[Done] Add MP, DNF etc... translation
 
 
 

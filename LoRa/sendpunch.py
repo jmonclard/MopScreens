@@ -258,6 +258,7 @@ class MyApplication(object):
         self.commandToDo = ["INSTSTART"]
         self.installMode = False
         self.punchMemory = []
+        self.debugDetected = False
 
         self.receptionQueue = queue.Queue()
 
@@ -385,16 +386,29 @@ class MyApplication(object):
             self.updateInfo(self.localBatPoste, 0, self.localBatLevel, self.localRSSI, self.localStatus)
 
     def waitReply(self, ser):
-      test = 3
+      test = 5
       done = False
       r_str = ""
       try:
         while test > 0 and not done:
           r = ser.readline() # ok ou erreur
           r_str = r.decode('utf-8').strip()
-          #self.log.debug("reception de " + r_str)
           if r_str.startswith("+RFRX"):
             self.receptionQueue.put(r_str)
+          else:
+            if "+DEBUG" in r_str:
+              self.debugDetected = True
+              self.dumpInfo("E\t" + str(r_str))
+
+            if r_str:
+              if "ERROR" in r_str:
+                self.log.error("[" + str(test) + "] Reception de " + r_str)
+              else:
+                if "OK" in r_str:
+                  self.log.debug("[" + str(test) + "] Reception de " + r_str)
+                else:
+                  self.log.warning("[" + str(test) + "] Reception de " + r_str)
+
           done = r_str.startswith("OK") or r_str.startswith("ERROR")
           test -= 1
       except serial.SerialException as e:
@@ -407,12 +421,15 @@ class MyApplication(object):
       self.log.debug("Waiting reply")
       r_str = self.waitReply(ser)
       self.log.debug(" => " + r_str)
+      return r_str
 
     def rxEnabler(self, ser, enable):
       if enable:
         self.loraTransact(ser, "AT+RFRX=CONTRX")# OK Start a Continuous RX
       else:
         self.loraTransact(ser, "AT+RFRX=STOP")
+
+      #self.loraTransact(ser, "AT+MAC=?")
 
     """ pas utile
     def watchdogThread(self, params):
@@ -465,11 +482,23 @@ class MyApplication(object):
             ser.flushOutput()
             ser.flushInput()
 
-            time.sleep(.3)
+            time.sleep(1)
 
-            self.loraTransact(ser, "AT+RF=ON") # OK Set the RF ON
-            self.loraTransact(ser, "AT+RFRX=SET,LORA,,125000,7") # OK Set some RX parameters. Let the channel to default frequency
-            self.loraTransact(ser, "AT+RFTX=SET,LORA,868100000,14,125000,7")
+            macDone = False
+            while not macDone:
+              repMac = self.loraTransact(ser, "AT+MAC=?")
+              macDone = "OK" in repMac
+
+            ser.flushOutput()
+            ser.flushInput()
+
+            compteOk = 0
+            if "OK" in self.loraTransact(ser, "AT+RF=ON"): # OK Set the RF ON
+              compteOk += 1
+            if "OK" in self.loraTransact(ser, "AT+RFRX=SET,LORA,,125000,7"): # OK Set some RX parameters. Let the channel to default frequency
+              compteOk += 1
+            if "OK" in self.loraTransact(ser, "AT+RFTX=SET,LORA,868100000,14,125000,7"):
+              compteOk += 1
 
             time.sleep(.5)
 
@@ -484,9 +513,15 @@ class MyApplication(object):
             # receive 0xCAFE hexa frame, rssi -78, snr 3, at timestamp 152987007 ms
             # A la fin éventuellement, AT+RFRX=STOP  Stop continuous Rx
 
+            if compteOk == 3:
+              self.log.debug("Waiting data from comport")
+              self.debugDetected = False
+            else:
+              self.dumpInfo("E\tError detected during LoRa initialization")
+              self.debugDetected = True
+
             before = time.time()
-            self.log.debug("Waiting data from comport")
-            while True and os.path.exists(ser.port):
+            while not self.debugDetected and os.path.exists(ser.port):
                 r_str = ""
                 try:
                   if self.receptionQueue.empty():
@@ -824,6 +859,7 @@ class MyApplication(object):
                 self.log.debug("Data to send {0}:{1}".format(str(datatosend), str(len(datatosend))))
 
                 self.socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                self.socket.settimeout(2)
                 self.socket.connect((str(self.args.ip) , self.args.port))
                 v = self.socket.send(datatosend)
                 self.log.debug("Send reply " + str(v))

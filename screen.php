@@ -34,7 +34,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr" dir="ltr">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>CFCO 2014 Screens</title>
+        <title>MopScreens</title>
         <link rel="stylesheet" type="text/css" href="styles/screen.css" />
         
         <script type="text/javascript">
@@ -288,7 +288,7 @@
             $subtitle = isset($_GET['subtitle']) ? stripSlashes($_GET['subtitle']) : "";
             $subtitlesize = isset($_GET['subtitlesize']) ? intval($_GET['subtitlesize']) : 16;
             $subtitlecolor = isset($_GET['subtitlecolor']) ? stripSlashes($_GET['subtitlecolor']) : "000000";
-            $titleleftpict = isset($_GET['titleleftpict']) ? stripSlashes($_GET['titleleftpict']) : "cfco2014.jpg";
+            $titleleftpict = isset($_GET['titleleftpict']) ? stripSlashes($_GET['titleleftpict']) : "metraware.jpg";
             $titlerightpict = isset($_GET['titlerightpict']) ? stripSlashes($_GET['titlerightpict']) : "metraware.jpg";
             $panelscount = isset($_GET['panelscount']) ? intval($_GET['panelscount']) : 2;
             
@@ -298,7 +298,7 @@
               $panels[$i-1]->mode = isset($_GET['panel'.$i.'mode']) ? intval($_GET['panel'.$i.'mode']) : 1;
               $panels[$i-1]->tm_count = isset($_GET['panel'.$i.'tm_count']) ? intval($_GET['panel'.$i.'tm_count']) : 2;
               $panels[$i-1]->alternate = isset($_GET['panel'.$i.'alternate']) ? intval($_GET['panel'.$i.'alternate']) : 0;
-              $panels[$i-1]->pict = isset($_GET['panel'.$i.'pict']) ? stripSlashes($_GET['panel'.$i.'pict']) : "cfco2014.jpg";
+              $panels[$i-1]->pict = isset($_GET['panel'.$i.'pict']) ? stripSlashes($_GET['panel'.$i.'pict']) : "metraware.jpg";
               $panels[$i-1]->slides = isset($_GET['panel'.$i.'slides']) ? stripSlashes($_GET['panel'.$i.'slides']) : "";
               $panels[$i-1]->txt = isset($_GET['panel'.$i.'txt']) ? stripSlashes($_GET['panel'.$i.'txt']) : "Welcome";
               $panels[$i-1]->txtsize = isset($_GET['panel'.$i.'txtsize']) ? intval($_GET['panel'.$i.'txtsize']) : 16;

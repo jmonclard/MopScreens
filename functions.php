@@ -32,7 +32,7 @@ function redirectSwitchUsers()
   $ipnb=explode('.',$ip);
   if (($ipnb[0]!='192')||($ipnb[1]!='168')||($ipnb[2]!='0')||($ipnb[3]=='20'))
   {
-      header("Location: http://192.168.0.10/cfco/show.php");
+      header("Location: http://<ToBeDefined>/show.php");
       exit;//die();
   }
 }
