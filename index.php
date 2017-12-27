@@ -12,20 +12,20 @@
   session_start();
   date_default_timezone_set('UTC');
   //date_default_timezone_set('Europe/Paris');
-  include_once('cfco/functions.php');
-  include_once('cfco/lang.php');
-  include_once('cfco/screenfunctions.php');
-  include_once('cfco/config.php');
+  include_once('functions.php');
+  include_once('lang.php');
+  include_once('screenfunctions.php');
+  include_once('config.php');
   $PHP_SELF = $_SERVER['PHP_SELF'];
-  ConnectToDB();
+//$link = ConnectToDB();
 
   $sql = 'SELECT cid FROM mopcompetition ORDER BY cid ASC';
-  $res = mysql_query($sql);
+  $res = mysqli_query($link,$sql);
   $new_cid = 444444;
-  if (mysql_num_rows($res))
+  if (mysqli_num_rows($res))
   {
     $arr_cid = array();
-    while($r = mysql_fetch_assoc($res))
+    while($r = mysqli_fetch_assoc($res))
     {
       $arr_cid[] = $r['cid'];
     }
