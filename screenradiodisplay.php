@@ -44,12 +44,12 @@
         exit;
       break;
       case 'installdone':
-        file_put_contents('pictures/command.txt',"INSTDONE**\n");
+        file_put_contents('radio/command.txt',"INSTDONE**\n");
         header('Location: screenradiodisplay.php');
         exit;
       break;
       case 'installstart':
-        file_put_contents('pictures/command.txt',"INSTSTART\n");
+        file_put_contents('radio/command.txt',"INSTSTART\n");
         header('Location: screenradiodisplay.php');
         exit;
       break;
@@ -230,7 +230,7 @@ _logerror("Je suis un log error");
 
   function ViewRadioLog()
   {
-    window.open("pictures/radiolog.txt");
+    window.open("radio/radiolog.txt");
   }
 
   function DelRadiodata(prompt_text)

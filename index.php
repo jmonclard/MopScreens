@@ -33,7 +33,7 @@
     $count_cid = count($arr_cid);
     if($count_cid < $max_cid)
     {
-      $inc = 10; // changer ici le start
+      $inc = 1; // changer ici le start
       while(in_array($inc, $arr_cid))
       {
         $inc++;

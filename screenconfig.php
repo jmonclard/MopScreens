@@ -114,7 +114,7 @@
         $ip3 = isset($_GET['ip3']) ? intval($_GET['ip3']) : 0;
         $ip4 = isset($_GET['ip4']) ? intval($_GET['ip4']) : 56;
         $serverip = $ip1.".".$ip2.".".$ip3.".".$ip4."\n";
-        $severipfile = fopen('pictures/serverip.txt', 'w');
+        $severipfile = fopen('radio/serverip.txt', 'w');
         fputs($severipfile, $serverip);
         fclose($severipfile);
     }

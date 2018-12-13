@@ -41,9 +41,9 @@
 
     $PHP_SELF = $_SERVER['PHP_SELF'];
 
-    if (file_exists('pictures/serverip.txt'))
+    if (file_exists('radio/serverip.txt'))
     {
-      $severipfile = fopen('pictures/serverip.txt', 'r');
+      $severipfile = fopen('radio/serverip.txt', 'r');
       $ligne = fgets($severipfile);
       fclose($severipfile);
       $adr = explode(".",$ligne);

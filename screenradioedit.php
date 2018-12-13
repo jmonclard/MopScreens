@@ -157,12 +157,14 @@
   
   function AddNewRadio($srcid,$radioid,$x,$y)
   {
+  global $link;
       $sql = "INSERT INTO resultradioposition SET srcid=$srcid, radioid=$radioid, radiox=$x, radioy=$y"; 
       $ret=mysqli_query($link, $sql);
   }
 
   function DelRadio($srcid,$radioid)
   {
+  global $link;
     $sql = "DELETE FROM resultradioposition WHERE srcid='$srcid' AND radioid='$radioid'";  
     mysqli_query($link, $sql);
   }

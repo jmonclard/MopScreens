@@ -1,7 +1,11 @@
 # -*- coding: utf8 -*-
 """
 Un petit envoi de punch
+----ancien mode
 python3 sendpunch.py -R /dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0 -v -v -v -v -v -f /var/www/cfco/pictures/serverip.txt -C /dev/serial/by-id/usb-FTDI_Dual_RS232-HS-if01-port0 -D /var/www/cfco/pictures/radiolog.txt
+
+----nouveau mode
+python3 sendpunch.py -R /dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0 -v -v -v -v -v -f /var/www/html/cfco/radio/serverip.txt -C /dev/serial/by-id/usb-FTDI_Dual_RS232-HS-if01-port0 -D /var/www/html/cfco/radio/radiolog.txt
 
 """
 
@@ -153,7 +157,7 @@ class MyApplication(object):
     def __init__(self, argv):
         # gestion des arguments de la ligne de commande de cette merveilleuse application
         parser = argparse.ArgumentParser(description="sendpunch",
-                                         epilog="python sendpunch.py -t12345 -c65 -s1001950 -v -v -v -v -i192.168.0.56 -CCOM1: -v\r\npython3 sendpunch.py -v -v -v -v -f/var/www/cfco/pictures/serverip.txt  -C/dev/ttyUSB1\r\npython3 /home/lpacaco/LoRa/sendpunch.py -f/var/www/cfco/pictures/serverip.txt -C/dev/serial/by-id/usb-FTDI_Dual_RS232-HS-if01-port0 -D/var/www/cfco/pictures/radiolog.txt")
+                                         epilog="python sendpunch.py -t12345 -c65 -s1001950 -v -v -v -v -i192.168.0.56 -CCOM1: -v\r\npython3 sendpunch.py -v -v -v -v -f/var/www/cfco/pictures/serverip.txt  -C/dev/ttyUSB1\r\npython3 /home/lpacaco/LoRa/sendpunch.py -f/var/www/html/cfco/radio/serverip.txt -C/dev/serial/by-id/usb-FTDI_Dual_RS232-HS-if01-port0 -D/var/www/html/cfco/radio/radiolog.txt")
         parser.add_argument('-p',
                             '--port',
                             dest='port',
@@ -167,11 +171,11 @@ class MyApplication(object):
         parser.add_argument('-f',
                             '--filewithip',
                             dest='ipfile',
-                            default='/var/www/cfco/pictures/serverip.txt',
+                            default='/var/www/html/cfco/radio/serverip.txt',
                             help="text file with destination ip address (a simple text line with ip address, ex:192.168.0.50)")
         parser.add_argument('--commandfile',
                             dest='commandfile',
-                            default='/var/www/cfco/pictures/command.txt',
+                            default='/var/www/html/cfco/radio/command.txt',
                             help="text file with destination ip address (a simple text line with ip address, ex:192.168.0.50)")
         parser.add_argument('-g',
                             dest='simulateget',

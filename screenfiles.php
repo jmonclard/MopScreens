@@ -157,7 +157,7 @@
         $name = isset($_GET['name']) ? strval($_GET['name']) : "";
         if ($name!="")
         {
-          $pathname = "./pictures/".substr($name,1,-1);
+          $pathname = "./radio/".substr($name,1,-1);
           unlink($pathname);
         }
     }
@@ -179,28 +179,33 @@
         {
           $pathname = "./slides/".substr($name,1,-1);
           //unlink($pathname.'/*.*');
-          array_map( "unlink", glob($pathname.'/*.*') );
+          array_map( "unlink", glob($pathname.'/*.*') ); /* */
           rmdir($pathname);
         }
     }
 
     //---------- files lists creation ----
     $picturefilelist= array();
-    $logfilelist= array();
-    $tmp_picturefilelist=array_diff(scandir("./pictures"), array('..', '.','index.php','index.html','serverip.txt','radiolog.txt'));
+    $tmp_picturefilelist=array_diff(scandir("./pictures"), array('..', '.','index.php','index.html'));
     foreach ($tmp_picturefilelist as $name)
     {
-      if(strpos($name, '.txt') === false)
         $picturefilelist[$name]=$name;
-      else
+    }
+
+    $logfilelist= array();
+    $tmp_logfilelist=array_diff(scandir("./radio"), array('..', '.','index.php','index.html','serverip.txt','radiolog.txt','command.txt'));
+    foreach ($tmp_logfilelist as $name)
+    {
+      if(strpos($name, '.txt') !== false)
+      {
         $logfilelist[$name]=$name;
+    }
     }
 
     $htmlfilelist= array();
     $tmp_htmlfilelist=array_diff(scandir("./htmlfiles"), array('..', '.','index.php','index.html'));
     foreach ($tmp_htmlfilelist as $name)
     {
-      $pathname = "./htmlfiles/".substr($name,1,-1);
       $htmlfilelist[$name]=$name;
     }
     
@@ -343,7 +348,7 @@
 	
     foreach ($logfilelist as $id => $name)
     {
-      $pathname = "./pictures/".$name;
+      $pathname = "./radio/".$name;
       if (file_exists($pathname))
       {
         $filesize = round(filesize($pathname)/1024,1);

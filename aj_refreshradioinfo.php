@@ -13,7 +13,12 @@
   $link = ConnectToDB();
   
 
-  $sql = 'SELECT * FROM (SELECT * FROM resultradio ORDER BY timestamp DESC) x GROUP BY idsender';
+  //$sql = 'SELECT * FROM (SELECT * FROM resultradio ORDER BY timestamp DESC) x GROUP BY idsender';
+  $sql = 'SELECT b.* FROM (
+  	SELECT idsender, MAX(timestamp) AS dernier_timestamp FROM resultradio GROUP BY idsender
+  ) a
+  INNER JOIN resultradio b ON (a.idsender=b.idsender AND a.dernier_timestamp = b.timestamp) ORDER BY idsender';
+
   $res = mysqli_query($link, $sql);
   $now = time();
   //echo 'id, battery, age'.'<br />';
@@ -24,7 +29,13 @@
     $batteryInfo[] = '['.$r['idsender'].', '.$r['senderbattery'].', '.($now - strtotime($r['timestamp'])).', '.$r['status'].']';
   }
   //echo '<hr />';
-  $sql = 'SELECT * FROM (SELECT * FROM resultradio ORDER BY timestamp DESC) x GROUP BY idsender, idreceiver';
+  //$sql = 'SELECT * FROM (SELECT * FROM resultradio ORDER BY timestamp DESC) x GROUP BY idsender, idreceiver';
+   $sql = 'SELECT b.* FROM (
+  	SELECT idsender, idreceiver, MAX(timestamp) AS dernier_timestamp FROM resultradio GROUP BY idsender, idreceiver
+  ) a
+  INNER JOIN resultradio b ON (a.idsender=b.idsender AND a.idreceiver=b.idreceiver AND a.dernier_timestamp = b.timestamp) ORDER BY idsender, idreceiver';
+
+
   $res = mysqli_query($link, $sql);
   $now = time();
   //echo 'sender id, receiver id, rx level, age'.'<br />';

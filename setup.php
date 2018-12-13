@@ -147,7 +147,7 @@ function setup() {
   $sql = "CREATE TABLE IF NOT EXISTS `resultradioconfig` (
       `srcid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'screen radio competition id',
       `srcname` varchar(30) NOT NULL,
-      `srcmap` varchar(120) NOT NULL,
+      `srcmap` varchar(120) NULL DEFAULT 'none',
       `srcx0` double NOT NULL DEFAULT '0',
       `srcy0` double NOT NULL DEFAULT '0',
       `srcx1` double NOT NULL DEFAULT '100',

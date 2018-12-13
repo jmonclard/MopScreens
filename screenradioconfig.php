@@ -119,12 +119,16 @@
   
   function AddNewRadioConfiguration($srcid,$name)
   {
+	global $link;
+
     $sql = "INSERT INTO resultradioconfig SET srcid=$srcid, srcname='$name'"; 
     $ret=mysqli_query($link, $sql);
   }
   
   function DelRadioConfiguration($srcid)
   {
+	global $link;
+
     $sql = "DELETE FROM resultradioconfig WHERE srcid='$srcid'";  
     mysqli_query($link, $sql);
     $sql = "DELETE FROM resultradioposition WHERE srcid='$srcid'";  
@@ -133,6 +137,8 @@
 
   function CloneRadioPosition($oldsrcid,$newsrcid)
   {
+	global $link;
+
     $sql = 'SELECT * FROM resultradioposition WHERE srcid='.$oldsrcid;
     $res = mysqli_query($link, $sql);
     if (mysqli_num_rows($res) > 0)
