@@ -197,7 +197,7 @@
       print "</tr>\n";
 
       print "<tr>\n";
-      print "<td rowspan=3><select name='takenclasses' id='takenclasses' size=40 multiple='multiple'>\n";
+      print "<td rowspan=3><select name='takenclasses' id='takenclasses' size=35 multiple='multiple'>\n";
       foreach ($takenclasslist as $takenid => $takenname)
       {
         print "<option value=$takenid>$takenname</option>\n";
@@ -205,7 +205,7 @@
       }
       print "</select></td>\n";
       print "<td>&nbsp;</td>\n";
-      print "<td rowspan=3><select name='availableclasses' id='availableclasses' size=40 multiple='multiple'>\n";
+      print "<td rowspan=3><select name='availableclasses' id='availableclasses' size=35 multiple='multiple'>\n";
       foreach ($availableclasslist as $availid => $availname)
       {
         print "<option value=$availid>$availname</option>\n";
