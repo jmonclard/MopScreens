@@ -653,6 +653,7 @@ function reorder_relay($arr, $numlegs)
 	$rel_radio0 = array();
 	$rel_radio1 = array();
 	$rel_radio2 = array();
+	$rel_radio3 = array();
 	$sta = array();
 	$rel_cumul = array();
 	for($i=1;$i<=$numlegs;$i++)
@@ -662,6 +663,7 @@ function reorder_relay($arr, $numlegs)
 		$rel_radio0[$i] = array();
 		$rel_radio1[$i] = array();
 		$rel_radio2[$i] = array();
+		$rel_radio3[$i] = array();
 		$rel_cumul[$i] = array();
 	}
 	foreach ($arr as $key => $val)
@@ -684,6 +686,8 @@ function reorder_relay($arr, $numlegs)
                 $rel_radio1[$i][$key] = $val['relay'.$i]['radio1'];
               if($val['relay'.$i]['radio2'] > 0)
                 $rel_radio2[$i][$key] = $val['relay'.$i]['radio2'];
+              if($val['relay'.$i]['radio3'] > 0)
+                $rel_radio3[$i][$key] = $val['relay'.$i]['radio3'];
               if(($val['relay'.$i]['tstat'] <= 1) && ($val['relay'.$i]['stat'] <= 1) && ($val['relay'.$i]['cumul'] > 0))
                 $rel_cumul[$i][$key]  = $val['relay'.$i]['cumul'];
             }
@@ -719,6 +723,16 @@ function reorder_relay($arr, $numlegs)
                 {
                 }
               }
+              if($val['relay'.$i]['radio3'] > 0)
+              {
+                if($val['relay'.($i-1)]['cumul'] > 0)
+                {
+                  $rel_radio3[$i][$key] = $val['relay'.($i-1)]['cumul'] + $val['relay'.$i]['radio3'];
+                }
+                else
+                {
+                }
+              }
               if(($val['relay'.$i]['tstat'] <= 1) && ($val['relay'.$i]['stat'] <= 1) && ($val['relay'.$i]['cumul'] > 0))
               {
                 if($val['relay'.($i-1)]['cumul'] > 0)
@@ -742,6 +756,7 @@ function reorder_relay($arr, $numlegs)
 		if($rel_radio0[$i] != null) natcasesort($rel_radio0[$i]);
 		if($rel_radio1[$i] != null) natcasesort($rel_radio1[$i]);
 		if($rel_radio2[$i] != null) natcasesort($rel_radio2[$i]);
+		if($rel_radio3[$i] != null) natcasesort($rel_radio3[$i]);
 	}
 	/*
 	print_r($rel_cumul);
@@ -791,7 +806,7 @@ function reorder_relay($arr, $numlegs)
 					$out[$k] = array_merge($out[$k], array($numlegs, $place_affichee, $arr[$k]['team_name']));
 					for($j=1;$j<=$numlegs;$j++)
 					{
-						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
+						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['radio3'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
 						$out[$k] = array_merge($out[$k], $temp_arr);
 					}
 					for($j=1;$j<=$numlegs;$j++)
@@ -804,6 +819,66 @@ function reorder_relay($arr, $numlegs)
          			    {
             			  $out[$k][] = '';
             			}
+					}
+				}
+			}
+		}
+		if($rel_radio3[$i] != null)
+		{
+			$last_time = -1;
+			foreach($rel_radio3[$i] as $k => $v)
+			{
+				if(!isset($out[$k]))
+				{
+					$place_stockee++;
+					if($i > 1)
+					{
+						if(($arr[$k]['relay'.($i-1)]['cumul'] + $arr[$k]['relay'.$i]['radio3']) != $last_time)
+						{
+						  $place_affichee = $place_stockee;
+						  $last_time = ($arr[$k]['relay'.($i-1)]['cumul'] + $arr[$k]['relay'.$i]['radio3']);
+						}
+					}
+					else
+					{
+						if($arr[$k]['relay'.$i]['radio3'] != $last_time)
+						{
+						  $place_affichee = $place_stockee;
+						  $last_time = $arr[$k]['relay'.$i]['radio3'];
+						}
+					}
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$displayed_relay[$j] = '';
+					}
+					for($j=1;$j<$i;$j++)
+					{
+						if(array_key_exists($k, $rel_cumul[$j]))
+							$displayed_relay[$j] = array_search($k, array_keys($rel_cumul[$j])) + 1;
+						else
+							$displayed_relay[$j] = '';
+					}
+					$out[$k] = array($arr[$k]['team_stat'], $arr[$k]['timestamp']);
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$out[$k][] = $arr[$k]['relay'.$j]['tstat'];
+					}
+					$out[$k] = array_merge($out[$k], array($numlegs, $place_affichee, $arr[$k]['team_name']));
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['radio3'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
+						$out[$k] = array_merge($out[$k], $temp_arr);
+					}
+					for($j=1;$j<=$numlegs;$j++)
+					{
+						if(isset($arr[$k]['relay'.$j]['name']))
+            {
+              $out[$k][] = $arr[$k]['relay'.$j]['name'];
+            }
+            else
+            {
+              $out[$k][] = '';
+            }
 					}
 				}
 			}
@@ -851,7 +926,7 @@ function reorder_relay($arr, $numlegs)
 					$out[$k] = array_merge($out[$k], array($numlegs, $place_affichee, $arr[$k]['team_name']));
 					for($j=1;$j<=$numlegs;$j++)
 					{
-						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
+						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['radio3'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
 						$out[$k] = array_merge($out[$k], $temp_arr);
 					}
 					for($j=1;$j<=$numlegs;$j++)
@@ -911,7 +986,7 @@ function reorder_relay($arr, $numlegs)
 					$out[$k] = array_merge($out[$k], array($numlegs, $place_affichee, $arr[$k]['team_name']));
 					for($j=1;$j<=$numlegs;$j++)
 					{
-						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
+						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['radio3'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
 						$out[$k] = array_merge($out[$k], $temp_arr);
 					}
 					for($j=1;$j<=$numlegs;$j++)
@@ -971,7 +1046,7 @@ function reorder_relay($arr, $numlegs)
 					$out[$k] = array_merge($out[$k], array($numlegs, $place_affichee, $arr[$k]['team_name']));
 					for($j=1;$j<=$numlegs;$j++)
 					{
-						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
+						$temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['radio3'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
 						$out[$k] = array_merge($out[$k], $temp_arr);
 					}
 					for($j=1;$j<=$numlegs;$j++)
@@ -1010,7 +1085,7 @@ function reorder_relay($arr, $numlegs)
                     $out[$k] = array_merge($out[$k], array($numlegs, $place_affichee, $arr[$k]['team_name']));
                     for($j=1;$j<=$numlegs;$j++)
                     {
-                      $temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
+                      $temp_arr = array($arr[$k]['relay'.$j]['radio0'], $arr[$k]['relay'.$j]['radio1'], $arr[$k]['relay'.$j]['radio2'], $arr[$k]['relay'.$j]['radio3'], $arr[$k]['relay'.$j]['finish'], $displayed_relay[$j], $arr[$k]['relay'.$j]['cumul']);
                       $out[$k] = array_merge($out[$k], $temp_arr);
                     }
                     for($j=1;$j<=$numlegs;$j++)
@@ -1032,8 +1107,8 @@ function reorder_relay($arr, $numlegs)
 	{
 		foreach($out as $k => $v)
 		{
-			$min = 5 + $numlegs + 6 * ($j-1);
-			$max = $min + 5;
+			$min = 5 + $numlegs + 7 * ($j-1);//6 * ($j-1);
+			$max = $min + 6;//5;
 			for($i=$min;$i<=$max;$i++)
 			{
 				//echo '-'.$j.'/'.$i.'-';
@@ -1054,6 +1129,7 @@ function reorder_relay($arr, $numlegs)
 				else
 				if($i != ($max-1))
 				{
+					$v[$i] = intval($v[$i]);
 					$t = $v[$i] / 10;
 					if ($t >= 3600)
 						$out[$k][$i] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);

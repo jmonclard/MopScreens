@@ -419,6 +419,8 @@
       var ATTENTE_BASE_s = 5;
       var ATTENTE_PAGE_s = 10;
 
+	var pos_tm_finish = new Array();
+
       var dataArray = new Array(4);
       var data2Array = new Array(4);
       data2Array[0] = new Array(16);
@@ -696,21 +698,43 @@
             if(e < pos_max_displayable)
             {
               mycellnum = (e - pos_min_displayable + 1);
+		mymodulo = 7;
+/*
               if((cells_for_tm == 6) 
                 || ((cells_for_tm == 5) && ((mycellnum)%6 != 0))
                 || ((cells_for_tm == 4) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4))
                 || ((cells_for_tm == 3) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4) && ((mycellnum)%6 != 3))
                 || ((cells_for_tm == 2) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4) && ((mycellnum)%6 != 3) && ((mycellnum)%6 != 2))
                 )
-                r += '<td class="'+ prefix_class + mycellnum +'">' + cell + '</td>\r\n';
+*/
+              if((cells_for_tm == 6)
+                || ((cells_for_tm == 5) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5))
+                || ((cells_for_tm == 4) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5) && ((mycellnum)%mymodulo != 4))
+                || ((cells_for_tm == 3) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5) && ((mycellnum)%mymodulo != 4) && ((mycellnum)%mymodulo != 3))
+                || ((cells_for_tm == 2) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5) && ((mycellnum)%mymodulo != 4) && ((mycellnum)%mymodulo != 3) && ((mycellnum)%mymodulo != 2))
+                )
+		{
+			if(pos_tm_finish.indexOf(mycellnum) > -1)
+			{
+                		r += '<td class="'+ prefix_class + mycellnum +' finish'+ tmcount +'">' + cell + '</td>\r\n';
+			}
+			else
+			{
+                		r += '<td class="'+ prefix_class + mycellnum +'">' + cell + '</td>\r\n';
+			}
+		}
             }
           }
         }
 
-        if((tmcount == 8) || (alternate && (tmcount == 6)))
+
+        if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
         {
-          if(alternate && (tmcount == 6))
+          if((alternate == 1) && (tmcount == 6))
             r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
+          else
+          if(tmcount == 8)
+            r += '<td class="radio0_8">&nbsp;</td>\r\n';
           else
             r += '<td class="radio0">&nbsp;</td>\r\n';
           if(bFoundRadio)
@@ -718,12 +742,14 @@
             r += '<td class="radio1">' + ((line[pos_recherche] === '') ? "&nbsp;" : line[pos_recherche]) + '</td>\r\n';
             r += '<td class="radio2">' + ((line[pos_recherche+1] === '') ? "&nbsp;" : line[pos_recherche+1]) + '</td>\r\n';
             r += '<td class="radio3">' + ((line[pos_recherche+2] === '') ? "&nbsp;" : line[pos_recherche+2]) + '</td>\r\n';
+            r += '<td class="radio4">' + ((line[pos_recherche+3] === '') ? "&nbsp;" : line[pos_recherche+3]) + '</td>\r\n';
           }
           else
           {
             r += '<td class="radio1">&nbsp;</td>\r\n';
             r += '<td class="radio2">&nbsp;</td>\r\n';
             r += '<td class="radio3">&nbsp;</td>\r\n';
+            r += '<td class="radio4">&nbsp;</td>\r\n';
           }
         }
 
@@ -780,7 +806,7 @@
             }
             break;
           case 3:
-            if(alternate)
+            if(alternate == 1)
             {
               for(var e in line)
               {
@@ -947,7 +973,7 @@
           switch(panelscount)
           {
             case 3:
-              if((alternate != 0) && (e > 2))
+              if((alternate == 1) && (e > 2))
               {
                 r += '<td class="'+ prefix_class + e +'">' + ((line[e] === '') ? "&nbsp;" : line[e]) + '</td>\r\n';
               }
@@ -958,7 +984,7 @@
               }
             break;
             case 4:
-              if((alternate != 0) && (e > 2))
+              if((alternate == 1) && (e > 2))
               {
                 r += '<td class="'+ prefix_class + e +'">' + ((line[e] === '') ? "&nbsp;" : line[e]) + '</td>\r\n';
               }
@@ -1011,21 +1037,39 @@
             if(e < pos_max_displayable)
             {
               mycellnum = (e - pos_min_displayable + 1);
-              if((cells_for_tm == 6) 
+/*              if((cells_for_tm == 6) 
                 || ((cells_for_tm == 5) && ((mycellnum)%6 != 0))
                 || ((cells_for_tm == 4) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4))
                 || ((cells_for_tm == 3) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4) && ((mycellnum)%6 != 3))
                 || ((cells_for_tm == 2) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4) && ((mycellnum)%6 != 3) && ((mycellnum)%6 != 2))
+                )*/
+		if((cells_for_tm == 6)
+                || ((cells_for_tm == 5) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5))
+                || ((cells_for_tm == 4) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5) && ((mycellnum)%mymodulo != 4))
+                || ((cells_for_tm == 3) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5) && ((mycellnum)%mymodulo != 4) && ((mycellnum)%mymodulo != 3))
+                || ((cells_for_tm == 2) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5) && ((mycellnum)%mymodulo != 4) && ((mycellnum)%mymodulo != 3) && ((mycellnum)%mymodulo != 2))
                 )
-                r += '<td class="'+ prefix_class + mycellnum +'">' + cell + '</td>\r\n';
+		{
+			/*if(pos_tm_finish.indexOf(mycellnum) > -1)
+			{
+                		r += '<td class="'+ prefix_class + mycellnum +' finish'+ tmcount +'">' + cell + '</td>\r\n';
+			}
+			else*/
+			{
+                		r += '<td class="'+ prefix_class + mycellnum +'">' + cell + '</td>\r\n';
+			}
+		}
             }
           }
         }
 
-        if((tmcount == 8) || (alternate && (tmcount == 6)))
+        if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
         {
-          if(alternate && (tmcount == 6))
+          if((alternate == 1) && (tmcount == 6))
             r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
+	  else
+	  if(tmcount == 8)
+	    r += '<td class="radio0_8">&nbsp;</td>\r\n';
           else
             r += '<td class="radio0">&nbsp;</td>\r\n';
           if(bFoundRadio)
@@ -1033,12 +1077,14 @@
             r += '<td class="radio1">' + ((line[pos_recherche] === '') ? "&nbsp;" : line[pos_recherche]) + '</td>\r\n';
             r += '<td class="radio2">' + ((line[pos_recherche+1] === '') ? "&nbsp;" : line[pos_recherche+1]) + '</td>\r\n';
             r += '<td class="radio3">' + ((line[pos_recherche+2] === '') ? "&nbsp;" : line[pos_recherche+2]) + '</td>\r\n';
+            r += '<td class="radio4">' + ((line[pos_recherche+3] === '') ? "&nbsp;" : line[pos_recherche+3]) + '</td>\r\n';
           }
           else
           {
             r += '<td class="radio1">&nbsp;</td>\r\n';
             r += '<td class="radio2">&nbsp;</td>\r\n';
             r += '<td class="radio3">&nbsp;</td>\r\n';
+            r += '<td class="radio4">&nbsp;</td>\r\n';
           }
         }
 
@@ -1092,70 +1138,76 @@
           switch(tmcount)
           {
             case 1:
-                count = 12; // names excluded
+                count = 13;//12; // names excluded
                 pos_rank = 4;
                 pos_team_name = 5;
-                pos_tm_rank = Array(10);
-                pos_tm_name = Array(12);
+                pos_tm_rank = Array(11);//Array(10);
+                pos_tm_name = Array(13);//Array(12);
+		pos_tm_finish = Array(8);
                 pos_min_displayable = 5;
                 pos_max_displayable = count;
                 cells_for_tm = 6;
                 tm_colspan = 4;
             break;
             case 2:
-                count = 19; // names excluded
+                count = 21;//19; // names excluded
                 pos_rank = 5;
                 pos_team_name = 6;
-                pos_tm_rank = Array(11, 17);
-                pos_tm_name = Array(19, 20);
+                pos_tm_rank = Array(12, 19);//Array(11, 17);
+                pos_tm_name = Array(21, 22);//Array(19, 20);
+		pos_tm_finish = Array(8,15);
                 pos_min_displayable = 6;
                 pos_max_displayable = count;
                 cells_for_tm = 6;
                 tm_colspan = 4;
             break;
             case 3:
-                count = 26; // names excluded
+                count = 29;//26; // names excluded
                 pos_rank = 6;
                 pos_team_name = 7;
-                pos_tm_rank = Array(12, 18, 24);
-                pos_tm_name = Array(26, 27, 28);
+                pos_tm_rank = Array(13, 20, 27);//Array(12, 18, 24);
+                pos_tm_name = Array(29, 30, 31);//Array(26, 27, 28);
+		pos_tm_finish = Array(8,15,22);
                 pos_min_displayable = 7;
                 pos_max_displayable = count;
                 cells_for_tm = 6;
                 tm_colspan = 4;
             break;
             case 4:
-                count = 33; // names excluded
+                count = 37;//33; // names excluded
                 pos_rank = 7;
                 pos_team_name = 8;
-                pos_tm_rank = Array(13, 19, 25, 31);
-                pos_tm_name = Array(33, 34, 35, 36);
+                pos_tm_rank = Array(14, 21, 28, 35);//Array(13, 19, 25, 31);
+                pos_tm_name = Array(37, 38, 39, 40);//Array(33, 34, 35, 36);
+		pos_tm_finish = Array(8,15,22,29);
                 pos_min_displayable = 8;
                 pos_max_displayable = count;
                 cells_for_tm = 5;
                 tm_colspan = 4;
             break;
             case 5:
-                count = 40; // names excluded
+                count = 45;//40; // names excluded
                 pos_rank = 8;
                 pos_team_name = 9;
-                pos_tm_rank = Array(14, 20, 26, 32, 38);
-                pos_tm_name = Array(40, 41, 42, 43, 44);
+                pos_tm_rank = Array(15, 22, 29, 36, 43);//Array(14, 20, 26, 32, 38);
+                pos_tm_name = Array(45, 46, 47, 48, 49);//Array(40, 41, 42, 43, 44);
+		pos_tm_finish = Array(8,15,22,29,36);
                 pos_min_displayable = 9;
                 pos_max_displayable = count;
                 cells_for_tm = 4;
                 tm_colspan = 3;
             break;
             case 6:
-                count = 47; // names excluded
+                count = 53;//47; // names excluded
                 pos_rank = 9;
                 pos_team_name = 10;
-                pos_tm_rank = Array(15, 21, 27, 33, 39, 45);
-                pos_tm_name = Array(47, 48, 49, 50, 51, 52);
+                pos_tm_rank = Array(16, 23, 30, 37, 44, 51);//Array(15, 21, 27, 33, 39, 45);
+                pos_tm_name = Array(53, 54, 55, 56, 57, 58);//Array(47, 48, 49, 50, 51, 52);
+		pos_tm_finish = Array(8,15,22,29,36,43);
                 pos_min_displayable = 10;
                 pos_max_displayable = count;
                 
-				if(alternate)
+				if(alternate == 1)
 				{
 					cells_for_tm = 2;
 					tm_colspan = 1;
@@ -1167,18 +1219,19 @@
 				}
             break;
             case 7:
-                count = 54; // names excluded
+                count = 61;//54; // names excluded
                 pos_rank = 10;
                 pos_team_name = 11;
-                pos_tm_rank = Array(16, 22, 28, 34, 40, 46, 52);
-                pos_tm_name = Array(54, 55, 56, 57, 58, 59, 60);
+                pos_tm_rank = Array(17, 24, 31, 38, 45, 52, 59);//Array(16, 22, 28, 34, 40, 46, 52);
+                pos_tm_name = Array(61, 62, 63, 64, 65, 66, 67);//Array(54, 55, 56, 57, 58, 59, 60);
+		pos_tm_finish = Array(8,15,22,29,36,43,50);
                 pos_min_displayable = 11;
                 pos_max_displayable = count;
                 cells_for_tm = 3;
                 tm_colspan = 2;
             break;
             case 8:
-                count = 61; // names excluded
+                /*count = 61; // names excluded
                 pos_rank = 11;
                 pos_team_name = 12;
                 pos_tm_rank = Array(17, 23, 29, 35, 41, 47, 53, 59);
@@ -1186,25 +1239,37 @@
                 pos_min_displayable = 12;
                 pos_max_displayable = count;
                 cells_for_tm = 2;
+                tm_colspan = 1;*/
+		count = 69; // names excluded
+                pos_rank = 11;
+                pos_team_name = 12;
+                pos_tm_rank = Array(18, 25, 32, 39, 46, 53, 60, 67);
+                pos_tm_name = Array(69, 70, 71, 72, 73, 74, 75, 76);
+		pos_tm_finish = Array(8,15,22,29,36,43,50,57);
+                pos_min_displayable = 12;
+                pos_max_displayable = count;
+                cells_for_tm = 2;
                 tm_colspan = 1;
             break;
             case 9:
-                count = 68; // names excluded
+                count = 77;//68; // names excluded
                 pos_rank = 12;
                 pos_team_name = 13;
-                pos_tm_rank = Array(18, 24, 30, 36, 42, 48, 54, 60, 66);
-                pos_tm_name = Array(68, 69, 70, 71, 72, 73, 74, 75, 76);
+                pos_tm_rank = Array(19, 26, 33, 40, 47, 54, 61, 68, 75);//Array(18, 24, 30, 36, 42, 48, 54, 60, 66);
+                pos_tm_name = Array(77, 78, 79, 80, 81, 82, 83, 84, 85);//Array(68, 69, 70, 71, 72, 73, 74, 75, 76);
+		pos_tm_finish = Array(8,15,22,29,36,43,50,57,64);
                 pos_min_displayable = 13;
                 pos_max_displayable = count;
                 cells_for_tm = 2;
                 tm_colspan = 1;
             break;
             case 10:
-                count = 75; // names excluded
+                count = 85;//75; // names excluded
                 pos_rank = 13;
                 pos_team_name = 14;
-                pos_tm_rank = Array(19, 25, 31, 37, 43, 49, 55, 61, 67, 73);
-                pos_tm_name = Array(75, 76, 77, 78, 79, 80, 81, 82, 83, 84);
+                pos_tm_rank = Array(20, 27, 34, 41, 48, 55, 62, 69, 76, 83);//Array(19, 25, 31, 37, 43, 49, 55, 61, 67, 73);
+                pos_tm_name = Array(85, 86, 87, 88, 89, 90, 91, 92, 93, 94);//Array(75, 76, 77, 78, 79, 80, 81, 82, 83, 84);
+		pos_tm_finish = Array(8,15,22,29,36,43,50,57,64,71);
                 pos_min_displayable = 14;
                 pos_max_displayable = count;
                 cells_for_tm = 2;
@@ -1345,15 +1410,19 @@
                 r += '<th class="entete_sumrelay" colspan="' + tm_colspan + '">'+relay_header_text+' ' + ind + '</th>\r\n';
                 r += '<th class="entete_sumrelay" colspan="' + (cells_for_tm - tm_colspan) + '" rowspan="2">'+relay_after_header_text+ ind + '</th>\r\n';
               }
-              if((tmcount == 8) || (alternate && (tmcount == 6)))
+              if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
               {
-                if(alternate && (tmcount == 6))
+                if((alternate == 1) && (tmcount == 6))
                   r += '<th class="entete_radio0_6alt" rowspan="2">&nbsp;</th>\r\n';
                 else
+		if(tmcount == 8)
+                  r += '<th class="entete_radio0_8" rowspan="2">&nbsp;</th>\r\n';
+		else
                   r += '<th class="entete_radio0" rowspan="2">&nbsp;</th>\r\n';
                 r += '<th class="entete_radio1" rowspan="2">Radio1</th>\r\n';
                 r += '<th class="entete_radio2" rowspan="2">Radio2</th>\r\n';
                 r += '<th class="entete_radio3" rowspan="2">Radio3</th>\r\n';
+                r += '<th class="entete_radio4" rowspan="2">Radio4</th>\r\n';
               }
             }
             r += '</tr>\r\n';
@@ -1413,14 +1482,14 @@
                 r += '<td class="'+ prefix_class + '0' +'">' + ((line[pos_rank] === '') ? "&nbsp;" : line[pos_rank]) + '</td>\r\n';
                 r += '<td class="'+ prefix_class + '1' +'">' + ((line[pos_team_name] === '') ? "&nbsp;" : line[pos_team_name]) + '</td>\r\n';
                 
-                if((tmcount == 8) || (alternate && (tmcount == 6)))
+                if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
                 {
                   iFound = tmcount;
                   bFoundRadio = false;
                   pos_recherche = 0;
                   while((iFound > 0) && (bFoundRadio == false))
                   {
-                    pos_recherche = pos_min_displayable + 1 + 6 * (iFound-1);
+                    pos_recherche = pos_min_displayable + 1 + 7 * (iFound-1); // + 6 * (iFound-1);
                     if((line[pos_recherche] != '') || (line[pos_recherche+1] != '')) // || (line[pos_recherche+2] != '')
                     {
                       bFoundRadio = true;
@@ -1473,13 +1542,16 @@
               {
                 r += '<td colspan="' + cells_for_tm + '" class="relay_tm_name">' +  "&nbsp;" + '</td>\r\n';
               }
-              if((tmcount == 8) || (alternate && (tmcount == 6)))
+              if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
               {
-                if(alternate && (tmcount == 6))
+                if((alternate == 1) && (tmcount == 6))
                   r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
-                else
+		else
+                if(tmcount == 8)
+                  r += '<td class="radio0_8">&nbsp;</td>\r\n';
+		else
                   r += '<td class="radio0">&nbsp;</td>\r\n';
-                r += '<td colspan="3" class="radio_tm_name">&nbsp;</td>\r\n';
+                r += '<td colspan="4" class="radio_tm_name">&nbsp;</td>\r\n';
               }
               r += '</tr>\r\n';
               r += '<tr class="' + cl + nf + '">\r\n';
@@ -1658,15 +1730,19 @@
                 r += '<th class="entete_relay" colspan="' + tm_colspan + '">'+relay_header_text+' ' + ind + '</th>\r\n';
                 r += '<th class="entete_relay" colspan="' + (cells_for_tm - tm_colspan) + '" rowspan="2">'+relay_after_header_text+ ind + '</th>\r\n';
               }
-              if((tmcount == 8) || (alternate && (tmcount == 6)))
+              if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
               {
-                if(alternate && (tmcount == 6))
+                if((alternate == 1) && (tmcount == 6))
                   r += '<th class="entete_radio0_6alt" rowspan="2">&nbsp;</th>\r\n';
-                else
+		else
+                if(tmcount == 8)
+                  r += '<th class="entete_radio0_8" rowspan="2">&nbsp;</th>\r\n';
+		else
                   r += '<th class="entete_radio0" rowspan="2">&nbsp;</th>\r\n';
                 r += '<th class="entete_radio1" rowspan="2">Radio1</th>\r\n';
                 r += '<th class="entete_radio2" rowspan="2">Radio2</th>\r\n';
                 r += '<th class="entete_radio3" rowspan="2">Radio3</th>\r\n';
+                r += '<th class="entete_radio4" rowspan="2">Radio4</th>\r\n';
               }
             }
             r += '</tr>\r\n';
@@ -1779,14 +1855,14 @@
                 {
                   r += '<td colspan="' + cells_for_tm + '" class="relay_tm_name">' + ((line[pos_tm_rank[ind]].length) ? '(' + line[pos_tm_rank[ind]]+ ') ' : '') + ((line[pos_tm_name[ind]] === '') ? "&nbsp;" : line[pos_tm_name[ind]]) + '</td>\r\n';
                 }
-                if((tmcount == 8) || (alternate && (tmcount == 6)))
+                if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
                 {
                   iFound = tmcount;
                   bFoundRadio = false;
                   pos_recherche = 0;
                   while((iFound > 0) && (bFoundRadio == false))
                   {
-                    pos_recherche = pos_min_displayable + 1 + 6 * (iFound-1);
+                    pos_recherche = pos_min_displayable + 1 + 7 * (iFound-1); // 6 * (iFound-1);
                     if((line[pos_recherche] != '') || (line[pos_recherche+1] != '')) // || (line[pos_recherche+2] != '')
                     {
                       bFoundRadio = true;
@@ -1797,17 +1873,20 @@
                     }
                   }
                     
-                  if(alternate && (tmcount == 6))
+                  if((alternate == 1) && (tmcount == 6))
                     r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
+                  else
+                  if(tmcount == 8)
+                    r += '<td class="radio0_8">&nbsp;</td>\r\n';
                   else
                     r += '<td class="radio0">&nbsp;</td>\r\n';
                   if(bFoundRadio)
                   {
-                    r += '<td colspan="3" class="radio_tm_name">' + ((line[pos_tm_name[iFound-1]] === '') ? "&nbsp;" : line[pos_tm_name[iFound-1]]) + '</td>\r\n';
+                    r += '<td colspan="4" class="radio_tm_name">' + ((line[pos_tm_name[iFound-1]] === '') ? "&nbsp;" : line[pos_tm_name[iFound-1]]) + '</td>\r\n';
                   }
                   else
                   {
-                    r += '<td colspan="3" class="radio_tm_name">&nbsp;</td>\r\n';
+                    r += '<td colspan="4" class="radio_tm_name">&nbsp;</td>\r\n';
                   }
                 }
                 
@@ -1883,14 +1962,14 @@
                     }
 
                     //------ when team member count = 8, radios are on the right
-                    if((tmcount == 8) || (alternate && (tmcount == 6)))
+                    if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
                     {
                       iFound = tmcount;
                       bFoundRadio = false;
                       pos_recherche = 0;
                       while((iFound > 0) && (bFoundRadio == false))
                       {
-                        pos_recherche = pos_min_displayable + 1 + 6 * (iFound-1);
+                        pos_recherche = pos_min_displayable + 1 + 7 * (iFound-1); // + 6 * (iFound-1);
                         if((line[pos_recherche] != '') || (line[pos_recherche+1] != '')) // || (line[pos_recherche+2] != '')
                         {
                           bFoundRadio = true;
@@ -1900,18 +1979,20 @@
                           iFound--;
                         }
                       }
-                      
-                      if(alternate && (tmcount == 6))
+                      if((alternate == 1) && (tmcount == 6))
                         r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
-                      else
+                  else
+                  if(tmcount == 8)
+                    r += '<td class="radio0_8">&nbsp;</td>\r\n';
+                  else
                         r += '<td class="radio0">&nbsp;</td>\r\n';
                       if(bFoundRadio)
                       {
-                        r += '<td colspan="3" class="radio_tm_name">' + ((line[pos_tm_name[iFound-1]] === '') ? "&nbsp;" : line[pos_tm_name[iFound-1]]) + '</td>\r\n';
+                        r += '<td colspan="4" class="radio_tm_name">' + ((line[pos_tm_name[iFound-1]] === '') ? "&nbsp;" : line[pos_tm_name[iFound-1]]) + '</td>\r\n';
                       }
                       else
                       {
-                        r += '<td colspan="3" class="radio_tm_name">&nbsp;</td>\r\n';
+                        r += '<td colspan="4" class="radio_tm_name">&nbsp;</td>\r\n';
                       }
                     }
                     r += '</tr>\r\n';
@@ -1957,13 +2038,16 @@
                   {
                     r += '<td colspan="' + cells_for_tm + '" class="relay_tm_name">' +  "&nbsp;" + '</td>\r\n';
                   }
-                  if((tmcount == 8) || (alternate && (tmcount == 6)))
+                  if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
                   {
-                    if(alternate && (tmcount == 6))
+                    if((alternate == 1) && (tmcount == 6))
                       r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
                     else
+                  if(tmcount == 8)
+                    r += '<td class="radio0_8">&nbsp;</td>\r\n';
+                  else
                       r += '<td class="radio0">&nbsp;</td>\r\n';
-                    r += '<td colspan="3" class="radio_tm_name">&nbsp;</td>\r\n';
+                    r += '<td colspan="4" class="radio_tm_name">&nbsp;</td>\r\n';
                   }
                   r += '</tr>\r\n';
                   r += '<tr class="' + cl + nf + '">\r\n';
@@ -2027,13 +2111,16 @@
                 {
                   r += '<td colspan="' + cells_for_tm + '" class="relay_tm_name">' +  "&nbsp;" + '</td>\r\n';
                 }
-                if((tmcount == 8) || (alternate && (tmcount == 6)))
+                if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
                 {
-                  if(alternate && (tmcount == 6))
+                  if((alternate == 1) && (tmcount == 6))
                     r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
                   else
+                  if(tmcount == 8)
+                    r += '<td class="radio0_8">&nbsp;</td>\r\n';
+                  else
                     r += '<td class="radio0">&nbsp;</td>\r\n';
-                  r += '<td colspan="3" class="radio_tm_name">&nbsp;</td>\r\n';
+                  r += '<td colspan="4" class="radio_tm_name">&nbsp;</td>\r\n';
                 }
                 r += '</tr>\r\n';
                 r += '<tr class="' + cl + nf + '">\r\n';
@@ -2052,7 +2139,7 @@
           nf = '';
           if(identifiant === 'result')
           {
-            if((panelscount == 3) && (alternate))
+            if((panelscount == 3) && (alternate == 1))
             {
               //count = count - 1;
             }
@@ -2091,13 +2178,16 @@
               {
                 r += '<td colspan="' + cells_for_tm + '" class="relay_tm_name">' +  "&nbsp;" + '</td>\r\n';
               }
-              if((tmcount == 8) || (alternate && (tmcount == 6)))
+              if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
               {
-                if(alternate && (tmcount == 6))
+                if((alternate == 1) && (tmcount == 6))
                   r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
                 else
+                  if(tmcount == 8)
+                    r += '<td class="radio0_8">&nbsp;</td>\r\n';
+                  else
                   r += '<td class="radio0">&nbsp;</td>\r\n';
-                r += '<td colspan="3" class="radio_tm_name">&nbsp;</td>\r\n';
+                r += '<td colspan="4" class="radio_tm_name">&nbsp;</td>\r\n';
               }
               r += '</tr>\r\n';
               r += '<tr class="' + cl + nf + '">\r\n';

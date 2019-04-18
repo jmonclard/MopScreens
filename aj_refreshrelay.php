@@ -49,7 +49,7 @@
     }
   }
   
-  $nb_radio = 3;
+  $nb_radio = 4;
   if($arr_radio != null)
   {
     if(count($arr_radio) > $nb_radio)
@@ -83,7 +83,7 @@
     if ($radio!='') {
       if ($radio == 'finish') {
         $results = array();
-        $arr_relaytimes = array('radio0' => '', 'radio1' => '', 'radio2' => '', 'finish' => '', 'cumul' => '', 'place' => '', 'stat' => '', 'tstat' => '');
+        $arr_relaytimes = array('radio0' => '', 'radio1' => '', 'radio2' => '', 'radio3' => '', 'finish' => '', 'cumul' => '', 'place' => '', 'stat' => '', 'tstat' => '');
         $sql = "SELECT id AS team_id, cls, name AS team_name, stat AS team_stat ".
                "FROM mopteam ".
                "WHERE cls = '$cls' ".
