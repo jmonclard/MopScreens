@@ -1,34 +1,34 @@
 <?php
   /*
   Copyright 2014-2016 Metraware
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
       http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
   */
-  
+
   session_start();
   //date_default_timezone_set('Europe/Paris');
   date_default_timezone_set('UTC');
   include_once('functions.php');
   redirectSwitchUsers();
-    
-  if (isset($_GET['rcid'])) 
+
+  if (isset($_GET['rcid']))
   {
       $rcid = intval($_GET['rcid']);
   }
-	
+
 	include_once('lang.php');
 	$_SESSION['CurrentLanguage'] = isset($_SESSION['CurrentLanguage']) ? $_SESSION['CurrentLanguage'] : autoSelectLanguage(array('fr','en','sv'),'en');
-	
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr" dir="ltr">
@@ -36,17 +36,17 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>MopScreens</title>
         <link rel="stylesheet" type="text/css" href="styles/screen.css" />
-        
+
         <script type="text/javascript">
             var rcid = <?php echo $rcid; ?>;
             var arr_timer = new Array;
             arr_timer[0]=0;
-            
+
             function EditScreen(rcid,sid)
             {
                 location.replace("screenedit.php?rcid="+rcid+"&sid="+sid);
             }
-            
+
             function ViewScreen(sid)
             {
                 window.open("pages.php?p="+sid);
@@ -75,10 +75,10 @@
                 xmlhttp.send();
             }
             window.onload = function() { refreshScreen(); };
-            
+
             window.setInterval(refreshScreen, 5000);
-            
-            
+
+
             function updateScreen(mysid)
             {
                 if (window.XMLHttpRequest)
@@ -99,7 +99,7 @@
                 xmlhttp.open("GET", "aj_updatescreen.php?rcid=" + rcid +"&sid=" + mysid, true);
                 xmlhttp.send();
             }
-            
+
             function fillTimestamps()
             {
                 var i = 0;
@@ -108,7 +108,7 @@
                 //var d = new Date();
                 var now = arr_timer[0];
                 var style_class = "";
-                
+
                 for(i=0;i<arr_timer.length;i++)
                 {
                     style_class = "refresh";
@@ -127,28 +127,28 @@
                     {
                         style_class = "norefresh";
                     }
-                    
+
                     if(document.getElementById('idtimestamp' + (i+1)))
                     {
                         //d.setTime(1000 * arr_timer[j]);
                         document.getElementById('idtimestamp' + (i+1)).className = style_class;
                         document.getElementById('idtimestamp' + (i+1)).innerHTML = '<img src="img/refresh.png" alt="'+delta_refresh+'s - '+delta_redraw+'s" title="'+delta_refresh+'s - '+delta_redraw+'s" onclick="updateScreen(' + (i+1) + ')" />';//d.toLocaleTimeString();//d.toLocaleString();
                     }
-                    
+
                 }
             }
         </script>
-        
+
     </head>
     <body>
 <?php
     include_once('screenfunctions.php');
     include_once('config.php');
-    
+
     class Panel {
       var $numpanel;
       var $classes;
-      
+
       var $content;
       var $mode;
       var $tm_count;
@@ -167,9 +167,10 @@
       var $scrollaftertime;
       var $updateduration;
       var $radioctrl;
-      
+      var $displaynomprenom;
+
       var $firstClass;
-      
+
       function Panel($num)
       {
         $this->numpanel = $num;
@@ -179,7 +180,7 @@
     $PHP_SELF = $_SERVER['PHP_SELF'];
      $link = ConnectToDB();
 
-    if (isset($_GET['rcid'])) 
+    if (isset($_GET['rcid']))
     {
         //$rcid = intval($_GET['rcid']);
         $configname = GetConfigurationName($rcid, $link);
@@ -190,7 +191,7 @@
     $panel2 = new Panel(2);
     $panel3 = new Panel(3);
     $panel4 = new Panel(4);
-    $panels = array($panel1,$panel2,$panel3,$panel4); 
+    $panels = array($panel1,$panel2,$panel3,$panel4);
 
     print "<table border>\n";
     print "  <tr>\n";
@@ -222,11 +223,11 @@
     print "  </tr>\n";
 
     include_once('screenfunctions.php');
-    
+
     $action = isset($_GET['action']) ? strval($_GET['action']) : "none";
 
    //================================== update screens configs================================================
-        
+
     if ($action == "clearclasses")
     {
         $rcid = isset($_GET['rcid']) ? intval($_GET['rcid']) : 0;
@@ -235,11 +236,11 @@
         $panel = isset($_GET['panel']) ? intval($_GET['panel']) : 0;
         if (($rcid>0)&&($cid>0)&&($sid>0)&&($panel>0))
         {
-            $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
+            $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";
             mysqli_query($link, $sql);
         }
     }
-    
+
     if ($action == "updateclasses")
     {
         $rcid = isset($_GET['rcid']) ? intval($_GET['rcid']) : 0;
@@ -248,11 +249,11 @@
         $panel = isset($_GET['panel']) ? intval($_GET['panel']) : 0;
         if (($cid>0)&&($panel>0))
         {
-            $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
+            $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";
             mysqli_query($link, $sql);
             $selclasses = isset($_GET['selclasses']) ? $_GET['selclasses'] : null;
             if ($selclasses !== null)
-            { 
+            {
                 foreach ($selclasses as $i => $id)
                 {
                     $str = "'".$rcid."', ";
@@ -271,7 +272,7 @@
         }
 
     }
-   
+
     if ($action==="update")
     {
         if ((isset($_GET['rcid']))&&(isset($_GET['sid'])))
@@ -280,7 +281,7 @@
             $rcid = intval($_GET['rcid']);
             $sid = intval($_GET['sid']);
             $cid = intval($_GET['cid']);
-            
+
             $style = isset($_GET['style']) ? stripSlashes($_GET['style']) : "co2016-04-01s.css";
             $title = isset($_GET['title']) ? stripSlashes($_GET['title']) : "no title";
             $titlesize = isset($_GET['titlesize']) ? intval($_GET['titlesize']) : 24;
@@ -291,7 +292,7 @@
             $titleleftpict = isset($_GET['titleleftpict']) ? stripSlashes($_GET['titleleftpict']) : "metraware.jpg";
             $titlerightpict = isset($_GET['titlerightpict']) ? stripSlashes($_GET['titlerightpict']) : "metraware.jpg";
             $panelscount = isset($_GET['panelscount']) ? intval($_GET['panelscount']) : 2;
-            
+
             for ($i=1; $i<=NB_PANEL; $i++)
             {
               $panels[$i-1]->content = isset($_GET['panel'.$i.'content']) ? intval($_GET['panel'.$i.'content']) : 2;
@@ -312,17 +313,18 @@
               $panels[$i-1]->scrollaftertime = isset($_GET['panel'.$i.'scrollaftertime']) ? intval($_GET['panel'.$i.'scrollaftertime']) : 80;
               $panels[$i-1]->updateduration = isset($_GET['panel'.$i.'updateduration']) ? intval($_GET['panel'.$i.'updateduration']) : 3;
               $panels[$i-1]->radioctrl = isset($_GET['panel'.$i.'radioctrl']) ? intval($_GET['panel'.$i.'radioctrl']) : 31;
+              $panels[$i-1]->displaynomprenom = isset($_GET['panel'.$i.'displaynomprenom']) ? intval($_GET['panel'.$i.'displaynomprenom']) : 0;
             }
 
             $title = isset($_GET['title']) ? stripSlashes($_GET['title']) : "no title";
-            
+
             $chkall = isset($_GET['chkall']) ? $_GET['chkall'] : null;
-            
+
             $res = mysqli_query($link,  "SELECT rcid FROM resultscreen WHERE rcid=$rcid AND sid=$sid");
             if (mysqli_num_rows($res) > 0)
             {
                 $now = time();
-                
+
                 $str = "cid='".$cid."', ";
                 $str = $str."panelscount='".$panelscount."', ";
 
@@ -356,37 +358,38 @@
                   $str = $str."panel".$i."scrollaftertime='".$panels[$i-1]->scrollaftertime."', ";
                   $str = $str."panel".$i."updateduration='".$panels[$i-1]->updateduration."', ";
                   $str = $str."panel".$i."radioctrl='".$panels[$i-1]->radioctrl."', ";
+                  $str = $str."panel".$i."displaynomprenom='".$panels[$i-1]->displaynomprenom."', ";
                 }
                 $str = $str."refresh=$now ";
 
                 $sql = "UPDATE resultscreen SET $str WHERE rcid=$rcid AND sid=$sid";
                 $res = mysqli_query($link, $sql);
-            
+
                 //-------- check all management ---------
-                
+
                 $now = time();
                 $str = "refresh=$now, ";
                 if ($chkall !== null)
                 {
                     foreach ($chkall as $i => $v)
                     {
-                        
+
                         if ($v=="cid") $str = $str."cid='".$cid."', ";
                         if ($v=="panelscount") $str = $str."panelscount='".$panelscount."', ";
-        
+
                         if ($v=="style") $str = $str."style='".addSlashes($style)."', ";
-        
+
                         if ($v=="title") $str = $str."title='".addSlashes($title)."', ";
                         if ($v=="title") $str = $str."titlesize='".$titlesize."', ";
                         if ($v=="title") $str = $str."titlecolor='".addSlashes($titlecolor)."', ";
-                        
+
                         if ($v=="subtitle") $str = $str."subtitle='".addSlashes($subtitle)."', ";
                         if ($v=="subtitle") $str = $str."subtitlesize='".$subtitlesize."', ";
                         if ($v=="subtitle") $str = $str."subtitlecolor='".addSlashes($subtitlecolor)."', ";
-                        
+
                         if ($v=="titleleftpict") $str = $str."titleleftpict='".addSlashes($titleleftpict)."', ";
                         if ($v=="titlerightpict") $str = $str."titlerightpict='".addSlashes($titlerightpict)."', ";
-						
+
                         for ($i=1; $i<=NB_PANEL; $i++)
                         {
                           if ($v=="panel".$i."content") $str = $str."panel".$i."content='".$panels[$i-1]->content."', ";
@@ -406,8 +409,9 @@
                           if ($v=="panel".$i."scrollbeforetime") $str = $str."panel".$i."scrollbeforetime='".$panels[$i-1]->scrollbeforetime."', ";
                           if ($v=="panel".$i."scrollaftertime") $str = $str."panel".$i."scrollaftertime='".$panels[$i-1]->scrollaftertime."', ";
                           if ($v=="panel".$i."updateduration") $str = $str."panel".$i."updateduration='".$panels[$i-1]->updateduration."', ";
+                          if ($v=="panel".$i."displaynomprenom") $str = $str."panel".$i."displaynomprenom='".$panels[$i-1]->displaynomprenom."', ";
                         }
-        
+
                     } // for each
                     $str = rtrim($str,", ");
                     $sql = "UPDATE resultscreen SET $str WHERE rcid=$rcid";
@@ -420,14 +424,14 @@
 
    //================================== display screens configs================================================
 
-    if (isset($_GET['rcid'])) 
+    if (isset($_GET['rcid']))
     {
         $rcid = intval($_GET['rcid']);
-    
+
         $sql = "SELECT sid,title FROM resultscreen WHERE rcid=$rcid";
         $res = mysqli_query($link, $sql);
         $n=mysqli_num_rows($res);
-	
+
         if ($n < NB_SCREEN)
         {
             if ($n<1)
@@ -439,7 +443,7 @@
                 AddNewScreen($rcid,$i,$link);
             }
         }
-	
+
         $tablecid=array();
 
         $sql = "SELECT * FROM resultscreen WHERE rcid=$rcid";
@@ -473,6 +477,7 @@
               $panels[$i-1]->classes=GetClassesAndEntries($rcid, $cid, $sid,$i,$link);
               $panels[$i-1]->firstClass=GetFirstClass($rcid, $cid, $sid,$i,$link);
               $panels[$i-1]->radioctrl=$r['panel'.$i.'radioctrl'];
+              $panels[$i-1]->displaynomprenom=$r['panel'.$i.'displaynomprenom'];
             }
 
             print '<tr>';
@@ -555,10 +560,10 @@
             }
             print "</tr>\n";
 
-        } 
+        }
         print "</table>\n";
 
-        
+
         print "<br/>\n";
         print "<a href='screenconfig.php'>".MyGetText(19)."</a>&nbsp;&nbsp;&nbsp;"; // Link to main page
         print "<br/>\n";
@@ -596,7 +601,7 @@
                 print "<th>".MyGetText(47)."</th>\n";
                 print "<th>&nbsp;</th>\n";
                 print "</tr>\n";
-                
+
                 while ($r = mysqli_fetch_array($res)) // for all classes
                 {
                     print "<tr>\n";
@@ -643,7 +648,7 @@
                                 $displaySL=$screen2.".".$i;
                               }
                           }
-                          
+
                           //-- Results
                           if (($panel2==$i)&&($panelcontent2[$i-1]==5))
                           {
@@ -696,7 +701,14 @@
                           $nentry=$r2[0];
                         }
                     }
-                    $pctentries=round(1000*$nentry/$totalentry)/10.0;
+                    if($totalentry != 0)
+                    {
+	                    $pctentries=round(1000*$nentry/$totalentry)/10.0;
+	                }
+	                else
+	                {
+	                   $pctentries=0;
+	                }
                     print "<td class='class_entries'>$nentry</td>\n";
                     print "<td class='class_entries'>$pctentries %</td>\n";
 

@@ -1,20 +1,20 @@
 <?php
   /*
   Copyright 2014-2016 Metraware
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
       http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
   */
-  
+
   include_once('functions.php');
   redirectSwitchUsers();
 
@@ -38,7 +38,7 @@
     foreach ($a as $k => $v)
     {
       print "key=$k , value=$v<br/>\n";
-    } 
+    }
   }
 
   function NumericIntList($ctrlname,$minval,$maxval,$defval)
@@ -60,7 +60,7 @@
   }
 
   //-------- screens configuration functions ---------
-  
+
   function GetConfigurationName($rcid, $link)
   {
     $configname = "unknown";
@@ -73,11 +73,11 @@
     }
     return $configname;
   }
-    
+
   function AddNewConfiguration($rcid,$name)
   {
     $link = ConnectToDB();
-    $sql = "INSERT INTO resultconfig SET rcid=$rcid, name='$name'"; 
+    $sql = "INSERT INTO resultconfig SET rcid=$rcid, name='$name'";
     $ret=mysqli_query($link, $sql);
   }
 
@@ -85,7 +85,7 @@
   function DelConfiguration($rcid)
   {
     $link = ConnectToDB();
-    $sql = "DELETE FROM resultconfig WHERE rcid='$rcid'";  
+    $sql = "DELETE FROM resultconfig WHERE rcid='$rcid'";
     mysqli_query($link, $sql);
 
     $sql = "DELETE FROM resultscreen WHERE rcid=$rcid";
@@ -100,7 +100,7 @@
   function AddNewScreen($rcid,$sid,$link)
   {
     $title="Screen #$sid";
-    $sql = "INSERT INTO resultscreen SET rcid=$rcid, sid=$sid, title='$title'"; 
+    $sql = "INSERT INTO resultscreen SET rcid=$rcid, sid=$sid, title='$title'";
     $ret=mysqli_query($link, $sql);
   }
 
@@ -125,7 +125,7 @@
         $str = $str."cid=$cid, ";
 
         //-------------------
-        
+
         $title=stripSlashes($r['title']);
         $str = $str."title='".addSlashes($title)."', ";
 
@@ -151,7 +151,7 @@
         $str = $str."titlerightpict='$titlerightpict', ";
 
         //-------------------
-        
+
         for ($i=1; $i<=NB_PANEL; $i++)
         {
           $prefix='panel'.$i;
@@ -194,19 +194,24 @@
 
           $updateduration=$r[$prefix.'updateduration'];
           $str = $str.$prefix.'updateduration='.$updateduration.', ';
+
+          $tmcount=$r[$prefix.'tm_count'];
+	      $str = $str.$prefix.'tm_count='.$tmcount.', ';
+
+	      $displaynomprenom=$r[$prefix.'displaynomprenom'];
+	      $str = $str.$prefix.'displaynomprenom='.$displaynomprenom.', ';
         }
         //-------------------
 
         $panelscount=$r['panelscount'];
-        $str = $str.'panelscount='.$panelscount.', ';
-        
-        $tmcount=$r['tm_count'];
-        $str = $str.'tm_count='.$tmcount.' ';
+        $str = $str.'panelscount='.$panelscount.' ';
+
+
 
         //-------------------
 
         $sql = "INSERT INTO resultscreen SET $str";
-        
+
 
         $ret=mysqli_query($link, $sql);
       }
@@ -220,7 +225,7 @@
     $sqltmp = "SELECT name,ord FROM resultclass, mopclass WHERE mopclass.cid=resultclass.cid AND mopclass.id=resultclass.id AND mopclass.cid=$cid AND resultclass.rcid=$rcid AND resultclass.panel=$panel AND resultclass.sid=$sid ORDER BY ord";
     $restmp = mysqli_query($link, $sqltmp);
     $panelclasses="";
-    
+
     if (mysqli_num_rows($restmp) > 0)
     {
       while ($rtmp = mysqli_fetch_array($restmp))
@@ -236,9 +241,9 @@
         }
       }
     }
-    return $panelclasses;            
+    return $panelclasses;
   }
-  
+
     function GetFirstClass($rcid, $cid, $sid, $panel, $link)
   {
     $sqltmp = "SELECT mopclass.id AS classid, name, ord FROM resultclass, mopclass WHERE ";
@@ -253,16 +258,16 @@
 
     $nentry=0;
     $panelclasses="";
-    
+
     if (mysqli_num_rows($restmp) > 0)
     {
       $rtmp = mysqli_fetch_array($restmp);
       $panelclasses=$rtmp['name'];
     }
-    return $panelclasses;            
+    return $panelclasses;
   }
-	
-    
+
+
   function GetClassesAndEntries($rcid, $cid, $sid, $panel, $link)
   {
     $sqltmp = "SELECT mopclass.id AS classid, name, ord FROM resultclass, mopclass WHERE ";
@@ -305,10 +310,10 @@
       }
 	  $panelclasses = "<b>$nentry : </b>".$panelclasses;
     }
-    return $panelclasses;            
+    return $panelclasses;
   }
 
-  //--------- class functions ----------    
+  //--------- class functions ----------
   function CloneClass($oldrcid,$newrcid)
   {
     $link = ConnectToDB();

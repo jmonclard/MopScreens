@@ -1,31 +1,31 @@
 <?php
   /*
   Copyright 2014-2015 Metraware
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
       http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
   */
-  
-  
+
+
   session_start();
   //date_default_timezone_set('Europe/Paris');
   date_default_timezone_set('UTC');
   include_once('functions.php');
   redirectSwitchUsers();
-  
-  
+
+
   include_once('lang.php');
   $_SESSION['CurrentLanguage'] = isset($_SESSION['CurrentLanguage']) ? $_SESSION['CurrentLanguage'] : autoSelectLanguage(array('fr','en','sv'),'en');
-  
+
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr" dir="ltr">
     <head>
@@ -35,7 +35,7 @@
             function GoBack()
             {
               location.replace("screenconfig.php");
-            }        
+            }
         </script>
     </head>
     <body>
@@ -50,7 +50,7 @@
       $sql = "SELECT rc.name rcname, c.name cname FROM mopcompetition c, resultconfig rc WHERE rc.rcid=$rcid";
       $res = mysqli_query($link , $sql);
 
-      if (mysql_num_rows($res) > 0)
+      if (mysqli_num_rows($res) > 0)
       {
         $r = mysqli_fetch_array($res);
         $rcname=$r['rcname'];
@@ -64,7 +64,7 @@
         print "</form>";
       }
     }
-    
+
 ?>
     </body>
 </html>

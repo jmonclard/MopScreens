@@ -18,7 +18,7 @@ $link = ConnectToDB();
 function ConnectToDB() {
   $link = mysqli_connect(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD);
   if (!$link) {
-    die('Not connected : ' . mysqli_error($link));
+    die('Not connected : ' . mysqli_connect_error());//mysqli_error($link));
   }
   $db_selected = mysqli_select_db($link, MYSQL_DBNAME);
   if (!$db_selected) {
@@ -68,7 +68,7 @@ function autoSelectLanguage($aLanguages, $sDefault = 'fr') {
 }
 function getStatusString($status) {
   switch($status) {
-    case 0: 
+    case 0:
       return "&ndash;"; //Unknown, running?
     case 1:
       return "OK";
@@ -80,7 +80,7 @@ function getStatusString($status) {
       return "DNF"; //Did not finish
     case 5:
       return "DQ"; // Disqualified
-    case 6:      
+    case 6:
       return "OT"; // Overtime
     case 99:
       return "NP"; //Not participating;
@@ -146,7 +146,7 @@ function newCalculateResult($res, $nb_radio = 4)
   $lastTeam = -1;
   $totalResult = array();
   $hasTotal = false;
-  
+
 while ($r = mysqli_fetch_array($res))
   {
     if ($lastTeam == $r['id'])
@@ -172,7 +172,7 @@ while ($r = mysqli_fetch_array($res))
       $row['st'] = $r['status'];
       $row['timestamp'] = $r['timestamp'];
       $row['place'] = $place;//.".";
-      $row['name'] = $r['name'];
+      $row['name'] = $r['name'].'/'.strtolower($r['country']); /*addFlag($r['country']).*/
       $row['team'] = $r['team'];
       for($i=0;$i<$nb_radio;$i++)
       {
@@ -196,7 +196,7 @@ while ($r = mysqli_fetch_array($res))
       $row['st'] = $r['status'];
       $row['timestamp'] = $r['timestamp'];
       $row['place'] = "";
-      $row['name'] = $r['name'];
+      $row['name'] = $r['name'].'/'.strtolower($r['country']); /*addFlag($r['country']).*/
       $row['team'] = $r['team'];
       for($i=0;$i<$nb_radio;$i++)
       {
@@ -241,9 +241,269 @@ while ($r = mysqli_fetch_array($res))
   return $out;
 }
 
+function newCalculateMultistageAlternateResult($res, $bestTime, $nb_radio = 4)
+{
+
+  global $global_out;
+  global $global_out2;
+  global $global_out3;
+  global $global_out4;
+
+  $out = array();
+  $global_out = array();
+  $global_out2 = array();
+  $global_out3 = array();
+  $global_out4 = array();
+  $temp_out = array();
+
+  $place = 0;
+  $count = 0;
+  $lastTeam = -1;
+  $totalResult = array();
+  $hasTotal = false;
+
+//while ($r = mysqli_fetch_array($res))
+foreach($res as $r)
+  {
+    if ($lastTeam == $r['id'])
+    {
+      $out[$count]['name'] .= " / " . $r['name'];
+      continue;
+    }
+    else
+    {
+      $lastTeam = $r['id'];
+    }
+    $count++;
+    $t = $r['time']/10;
+    $row = array();
+    if ($r['status'] == 1) {
+      $row['st'] = $r['status'];
+      $row['timestamp'] = $r['timestamp'];
+      if($r['totstat'] == 1)
+      {
+	      $row['place'] = $r['rank_tot'];//.".";
+	  }
+	  else
+	  {
+	  	$row['place'] = '';
+	  }
+      $row['name'] = $r['name'].'/'.strtolower($r['country']); /*addFlag($r['country']).*/
+      $row['team'] = $r['team'];
+      /*$row['tottime'] = $r['tottime'];
+      $row['totstat'] = $r['totstat'];*/
+      for($i=0;$i<$nb_radio;$i++)
+      {
+        $row['radio'.$i] = '';//sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
+      }
+		if (isset($r['tottime']))
+		{
+			$hasTotal = true;
+			if (($r['totstat'] == 1) && ($r['status'] == 1))
+			{
+    			$tt = $r['tottime']/10;
+    			if ($tt > 0)
+    			$row['tottime'] = sprintf("%d:%02d:%02d", $tt/3600, ($tt/60)%60, $tt%60);
+    			else
+    			$row['tottime'] = "OK"; // No timing
+			}
+			else
+			{
+    			if($r['totstat'] > 1)
+    			{
+        			$row['tottime'] = newGetStatusString($r['totstat']);
+    			}
+    			else
+    			{
+        			$row['tottime'] = newGetStatusString($r['status']);
+    			}
+			}
+			if ($r['totstat'] > 0)
+    			$totalResult[$count] = ($r['totstat']-1) * 10000000 + $r['tottime'];
+			else
+    			$totalResult[$count] = 10000000 * 100;
+
+
+		}
+    	if ($t >= 3600)
+        	$row['time'] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
+    	else
+      	if ($t > 0)
+        	$row['time'] = sprintf("%02d:%02d", ($t/60), $t%60);
+      	else
+        	$row['time'] = "OK"; // No timing
+      	$after = $t - $bestTime/10;
+      	if ($after > 0)
+        	$row['after'] = sprintf("+%d:%02d", ($after/60), $after%60);
+      	else
+        	$row['after'] = "";
+        $row['inter_classement'] = $r['rank_etape'];
+    }
+    else
+    {
+      $row['st'] = $r['status'];
+      $row['timestamp'] = $r['timestamp'];
+      $row['place'] = "";
+      $row['name'] = $r['name'].'/'.strtolower($r['country']); /*addFlag($r['country']).*/
+      $row['team'] = $r['team'];
+      /*$row['tottime'] = $r['tottime'];
+      $row['totstat'] = $r['totstat'];*/
+      for($i=0;$i<$nb_radio;$i++)
+      {
+        $row['radio'.$i] = '';//sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
+      }
+      if($r['totstat'] > 1)
+    {
+        $row['tottime'] = newGetStatusString($r['totstat']);
+    }
+    else
+    {
+        $row['tottime'] = newGetStatusString($r['status']);
+    }
+      $row['time'] = newGetStatusString($r['status']);
+      $row['after'] = "";
+      $row['inter_classement'] = "";
+    }
+
+    $out[$count] = $row;
+    $row['id'] = $r['id'];
+    $row['status'] = $r['status'];
+    $row['tt'] = $t;
+
+  }
+
+  return $out;
+}
+
+function newCalculateMultistageResult($res, $bestTime, $nb_radio = 4)
+{
+
+  global $global_out;
+  global $global_out2;
+  global $global_out3;
+  global $global_out4;
+
+  $out = array();
+  $global_out = array();
+  $global_out2 = array();
+  $global_out3 = array();
+  $global_out4 = array();
+  $temp_out = array();
+
+  $place = 0;
+  $count = 0;
+  $lastTeam = -1;
+  $totalResult = array();
+  $hasTotal = false;
+
+//while ($r = mysqli_fetch_array($res))
+if($res != null)
+{
+	foreach($res as $r)
+  {
+    if ($lastTeam == $r['id'])
+    {
+      $out[$count]['name'] .= " / " . $r['name'];
+      continue;
+    }
+    else
+    {
+      $lastTeam = $r['id'];
+    }
+    $count++;
+    $t = $r['time']/10;
+    $row = array();
+    if ($r['status'] == 1) {
+      $row['st'] = $r['status'];
+      $row['timestamp'] = $r['timestamp'];
+      $row['place'] = $r['rank_etape'];//.".";
+      $row['name'] = $r['name'].'/'.strtolower($r['country']); /*addFlag($r['country']).*/
+      $row['team'] = $r['team'];
+      /*$row['tottime'] = $r['tottime'];
+      $row['totstat'] = $r['totstat'];*/
+      for($i=0;$i<$nb_radio;$i++)
+      {
+        $row['radio'.$i] = '';//sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
+      }
+    if ($t >= 3600)
+        $row['time'] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
+    else
+      if ($t > 0)
+        $row['time'] = sprintf("%02d:%02d", ($t/60), $t%60);
+      else
+        $row['time'] = "OK"; // No timing
+      $after = $t - $bestTime/10;
+      if ($after > 0)
+        $row['after'] = sprintf("+%d:%02d", ($after/60), $after%60);
+      else
+        $row['after'] = "";
+    }
+    else
+    {
+      $row['st'] = $r['status'];
+      $row['timestamp'] = $r['timestamp'];
+      $row['place'] = "";
+      $row['name'] = $r['name'].'/'.strtolower($r['country']); /*addFlag($r['country']).*/
+      $row['team'] = $r['team'];
+      /*$row['tottime'] = $r['tottime'];
+      $row['totstat'] = $r['totstat'];*/
+      for($i=0;$i<$nb_radio;$i++)
+      {
+        $row['radio'.$i] = '';//sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
+      }
+      $row['time'] = newGetStatusString($r['status']);
+      $row['after'] = "";
+    }
+    if (isset($r['tottime']))
+    {
+      $hasTotal = true;
+      if (($r['totstat'] == 1) && ($r['status'] == 1))
+      {
+        $tt = $r['tottime']/10;
+        if ($tt > 0)
+          $row['tottime'] = sprintf("%d:%02d:%02d", $tt/3600, ($tt/60)%60, $tt%60);
+        else
+          $row['tottime'] = "OK"; // No timing
+      }
+      else
+      {
+      	if($r['totstat'] > 1)
+      	{
+        	$row['tottime'] = newGetStatusString($r['totstat']);
+        }
+        else
+        {
+        	$row['tottime'] = newGetStatusString($r['status']);
+        }
+      }
+      if ($r['totstat'] > 0)
+        $totalResult[$count] = ($r['totstat']-1) * 10000000 + $r['tottime'];
+      else
+        $totalResult[$count] = 10000000 * 100;
+
+		if(($r['totstat'] == 1) && ($r['status'] == 1))
+		{
+	       	$row['inter_classement'] = $r['rank_tot'];
+	    }
+	    else
+	    {
+	    	$row['inter_classement'] = '';
+	    }
+
+    }
+    $out[$count] = $row;
+    $row['id'] = $r['id'];
+    $row['status'] = $r['status'];
+    $row['tt'] = $t;
+  	}
+  }
+
+  return $out;
+}
+
 function calculateResult($res) {
-  $out = array();  
-  
+  $out = array();
+
   $place = 0;
   $count = 0;
   $lastTime = -1;
@@ -255,11 +515,11 @@ while ($r = mysqli_fetch_array($res))
   {
     if ($lastTeam == $r['id']) {
       $out[$count]['name'] .= " / " . $r['name'];
-      continue; 
+      continue;
     }
     else
       $lastTeam = $r['id'];
-      
+
     $count++;
     $t = $r['time']/10;
     if ($bestTime == -1)
@@ -267,69 +527,69 @@ while ($r = mysqli_fetch_array($res))
     if ($lastTime != $t) {
       $place = $count;
       $lastTime = $t;
-    }        
+    }
     $row = array();
-    
+
     if ($r['status'] == 1)
     {
       $row['place'] = $place.".";
-      $row['name'] = $r['name'];      
+      $row['name'] = $r['name'];
       $row['team'] = $r['team'];
-    
+
       if ($t > 0)
         $row['time'] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
       else
         $row['time'] = "OK"; // No timing
-        
+
       $after = $t - $bestTime;
       if ($after > 3600)
         $row['after'] = sprintf("+%d:%02d:%02d", $after/3600, ($after/60)%60, $after%60);
       elseif ($after > 0)
-        $row['after'] = sprintf("+%d:%02d", ($after/60)%60, $after%60);        
+        $row['after'] = sprintf("+%d:%02d", ($after/60)%60, $after%60);
       else
         $row['after'] = "";
     }
     else
     {
       $row['place'] = "";
-      $row['name'] = $r['name'];      
+      $row['name'] = $r['name'];
       $row['team'] = $r['team'];
 
       $row['time'] = getStatusString($r['status']);
       $row['after'] = "";
     }
-    
-          
+
+
     if (isset($r['tottime']))
     {
       $hasTotal = true;
       if ($r['totstat'] == 1) {
-        $tt = $r['tottime']/10;          
+        $tt = $r['tottime']/10;
         if ($tt > 0)
           $row['tottime'] = sprintf("%d:%02d:%02d", $tt/3600, ($tt/60)%60, $tt%60);
         else
           $row['tottime'] = "OK"; // No timing
       }
       else {
-        $row['tottime'] = getStatusString($r['totstat']); 
+        $row['tottime'] = getStatusString($r['totstat']);
       }
-      
+
       if ($r['totstat'] > 0)
         $totalResult[$count] = ($r['totstat']-1) * 10000000 + $r['tottime'];
       else
         $totalResult[$count] = 10000000 * 100;
     }
-          
+
     $out[$count] = $row;
   }
-  
+
   if ($hasTotal)
   {
     array_multisort($totalResult, $out);
     $place = 0;
     $lastTime = -1;
     $bestTime = -1;
-    
+
     for($k = 0; $k<$count; $k++) {
       if ($totalResult[$k] < 10000000) {
         $t = $totalResult[$k];
@@ -341,14 +601,14 @@ while ($r = mysqli_fetch_array($res))
         }
         if ($out[$k]['place'] > 0)
           $out[$k]['time'].=" (".substr($out[$k]['place'], 0, -1).")";
-        
+
         $out[$k]['place'] = $place.".";
-        
+
         $after = ($t - $bestTime)/10;
         if ($after > 3600)
           $out[$k]['totafter'] = sprintf("+%d:%02d:%02d", $after/3600, ($after/60)%60, $after%60);
         elseif ($after > 0)
-          $out[$k]['totafter'] = sprintf("+%d:%02d", ($after/60)%60, $after%60);        
+          $out[$k]['totafter'] = sprintf("+%d:%02d", ($after/60)%60, $after%60);
         else
           $out[$k]['totafter'] = '';
       }
@@ -358,8 +618,14 @@ while ($r = mysqli_fetch_array($res))
       }
     }
   }
-  
+
   return $out;
+}
+
+function addRadioMultistageResult($res, $results)
+{
+	// do nothing, but have to return something to be transparent
+	return $results;
 }
 
 function addRadioResult($res, $results)
@@ -429,7 +695,7 @@ function ordonnertableau($result, $arr_radiomax)
   $arr_timeRunning = array();
   $temp_tab = array();
   $out = array();
-  
+
   $nradios = count($arr_radio); // 2016
   foreach($arr_radiomax as $k => $v)
   {
@@ -613,7 +879,7 @@ function formatResultScreen($result, $limit = 9999)
 {
   global $pos;
   global $lang;
-  
+
   $head = true;
   print '[';
   $i = 0;
@@ -1147,7 +1413,7 @@ function reorder_relay($arr, $numlegs)
 function formatRelayResults($result, $limit = 99999)
 {
   global $pos;
-  
+
   $head = true;
   print '[';
   $i = 0;
@@ -1196,14 +1462,15 @@ function selectRadio($cls) {
   $link = ConnectToDB();
   $res = mysqli_query($link, $sql);
   $radios = mysqli_num_rows($res);
-  if ($radios > 0) {
+  if ($radios > 0)
+  {
     if (isset($_GET['radio'])) {
       $radio = $_GET['radio'];
     }
     while ($r = mysqli_fetch_array($res)) {
-      print '<a href="'."$PHP_SELF?cls=$cls&radio=$r[ctrl]".'">'.$r['name']."</a><br/>\n";
+      print '<a href="'.$_SERVER['PHP_SELF']."?cls=$cls&radio=$r[ctrl]".'">'.$r['name']."</a><br/>\n";
     }
-    print '<a href="'."$PHP_SELF?cls=$cls&radio=finish".'">'.'Finish'."</a><br/>\n";
+    print '<a href="'.$_SERVER['PHP_SELF']."?cls=$cls&radio=finish".'">'.'Finish'."</a><br/>\n";
   }
   else {
     // Only finish
@@ -1282,115 +1549,134 @@ function clearCompetition($cid) {
 /** Update control table */
 function processCompetition($cid, $cmp) {
   $link = ConnectToDB();
-  $name = mysqli_real_escape_string($link, $cmp);
-  $date = mysqli_real_escape_string($link, $cmp['date']);
-  $organizer = mysqli_real_escape_string($link, $cmp['organizer']);
-  $homepage = mysqli_real_escape_string($link, $cmp['homepage']);
-  $sqlupdate = "name='$name', date='$date', organizer='$organizer', homepage='$homepage'";
-  updateTable("mopcompetition", $cid, 1, $sqlupdate);
+  if(!isset($cmp['delete']))
+  {
+  	$name = mysqli_real_escape_string($link, substr($cmp, 0, 64));
+  	$date = mysqli_real_escape_string($link, $cmp['date']);
+  	$organizer = mysqli_real_escape_string($link, $cmp['organizer']);
+  	$homepage = mysqli_real_escape_string($link, $cmp['homepage']);
+  	$sqlupdate = "name='$name', date='$date', organizer='$organizer', homepage='$homepage'";
+  	updateTable("mopcompetition", $cid, 1, $sqlupdate);
+  }
 }
 /** Update control table */
 function processControl($cid, $ctrl) {
   $link = ConnectToDB();
-  $id = mysqli_real_escape_string($link, $ctrl['id']);
-  $name = mysqli_real_escape_string($link, $ctrl);
-  $sqlupdate = "name='$name'";
-  updateTable("mopcontrol", $cid, $id, $sqlupdate);
+  if(!isset($ctrl['delete']))
+  {
+  	$id = mysqli_real_escape_string($link, $ctrl['id']);
+  	$name = mysqli_real_escape_string($link, $ctrl);
+  	$sqlupdate = "name='$name'";
+  	updateTable("mopcontrol", $cid, $id, $sqlupdate);
+  }
 }
 /** Update class table */
 function processClass($cid, $cls) {
   $link = ConnectToDB();
-  $id = mysqli_real_escape_string($link , $cls['id']);
-  $ord = mysqli_real_escape_string($link , $cls['ord']);
-  $name = mysqli_real_escape_string($link , $cls);
-  $sqlupdate = "name='$name', ord='$ord'";
-  updateTable("mopclass", $cid, $id, $sqlupdate);
-  if (isset($cls['radio'])) {
-    $radio = mysqli_real_escape_string($link , $cls['radio']);
-    updateLinkTable("mopclasscontrol", $cid, $id, "ctrl", $radio);
+  if(!isset($cls['delete']))
+  {
+  	$id = mysqli_real_escape_string($link , $cls['id']);
+  	$ord = mysqli_real_escape_string($link , $cls['ord']);
+  	$name = mysqli_real_escape_string($link , $cls);
+  	$sqlupdate = "name='$name', ord='$ord'";
+  	updateTable("mopclass", $cid, $id, $sqlupdate);
+  	if (isset($cls['radio'])) {
+    	$radio = mysqli_real_escape_string($link , $cls['radio']);
+    	updateLinkTable("mopclasscontrol", $cid, $id, "ctrl", $radio);
+  	}
   }
 }
 /** Update organization table */
 function processOrganization($cid, $org) {
   $link = ConnectToDB();
-  $id = mysqli_real_escape_string($link , $org['id']);
-  $name = mysqli_real_escape_string($link , $org);
-  $sqlupdate = "name='$name'";
-  updateTable("moporganization", $cid, $id, $sqlupdate);
+  if(!isset($org['delete']))
+  {
+  	$id = mysqli_real_escape_string($link , $org['id']);
+  	$name = mysqli_real_escape_string($link , $org);
+  	$sqlupdate = "name='$name'";
+  	updateTable("moporganization", $cid, $id, $sqlupdate);
+  }
 }
 /** Update competitor table */
 function processCompetitor($cid, $cmp) {
   $link = ConnectToDB();
-  $base = $cmp->base;
-  $id = mysqli_real_escape_string($link, $cmp['id']);
-  $name = mysqli_real_escape_string($link, $base);
-  $org = (int)$base['org'];
-  $cls = (int)$base['cls'];
-  $stat = (int)$base['stat'];
-  $st = (int)$base['st'];
-  $rt = (int)$base['rt'];
-  $now = time();
-  $sqlupdate = "name='$name', org=$org, cls=$cls, stat=$stat, st=$st, rt=$rt,timestamp=$now";
-  if (isset($cmp->input)) {
-    $input = $cmp->input;
-    $it = (int)$input['it'];
-    $tstat = (int)$input['tstat'];
-    $sqlupdate.=", it=$it, tstat=$tstat";
-  }
-  updateTable("mopcompetitor", $cid, $id, $sqlupdate);
-/* 
- // ORIGINAL
- if (isset($cmp->radio)) {
-    $sql = "DELETE FROM mopradio WHERE cid='$cid' AND id='$id'";
-    mysql_query($sql);
-    $radios = explode(";", $cmp->radio);
-    foreach($radios as $radio) {
-      $tmp = explode(",", $radio);
-      $radioId = (int)$tmp[0];
-      $radioTime = (int)$tmp[1];
-      $sql = "REPLACE INTO mopradio SET cid='$cid', id='$id', ctrl='$radioId', rt='$radioTime', timestamp=$now";
-      mysql_query($sql);
-    }
-  }
-*/
-  if (isset($cmp->radio))
+  if(!isset($cmp['delete']))
   {
-    $radios = explode(";", $cmp->radio);
-    foreach($radios as $radio)
-    {
-      $tmp = explode(",", $radio);
-      $radioId = (int)$tmp[0];
-      $radioTime = (int)$tmp[1];
-      $sql = "SELECT 1 FROM mopradio WHERE cid='$cid' AND id='$id' AND ctrl='$radioId'";
-      $res = mysqli_query($link, $sql);
-      if(mysqli_num_rows($res))
-      {
-        $sql = "UPDATE mopradio SET rt='$radioTime' WHERE cid='$cid' AND id='$id' AND ctrl='$radioId'";
-        mysqli_query($link, $sql);
-      }
-      else
-      {
-        $sql = "INSERT INTO mopradio SET cid='$cid', id='$id', ctrl='$radioId', rt='$radioTime', timestamp=$now";
-        mysqli_query($link, $sql);
-      }
-    }
+  	$base = $cmp->base;
+  	$id = mysqli_real_escape_string($link, $cmp['id']);
+  	$name = mysqli_real_escape_string($link, $base);
+  	$org = (int)$base['org'];
+  	$cls = (int)$base['cls'];
+  	$stat = (int)$base['stat'];
+  	$st = (int)$base['st'];
+  	$rt = (int)$base['rt'];
+  	$flag = mysqli_real_escape_string($link, $base['flag']);
+  	$now = time();
+  	$sqlupdate = "name='$name', org=$org, cls=$cls, stat=$stat, st=$st, rt=$rt, country='$flag', timestamp=$now";
+  	if (isset($cmp->input)) {
+    	$input = $cmp->input;
+    	$it = (int)$input['it'];
+    	$tstat = (int)$input['tstat'];
+    	$sqlupdate.=", it=$it, tstat=$tstat";
+  	}
+  	updateTable("mopcompetitor", $cid, $id, $sqlupdate);
+	/*
+ 	// ORIGINAL
+ 	if (isset($cmp->radio)) {
+    	$sql = "DELETE FROM mopradio WHERE cid='$cid' AND id='$id'";
+    	mysql_query($sql);
+    	$radios = explode(";", $cmp->radio);
+    	foreach($radios as $radio) {
+      	$tmp = explode(",", $radio);
+      	$radioId = (int)$tmp[0];
+      	$radioTime = (int)$tmp[1];
+      	$sql = "REPLACE INTO mopradio SET cid='$cid', id='$id', ctrl='$radioId', rt='$radioTime', timestamp=$now";
+      	mysql_query($sql);
+    	}
+  	}
+	*/
+  	if (isset($cmp->radio))
+  	{
+    	$radios = explode(";", $cmp->radio);
+    	foreach($radios as $radio)
+    	{
+      	$tmp = explode(",", $radio);
+      	$radioId = (int)$tmp[0];
+      	$radioTime = (int)$tmp[1];
+      	$sql = "SELECT 1 FROM mopradio WHERE cid='$cid' AND id='$id' AND ctrl='$radioId'";
+      	$res = mysqli_query($link, $sql);
+      	if(mysqli_num_rows($res))
+      	{
+        	$sql = "UPDATE mopradio SET rt='$radioTime' WHERE cid='$cid' AND id='$id' AND ctrl='$radioId'";
+        	mysqli_query($link, $sql);
+      	}
+      	else
+      	{
+        	$sql = "INSERT INTO mopradio SET cid='$cid', id='$id', ctrl='$radioId', rt='$radioTime', timestamp=$now";
+        	mysqli_query($link, $sql);
+      	}
+    	}
+  	}
   }
 }
 /** Update team table */
 function processTeam($cid, $team) {
   $link = ConnectToDB();
-  $base = $team->base;
-  $id = mysqli_real_escape_string($link, $team['id']);
-  $name = mysqli_real_escape_string($link, $base);
-  $org = (int)$base['org'];
-  $cls = (int)$base['cls'];
-  $stat = (int)$base['stat'];
-  $st = (int)$base['st'];
-  $rt = (int)$base['rt'];
-  $sqlupdate = "name='$name', org=$org, cls=$cls, stat=$stat, st=$st, rt=$rt";
-  updateTable("mopteam", $cid, $id, $sqlupdate);
-  if (isset($team->r)) {
-    updateLinkTable("mopteammember", $cid, $id, "rid", $team->r);
+  if(!isset($team['delete']))
+  {
+  	$base = $team->base;
+  	$id = mysqli_real_escape_string($link, $team['id']);
+  	$name = mysqli_real_escape_string($link, $base);
+  	$org = (int)$base['org'];
+  	$cls = (int)$base['cls'];
+  	$stat = (int)$base['stat'];
+  	$st = (int)$base['st'];
+  	$rt = (int)$base['rt'];
+  	$sqlupdate = "name='$name', org=$org, cls=$cls, stat=$stat, st=$st, rt=$rt";
+  	updateTable("mopteam", $cid, $id, $sqlupdate);
+  	if (isset($team->r)) {
+    	updateLinkTable("mopteammember", $cid, $id, "rid", $team->r);
+  	}
   }
 }
 /** MOP return code. */
@@ -1485,16 +1771,16 @@ function displayContentPicture($picture, $panel, $panelcount)
     $or_height = $arr_img[1];
     $ratio_h = $or_height / $max_height;
     $ratio_w = $or_width / $max_width;
-    
+
     //screen.width screen.height
-    
-  $retour .= '<div id="imgpan'.$panel.'" style="display:table;overflow:hidden;margin:auto;">';    
+
+  $retour .= '<div id="imgpan'.$panel.'" style="display:table;overflow:hidden;margin:auto;">';
   $retour .= '<div id="imgp'.$panel.'" style="padding:2px;display:table-cell;vertical-align:middle;text-align:center;"><img id="imgs'.$panel.'" src="pictures/'.$picture.'" alt="L" title="L" /></div>';
   $retour .= '</div>';
   $retour .= '<script type="text/javascript">';
   $retour .= 'function computeSize'.$panel.'()';
   $retour .= '{';
-  $retour .= 'ratio_device = 1.25;';  
+  $retour .= 'ratio_device = 1.25;';
   $retour .= 'screenw = (screen.height - 70) / '.$panelcount.' / ratio_device;';
   $retour .= 'screenh = (screen.width - 140) / ratio_device;';
   $retour .= 'imgw = '.$or_width.';';
@@ -1504,18 +1790,18 @@ function displayContentPicture($picture, $panel, $panelcount)
   $retour .= 'ratio = Math.max(ratio_h, ratio_w);';
   $retour .= 'h = imgh / ratio;';
   $retour .= 'w = imgw / ratio;';
-  $retour .= 'return {h:h, w:w};'; 
+  $retour .= 'return {h:h, w:w};';
   $retour .= '}'."\n";
   $retour .= 'var mysize'.$panel.' = computeSize'.$panel.'();'."\n";
   $retour .= 'document.getElementById("imgpan'.$panel.'").style.height = mysize'.$panel.'.h;'."\n";
   $retour .= 'document.getElementById("imgpan'.$panel.'").style.width = mysize'.$panel.'.w;'."\n";
-  
+
   $retour .= 'document.getElementById("imgp'.$panel.'").style.height = mysize'.$panel.'.h;'."\n";
   $retour .= 'document.getElementById("imgp'.$panel.'").style.width = mysize'.$panel.'.w;'."\n";
-  
+
   $retour .= 'document.getElementById("imgs'.$panel.'").height = mysize'.$panel.'.h;'."\n";
   $retour .= 'document.getElementById("imgs'.$panel.'").width = mysize'.$panel.'.w;'."\n";
-           /* 
+           /*
   $retour .= 'document.write("*" + imgh + "*" + imgw + "*<br />");';
   $retour .= 'document.write("/" + ratio_h + "/" + ratio_w + "/<br />");';
   $retour .= 'document.write("+" + screenh + "+" + screenw + "+" + screen.width + "x" + screen.availWidth + "x" + screen.availHeight + "+<br />");';
@@ -1532,7 +1818,7 @@ function displayContentPicture($picture, $panel, $panelcount)
     }
     else
     {
-      
+
 //        $retour .= '<div style="padding:2px;text-align:center;"><img src="pictures/'.$picture.'" alt="L" title="L" max-height="470px"; vertical-align:middle;/></div>';
 //        $retour .= '<div style="padding:2px;text-align:center;"><img src="pictures/'.$picture.'" alt="" max-height="470px" height="470px" /></div>';
     }
@@ -1543,7 +1829,7 @@ function displayContentBlog($rcid, $nlines, $highlight, $panel)
 {
   $link = ConnectToDB();
   $content = '';
-  $highlight_s = $highlight * 60; 
+  $highlight_s = $highlight * 60;
   $sql = 'SELECT * FROM resultblog WHERE rcid='.$rcid.' ORDER BY timestamp DESC LIMIT '.$nlines;
   $res = mysqli_query($link, $sql);
   $content .= '<ul class="blogview" id="bloglist'.$panel.'">';
@@ -1564,7 +1850,7 @@ function displayContentBlog($rcid, $nlines, $highlight, $panel)
         $mytext .= '<li>';
       }
       $mytext .= '<span class="blogtime">'.date('H:i:s', $mytimestamp).'</span>';//date('d-m-Y H:i:s', $mytimestamp);
-      
+
       $mytext .= htmlspecialchars($r['text']);
       $arr_data[] = $mytext;
     }
@@ -1580,7 +1866,7 @@ function displayContentRadio($rcid, $nlines, $highlight, $panel)
 {
   $link = ConnectToDB();
   $content = '';
-  $highlight_s = $highlight * 60; 
+  $highlight_s = $highlight * 60;
   //$sql = 'SELECT * FROM resultblog WHERE rcid='.$rcid.' ORDER BY timestamp DESC LIMIT '.$nlines;
   //$res = mysqli_query($link, $sql);
   $content .= '<table class="radioview" cellspacing="0" cellpadding="0" id="radiolist'.$panel.'">';
@@ -1601,7 +1887,7 @@ function displayContentRadio($rcid, $nlines, $highlight, $panel)
         $mytext .= '<li>';
       }
       $mytext .= '<span class="radiotime">'.date('H:i:s', $mytimestamp).'</span>';//date('d-m-Y H:i:s', $mytimestamp);
-      
+
       $mytext .= htmlspecialchars($r['text']);
       $arr_data[] = $mytext;
     }
@@ -1678,5 +1964,16 @@ function calculeStart($res) {
     $out[$count] = $row;
   }
   return $out;
+}
+
+function addFlag($country_flag)
+{
+	$txt = '';
+	$curflag = strtolower($country_flag);
+	if(file_exists('img/flags-mini/'.$curflag.'.png'))
+	{
+		$txt = '<img src="img/flags-mini/'.$curflag.'.png" alt="'.$curflag.'" title="'.$curflag.'" class="countryflag" />';
+	}
+	return $txt;
 }
 ?>

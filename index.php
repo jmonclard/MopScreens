@@ -4,10 +4,10 @@
   $ipnb=explode('.',$ip);
   if (($ipnb[0]!='192')||($ipnb[1]!='168')||($ipnb[2]!='0')||($ipnb[3]=='20'))
   {
-      header("Location: http://<ToBeDefined>/show.php");
+      header("Location: http://192.168.0.10/cfco/show.php");
       exit;//die();
   }
-  
+
   // ajout 20170518
   session_start();
   date_default_timezone_set('UTC');
@@ -61,18 +61,68 @@
   <title>Screen configuration portail</title>
   </head>
   <body>
-  	<b>For screens configuration <a href="http://<ToBeDefined>/screenconfig.php">click here !</a></b>
+  	<b>Pour la configuration des écrans <a href="http://192.168.0.10/cfco/screenconfig.php">cliquez ici !</a></b>
     <br/>
     <br/>
     <hr>
-    <b>Help for MeOS configuration</b><br/>
-    <b>First available competition ID :<span style="color:blue;font-size:2em;"> <?php echo $new_cid; ?></span></b>
+    <b>Aide à la configuration de MeOS</b><br/>
+    <b>Premier identifiant de competition disponible :<span style="color:blue;font-size:2em;"> <?php echo $new_cid; ?></span></b>
     <br/>
     <br/>
-    <b>URL to be used in MEOS service &nbsp;</b>http://<ToBeDefined>/update.php
+    <b>URL pour MEOS</b> (faire un copier/coller) : &nbsp;http:192.168.0.10/cfco/update.php
     <br/>
     <br/>
     <img src='config.jpg' title='MeOS configuration'></img>
     <br/>
+    <br/>
+    <hr>
+    <b>Configuration du NUC (pour les gourous !)</b><br/>
+    <br/>
+    <table border=1>
+      <tr>
+        <th colspan=2>Configuration</th>
+      </tr>
+      <tr>
+        <td>Connexion MeOS</td>
+        <td>resultpaca</td>
+      </tr>
+      <tr>
+        <td>Ubuntu Nom</td>
+        <td>LiguePacaCO</td>
+      </tr>
+      <tr>
+        <td>Ubuntu User</td>
+        <td>lpacaco</td>
+      </tr>
+      <tr>
+        <td>Ubuntu password</td>
+        <td>lpacaco</td>
+      </tr>
+      <tr>
+        <td>MySQL compte</td>
+        <td>lpacaco</td>
+      </tr>
+      <tr>
+        <td>MySQL password</td>
+        <td>lpacaco</td>
+      </tr>
+      <tr>
+        <td>PhpMyAdmin compte</td>
+        <td>root</td>
+      </tr>
+      <tr>
+        <td>PhpMyAdmin password</td>
+        <td>lpacaco</td>
+      </tr>
+      <tr>
+        <td>Serveur Apache</td>
+        <td>/var/www/html</td>
+      </tr>
+      <tr>
+        <td>Répertoire gestion écran</td>
+        <td>192.168.0.10/cfco</td>
+      </tr>
+    </table>
+
   </body>
 </html>
