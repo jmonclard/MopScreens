@@ -1,13 +1,13 @@
 <?php
   /*
   Copyright 2014-2016 Metraware
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
       http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +20,13 @@
   date_default_timezone_set('UTC');
   include_once('functions.php');
   redirectSwitchUsers();
-  
+
   include_once('lang.php');
   $_SESSION['CurrentLanguage'] = isset($_SESSION['CurrentLanguage']) ? $_SESSION['CurrentLanguage'] : autoSelectLanguage(array('fr','en','sv'),'en');
-  
+
   include_once('screenfunctions.php');
   include_once('config.php');
-  
+
 
   function InsertFileList($list, $listname,$current_value,$listid)
   {
@@ -81,14 +81,14 @@
             {
                 location.replace("screen.php?rcid="+rcid);
             }
-            
+
             function Reload(rcid,sid)
             {
                 var compet = document.getElementById("cid");
                 var cid = compet.options[compet.selectedIndex].value;
                 location.replace("screenedit.php?action=reload&rcid="+rcid+"&sid="+sid+"&cid="+cid);
             }
-            
+
             function ManagePanel(sel,i)
             {
               sel=parseInt(sel);
@@ -170,13 +170,13 @@
                   break;
                 }
             }
-            
-           
+
+
             function EditClassesList(rcid,cid,sid,panel)
             {
                 location.replace("screenclasses.php?rcid="+rcid+"&cid="+cid+"&sid="+sid+"&panel="+panel);
             }
-            
+
         </script>
         <script type="text/javascript" src="jscolor/jscolor.js"></script>
     </head>
@@ -189,7 +189,7 @@
   class Panel {
     var $numpanel;
     var $classes;
-    
+
     var $content;
     var $mode;
     var $tm_count;
@@ -208,7 +208,8 @@
     var $scrollaftertime;
     var $updateduration;
     var $radioctrl;
-    
+    var $displaynomprenom;
+
     function Panel($num)
     {
       $this->numpanel = $num;
@@ -234,16 +235,17 @@
       $this->scrollaftertime=$r['panel'.$this->numpanel.'scrollaftertime'];
       $this->updateduration=$r['panel'.$this->numpanel.'updateduration'];
       $this->radioctrl=$r['panel'.$this->numpanel.'radioctrl'];
-      
+      $this->displaynomprenom = $r['panel'.$this->numpanel.'displaynomprenom'];
+
       $this->classes = $cls;
     }
-    
+
     function Display()
     {
       global $picturefilelist;
       global $slidesfilelist;
       global $htmlfilelist;
-      
+
       print '<div id="pan'.$this->numpanel.'div">';
       $prefix = 'panel'.$this->numpanel;
       //print "<h4>$prefix</h4>"; //TODO to be replaced with tab higlighting
@@ -330,21 +332,21 @@
       // Picture
       print "<tr>\n";
       print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'pict"></input></td>';
-      print '<td><input type="radio" name="'.$prefix.'content" value="1" id="'.$prefix.'id1">'.MyGetText(38).'</input></td>'; 
+      print '<td><input type="radio" name="'.$prefix.'content" value="1" id="'.$prefix.'id1">'.MyGetText(38).'</input></td>';
       InsertFileList($picturefilelist,$prefix.'pict',$this->pict,$prefix.'content1txt');
       print "</tr>\n";
-      
+
       // Slides
       print "<tr>\n";
       print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'slides"></input></td>';
-      print '<td><input type="radio" name="'.$prefix.'content" value="8" id="'.$prefix.'id8">'.MyGetText(99).'</input></td>'; 
+      print '<td><input type="radio" name="'.$prefix.'content" value="8" id="'.$prefix.'id8">'.MyGetText(99).'</input></td>';
       InsertFileList($slidesfilelist,$prefix.'slides',$this->slides,$prefix.'content8');
       print "</tr>\n";
-      
+
       // Text
       print "<tr>\n";
       print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'txt"></input></td>';
-      print '<td><input type="radio" name="'.$prefix.'content" value="2" id="'.$prefix.'id2">'.MyGetText(39).'</input></td>'; 
+      print '<td><input type="radio" name="'.$prefix.'content" value="2" id="'.$prefix.'id2">'.MyGetText(39).'</input></td>';
       print '<td><textarea name="'.$prefix.'txt" cols=64 rows=4 maxlength=500 id="'.$prefix.'content2">'.$this->txt.'</textarea></td>';
       $str=NumericIntList($prefix.'txtsize',1,72,$this->txtsize);
       print "<td>$str</td>\n";
@@ -354,41 +356,51 @@
        // Blog
       print "<tr>\n";
       print "<td>&nbsp;</td>\n";
-      print '<td><input type="radio" name="'.$prefix.'content" value="7" id="'.$prefix.'id7">'.MyGetText(93).'</input></td>'; 
+      print '<td><input type="radio" name="'.$prefix.'content" value="7" id="'.$prefix.'id7">'.MyGetText(93).'</input></td>';
       print "</tr>\n";
 
        // HTML
       print "<tr>\n";
       print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'html"></input></td>';
-      print '<td><input type="radio" name="'.$prefix.'content" value="3" id="'.$prefix.'id3">'.MyGetText(40).'</input></td>'; 
+      print '<td><input type="radio" name="'.$prefix.'content" value="3" id="'.$prefix.'id3">'.MyGetText(40).'</input></td>';
       InsertFileList($htmlfilelist,$prefix.'html',$this->html,$prefix.'content3txt');
       print "</tr>\n";
 
       // Start list
       print "<tr>\n";
       print "<td>&nbsp;</td>\n";
-      print '<td><input type="radio" name="'.$prefix.'content" value="4" id="'.$prefix.'id4">'.MyGetText(42).'</input></td>'; 
+      print '<td><input type="radio" name="'.$prefix.'content" value="4" id="'.$prefix.'id4">'.MyGetText(42).'</input></td>';
       print '<td><input type="text" name="'.$prefix.'startlist" size=64 id="'.$prefix.'content4" readonly value="'.$this->classes.'"></td>';
       print "</tr>\n";
-      
+
       // Results
       print "<tr>\n";
       print "<td>&nbsp;</td>\n";
-      print '<td><input type="radio" name="'.$prefix.'content" value="5" id="'.$prefix.'id5">'.MyGetText(43).'</input></td>'; 
+      print '<td><input type="radio" name="'.$prefix.'content" value="5" id="'.$prefix.'id5">'.MyGetText(43).'</input></td>';
       print '<td><input type="text" name="'.$prefix.'results" size=64 id="'.$prefix.'content5" readonly value="'.$this->classes.'"></td>';
+
+      print "<td><input type=\"checkbox\" name=\"chkall[]\" value=\"".$prefix."displaynomprenom\"></input><select name='".$prefix."displaynomprenom' size=1>\n";
+      print "<option value='0'".(($this->displaynomprenom == 0)? " selected" :"").">".MyGetText(114)."</option>\n";
+      print "<option value='1'".(($this->displaynomprenom == 1)? " selected" :"").">".MyGetText(115)."</option>\n";
+      print "<option value='2'".(($this->displaynomprenom == 2)? " selected" :"").">".MyGetText(116)."</option>\n";
+      print "<option value='3'".(($this->displaynomprenom == 3)? " selected" :"").">".MyGetText(117)."</option>\n";
+      print "<option value='4'".(($this->displaynomprenom == 4)? " selected" :"").">".MyGetText(118)."</option>\n";
+      print "<option value='5'".(($this->displaynomprenom == 5)? " selected" :"").">".MyGetText(119)."</option>\n";
+      print "</select></td>\n";
+
       print "</tr>\n";
 
       // Summary
       print "<tr>\n";
       print "<td>&nbsp;</td>\n";
-      print '<td><input type="radio" name="'.$prefix.'content" value="6" id="'.$prefix.'id6">'.MyGetText(92).'</input></td>'; 
+      print '<td><input type="radio" name="'.$prefix.'content" value="6" id="'.$prefix.'id6">'.MyGetText(92).'</input></td>';
       print '<td><input type="text" name="'.$prefix.'summary" size=64 id="'.$prefix.'content6" readonly value="'.$this->classes.'"></td>';
       print "</tr>\n";
 
       // Radio
       print "<tr>\n";
       print "<td>&nbsp;</td>\n";
-      print '<td><input type="radio" name="'.$prefix.'content" value="9" id="'.$prefix.'id9">'.MyGetText(107).'</input></td>'; 
+      print '<td><input type="radio" name="'.$prefix.'content" value="9" id="'.$prefix.'id9">'.MyGetText(107).'</input></td>';
       print '<td><input type="text" name="'.$prefix.'radio" size=64 id="'.$prefix.'content9" readonly value="'.$this->classes.'"></td>';
       $str=NumericIntList($prefix.'radioctrl',31,255,$this->radioctrl);
       print "<td>$str</td>\n";
@@ -405,16 +417,16 @@
       // Fixed line
       print "<tr>\n";
       print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'fixedlines"></input></td>';
-      $str=NumericIntList($prefix."fixedlines",0,30,$this->fixedlines);
-      print "<td>".MyGetText(59)."</td>\n"; 
+      $str=NumericIntList($prefix."fixedlines",0,99,$this->fixedlines);
+      print "<td>".MyGetText(59)."</td>\n";
       print "<td>$str</td>\n";
       print "</tr>\n";
 
       // Scrolling lines
       print "<tr>\n";
       print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'scrolledlines"></input></td>';
-      $str=NumericIntList($prefix."scrolledlines",0,30,$this->scrolledlines);
-      print "<td>".MyGetText(60)."</td>\n"; 
+      $str=NumericIntList($prefix."scrolledlines",0,99,$this->scrolledlines);
+      print "<td>".MyGetText(60)."</td>\n";
       print "<td>$str</td>\n";
       print "</tr>\n";
 
@@ -430,7 +442,7 @@
       print "<tr>\n";
       print '<td><input type="checkbox" name="chkall[]" value="'.$prefix.'scrolltime"></input></td>';
       $str=NumericIntList($prefix."scrolltime",1,200,$this->scrolltime);
-      print "<td>".MyGetText(61)."</td>\n"; 
+      print "<td>".MyGetText(61)."</td>\n";
       print "<td>$str 1/10°s</td> \n";
       print "</tr>\n";
 
@@ -459,7 +471,7 @@
   $panel2 = new Panel(2);
   $panel3 = new Panel(3);
   $panel4 = new Panel(4);
-  $panels = array($panel1,$panel2,$panel3,$panel4); 
+  $panels = array($panel1,$panel2,$panel3,$panel4);
 
 
   $rcid = isset($_GET['rcid']) ? intval($_GET['rcid']) : 0;
@@ -467,30 +479,30 @@
   if (($rcid>0) && ($sid>0))
   {
       $action = isset($_GET['action']) ? $_GET['action'] : "none";
-      
-      
+
+
       if ($action == "clearclasses")
       {
           $cid = isset($_GET['cid']) ? intval($_GET['cid']) : 0;
           $panel = isset($_GET['panel']) ? intval($_GET['panel']) : 0;
           if (($cid>0)&&($panel>0))
           {
-              $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
+              $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";
               mysqli_query($link, $sql);
           }
       }
-      
+
       if ($action == "updateclasses")
       {
           $cid = isset($_GET['cid']) ? intval($_GET['cid']) : 0;
           $panel = isset($_GET['panel']) ? intval($_GET['panel']) : 0;
           if (($cid>0)&&($panel>0))
           {
-              $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";  
+              $sql = "DELETE FROM resultclass WHERE rcid='$rcid' AND cid='$cid' AND sid='$sid' AND panel='$panel'";
               mysqli_query($link, $sql);
               $selclasses = isset($_GET['selclasses']) ? $_GET['selclasses'] : null;
               if ($selclasses !== null)
-              { 
+              {
                   foreach ($selclasses as $i => $id)
                   {
                       $str = "'".$rcid."', ";
@@ -505,16 +517,16 @@
           }
 
       }
-      
+
       $configname = GetConfigurationName($rcid,$link);
       print "<h2>$configname, ".MyGetText(24)." $sid</h2>\n"; // Screen
-      
+
       $sql = "SELECT * FROM resultscreen WHERE rcid=$rcid AND sid=$sid";
       $res = mysqli_query($link, $sql);
-      
+
       if (mysqli_num_rows($res) > 0)
       {
-      
+
           $r = mysqli_fetch_array($res);
           $cid=$r['cid'];
           if (($action == "reload")||($action == "updateclasses"))
@@ -531,7 +543,7 @@
           $titleleftpict=$r['titleleftpict'];
           $titlerightpict=$r['titlerightpict'];
           $panelscount=$r['panelscount'];
-          
+
           for ($i=1; $i<=NB_PANEL; $i++)
           {
             $panels[$i-1]->Initialise($r, GetClasses($rcid, $cid, $sid,$i,$link));
@@ -569,14 +581,14 @@
           {
             $htmlfilelist[$name]=$name;
           }
-  
-          
+
+
           print "<form name='screenedit' method=GET action='screen.php'>\n";
           print "<input type='hidden' name='action' value='update'>\n";
           print "<input type='hidden' name='rcid' value='$rcid'>\n";
           print "<input type='hidden' name='sid' value='$sid'>\n";
 
-          //----------------- screen global ---------------------- 
+          //----------------- screen global ----------------------
           print "<table>\n";
           print "<tr>\n";
           print "<td><input type='checkbox' name='chkall[]' value='cid'></input></td>\n";
@@ -644,7 +656,7 @@
 
           print "</table>\n";
 
-          //----------------- top of the screen ---------------------- 
+          //----------------- top of the screen ----------------------
           print "<hr>\n";
           print "<h4>".MyGetText(100)."</h4>\n";
 
@@ -657,7 +669,7 @@
           print "<td>$str</td>\n";
           print '<td>'.MyGetText(66).' : <input type="text" name="titlecolor" class="color" size=6 value="'.$titlecolor.'"></td>'; // color
           print "</tr>\n";
-          
+
           print "<tr>\n";
           print "<td><input type='checkbox' name='chkall[]' value='subtitle'></input></td>\n";
           print "<td>".MyGetText(26)." : </td>\n"; // subtitle
@@ -666,20 +678,20 @@
           print "<td>$str</td>\n";
           print '<td>'.MyGetText(66).' : <input type="text" name="subtitlecolor" class="color" size=6 value="'.$subtitlecolor.'"></td>'; // color
           print "</tr>\n";
-          
+
           print "<tr>\n";
           print "<td><input type='checkbox' name='chkall[]' value='titleleftpict'></input></td>\n";
           print "<td>".MyGetText(56)."</td>\n"; // Left picture
           InsertFileList($picturefilelist,'titleleftpict',$titleleftpict,'titleleftcontenttxt');
           print "</tr>\n";
-          
+
           print "<tr>\n";
           print "<td><input type='checkbox' name='chkall[]' value='titlerightpict'></input></td>\n";
           print "<td>".MyGetText(57)."</td>\n"; // Right picture
           InsertFileList($picturefilelist,'titlerightpict',$titlerightpict,'titlerightcontenttxt');
           print "</tr>\n";
-		  
-          
+
+
           print "</table>\n";
 
           //------- Panels configuration -------------------------------
@@ -708,10 +720,10 @@
           print "</form>\n";
       }
   }
-    
+
 ?>
         <script type="text/javascript">
-            window.onload = function() 
+            window.onload = function()
             {
 <?php
                 for ($i=1; $i<=NB_PANEL; $i++)
@@ -760,7 +772,7 @@
           }
           devPanel(1);
         </script>
-        
+
     </body>
 </html>
 

@@ -2,13 +2,13 @@
   /*
   Copyright 2013 Melin Software HB
   Copyright 2014-2016 Metraware
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
       http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,7 @@ function setupBaseCompetitor() {
          " INDEX(org), INDEX(cls),  INDEX(stat, rt), INDEX(st)";
 }
 
-function setup() {  
+function setup() {
 
   $sql = "CREATE TABLE IF NOT EXISTS mopclass (".
    			setupIddBase().
@@ -42,7 +42,7 @@ function setup() {
    			" ord INT NOT NULL DEFAULT 0, INDEX(ord)".
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
-  
+
   $sql = "CREATE TABLE IF NOT EXISTS mopclasscontrol (".
          " cid INT NOT NULL, id INT NOT NULL,".
          " leg TINYINT NOT NULL, ord TINYINT NOT NULL,".
@@ -59,8 +59,8 @@ function setup() {
    			" homepage VARCHAR(128) NOT NULL DEFAULT ''".
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
- 
-  
+
+
   $sql = "CREATE TABLE IF NOT EXISTS mopcompetitor (".
    			 setupIddBase().
    			 setupBaseCompetitor().
@@ -69,19 +69,19 @@ function setup() {
          " timestamp INT NOT NULL DEFAULT 0". // Last refresh
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
- 
+
   $sql = "CREATE TABLE IF NOT EXISTS mopcontrol (".
    			setupIddBase().
    			" name VARCHAR(64) NOT NULL DEFAULT ''".
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
-  
+
   $sql = "CREATE TABLE IF NOT EXISTS moporganization (".
    			 setupIddBase().
    			" name VARCHAR(64) NOT NULL DEFAULT ''".
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
- 
+
   $sql = "CREATE TABLE IF NOT EXISTS mopradio (".
          " cid INT NOT NULL, id INT NOT NULL,".
          " ctrl INT NOT NULL,".
@@ -90,13 +90,13 @@ function setup() {
          " timestamp INT NOT NULL DEFAULT 0".
          ") ENGINE = MyISAM";
   query($sql);
-  
+
   $sql = "CREATE TABLE IF NOT EXISTS mopteam (".
    			 setupIddBase().
    			 setupBaseCompetitor().
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
-   
+
   $sql = "CREATE TABLE IF NOT EXISTS mopteammember (".
          " cid INT NOT NULL, id INT NOT NULL,".
          " leg TINYINT NOT NULL, ord TINYINT NOT NULL,".
@@ -104,15 +104,15 @@ function setup() {
          " rid INT NOT NULL DEFAULT 0".
          ") ENGINE = MyISAM";
   query($sql);
-  
+
   $sql = "CREATE TABLE IF NOT EXISTS resultblog (".
         " rcid int(11) NOT NULL,".
         " timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,".
         " text varchar(256) CHARACTER SET utf8 NOT NULL".
         ") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
-        
-  
+
+
   $sql = "CREATE TABLE IF NOT EXISTS `resultclass` (
       `rcid` int(11) NOT NULL,
       `cid` int(11) NOT NULL default '0',
@@ -143,7 +143,7 @@ function setup() {
       `status` int(11) NOT NULL DEFAULT '0'
       ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
-  
+
   $sql = "CREATE TABLE IF NOT EXISTS `resultradioconfig` (
       `srcid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'screen radio competition id',
       `srcname` varchar(30) NOT NULL,
@@ -192,10 +192,10 @@ function setup() {
       `panel1firstline` int(10) unsigned NOT NULL DEFAULT '1',
       `panel1fixedlines` tinyint(4) NOT NULL DEFAULT '3',
       `panel1scrolledlines` tinyint(4) NOT NULL DEFAULT '27',
-      `panel1scrolltime` tinyint(4) NOT NULL DEFAULT '3',
+      `panel1scrolltime` tinyint(4) NOT NULL DEFAULT '10',
       `panel1scrollbeforetime` tinyint(4) NOT NULL DEFAULT '50',
       `panel1scrollaftertime` tinyint(4) NOT NULL DEFAULT '50',
-      `panel1updateduration` int(11) NOT NULL DEFAULT '10',
+      `panel1updateduration` int(11) NOT NULL DEFAULT '3',
       `panel1lastrefresh` int(11) NOT NULL DEFAULT '0',
       `panel1lastredraw` int(11) NOT NULL DEFAULT '0',
       `panel1radioctrl` int(11) NOT NULL DEFAULT '0',
@@ -212,10 +212,10 @@ function setup() {
       `panel2firstline` int(10) unsigned NOT NULL DEFAULT '1',
       `panel2fixedlines` tinyint(4) NOT NULL DEFAULT '3',
       `panel2scrolledlines` tinyint(4) NOT NULL DEFAULT '27',
-      `panel2scrolltime` tinyint(4) NOT NULL DEFAULT '3' COMMENT 'en 1/10s',
+      `panel2scrolltime` tinyint(4) NOT NULL DEFAULT '10' COMMENT 'en 1/10s',
       `panel2scrollbeforetime` tinyint(4) NOT NULL DEFAULT '50' COMMENT 'en 0.1s',
       `panel2scrollaftertime` tinyint(4) NOT NULL DEFAULT '50' COMMENT 'en 0.1s',
-      `panel2updateduration` int(11) NOT NULL DEFAULT '10',
+      `panel2updateduration` int(11) NOT NULL DEFAULT '3',
       `panel2lastrefresh` int(11) NOT NULL DEFAULT '0',
       `panel2lastredraw` int(11) NOT NULL DEFAULT '0',
       `panel2radioctrl` int(11) NOT NULL DEFAULT '0',
@@ -232,10 +232,10 @@ function setup() {
       `panel3firstline` int(10) unsigned NOT NULL DEFAULT '1',
       `panel3fixedlines` tinyint(4) NOT NULL DEFAULT '3',
       `panel3scrolledlines` tinyint(4) NOT NULL DEFAULT '27',
-      `panel3scrolltime` tinyint(4) NOT NULL DEFAULT '3' COMMENT 'en 1/10s',
+      `panel3scrolltime` tinyint(4) NOT NULL DEFAULT '10' COMMENT 'en 1/10s',
       `panel3scrollbeforetime` tinyint(4) NOT NULL DEFAULT '50' COMMENT 'en 0.1s',
       `panel3scrollaftertime` tinyint(4) NOT NULL DEFAULT '50' COMMENT 'en 0.1s',
-      `panel3updateduration` int(11) NOT NULL DEFAULT '10',
+      `panel3updateduration` int(11) NOT NULL DEFAULT '3',
       `panel3lastrefresh` int(11) NOT NULL DEFAULT '0',
       `panel3lastredraw` int(11) NOT NULL DEFAULT '0',
       `panel3radioctrl` int(11) NOT NULL DEFAULT '0',

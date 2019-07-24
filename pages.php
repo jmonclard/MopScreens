@@ -1,13 +1,13 @@
 <?php
   /*
   Copyright 2014-2016 Metraware
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
       http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,12 +20,12 @@
   include_once('functions.php');
   include_once('lang.php');
   redirectSwitchUsers();
-  
+
   include_once('screenfunctions.php');
   include_once('config.php');
-	
+
 	$_SESSION['CurrentLanguage'] = isset($_SESSION['CurrentLanguage']) ? $_SESSION['CurrentLanguage'] : autoSelectLanguage(array('fr','en','sv'),'en');
-    
+
 
   $PHP_SELF = $_SERVER['PHP_SELF'];
   $link = ConnectToDB();
@@ -36,7 +36,7 @@
   class Panel {
     var $numpanel;
     var $classes;
-    
+
     var $content;
     var $mode;
     var $tm_count;
@@ -55,7 +55,8 @@
     var $scrollaftertime;
     var $updateduration;
     var $radioctrl;
-    
+    var $displaynomprenom;
+
     function Panel($num)
     {
       $this->numpanel = $num;
@@ -81,7 +82,8 @@
       $this->scrollaftertime=$r['panel'.$this->numpanel.'scrollaftertime'];
       $this->updateduration=$r['panel'.$this->numpanel.'updateduration'];
       $this->radioctrl=$r['panel'.$this->numpanel.'radioctrl'];
-      
+      $this->displaynomprenom=$r['panel'.$this->numpanel.'displaynomprenom'];
+
       $this->classes = $cls;
     }
   }
@@ -92,7 +94,7 @@
   $panel2 = new Panel(2);
   $panel3 = new Panel(3);
   $panel4 = new Panel(4);
-  $panels = array($panel1,$panel2,$panel3,$panel4); 
+  $panels = array($panel1,$panel2,$panel3,$panel4);
 
   $arr_cls = array();
   $sql = "SELECT rcid FROM resultconfig WHERE active=1";
@@ -101,7 +103,7 @@
   {
     $r = mysqli_fetch_array($res);
     $rcid=$r['rcid'];
-    
+
     $sql = "SELECT * FROM resultscreen WHERE rcid=$rcid AND sid=$screenIndex";
     $res = mysqli_query($link, $sql);
     if (mysqli_num_rows($res) > 0)
@@ -128,7 +130,7 @@
       $classPanels = array();
       $classNamePanels = array();
       $sql_classes = array(-1);
-      
+
       for($i=0; $i<$panelscount; $i++)
       {
         if(($panels[$i]->content == CST_CONTENT_RESULT) || ($panels[$i]->content == CST_CONTENT_SUMMARY) || ($panels[$i]->content == CST_CONTENT_RADIO) || ($panels[$i]->content == CST_CONTENT_START))
@@ -143,7 +145,7 @@
             {
               $myid = $r['id'];
               $classPanels[$i][] = $myid;
-              
+
               $sql = "SELECT name FROM mopclass WHERE cid=$cid AND id=$myid";
               $resname = mysqli_query($link, $sql);
               if (mysqli_num_rows($resname) > 0)
@@ -169,7 +171,7 @@
           }
         }
       }
-      
+
       $sql = 'SELECT cls, COUNT(*) AS nb FROM mopcompetitor WHERE cid='.$cid.' AND cls IN('.implode(', ', $sql_classes).') GROUP BY cid, cls';
       $res = mysqli_query($link, $sql);
       while($data = mysqli_fetch_array($res))
@@ -187,9 +189,9 @@
     <meta name="viewport" content="initial-scale=1.25">
 
     <title>CO (page <?php print $screenIndex; ?>)</title>
-    <!--<link rel="stylesheet" type="text/css" href="styles/<?php print $style; ?>?timestamp=<?php print time(); ?>" />-->
+    <!--	<link rel="stylesheet" type="text/css" href="styles/<?php print $style; ?>?timestamp=<?php print time(); ?>" /> -->
     <link rel="stylesheet" type="text/css" href="styles/<?php print $style; ?>" />
-   
+
     <script type="text/javascript">
       <!--
 <?php
@@ -225,13 +227,13 @@
         break;
       }
       ?>;
-      
-      window.onload = function() 
-      { 
+
+      window.onload = function()
+      {
 <?php
   defineVariableArrNx("phpTitle", $classNamePanels, $panelscount);
   defineVariableArrNx("phpcls", $classPanels, $panelscount);
-  
+
   defineVariableArr("phpfirstline", $panels[0]->firstline, $panels[1]->firstline, $panels[2]->firstline, $panels[3]->firstline);
   defineVariableArr("phpfixedlines", $panels[0]->fixedlines, $panels[1]->fixedlines, $panels[2]->fixedlines, $panels[3]->fixedlines);
   defineVariableArr("phpscrolledlines", $panels[0]->scrolledlines, $panels[1]->scrolledlines, $panels[2]->scrolledlines, $panels[3]->scrolledlines);
@@ -239,21 +241,24 @@
   defineVariableArr("phpscrollaftertime", $panels[0]->scrollaftertime, $panels[1]->scrollaftertime, $panels[2]->scrollaftertime, $panels[3]->scrollaftertime);
   defineVariableArr("phpscrollbeforetime", $panels[0]->scrollbeforetime, $panels[1]->scrollbeforetime, $panels[2]->scrollbeforetime, $panels[3]->scrollbeforetime);
   defineVariableArr("phpupdateduration", $panels[0]->updateduration, $panels[1]->updateduration, $panels[2]->updateduration, $panels[3]->updateduration);
-  
+
   defineVariableArr("phpcontent", $panels[0]->content, $panels[1]->content, $panels[2]->content, $panels[3]->content);
-  
+
   defineVariableArr("phpmode", $panels[0]->mode, $panels[1]->mode, $panels[2]->mode, $panels[3]->mode);
   defineVariableArr("phpradioctrl", $panels[0]->radioctrl, $panels[1]->radioctrl, $panels[2]->radioctrl, $panels[3]->radioctrl);
-  
+
+  defineVariableArr("phpdisplaynomprenom", $panels[0]->displaynomprenom, $panels[1]->displaynomprenom, $panels[2]->displaynomprenom, $panels[3]->displaynomprenom);
+
+
   defineVariableArr("phpalternate", $panels[0]->alternate, $panels[1]->alternate, $panels[2]->alternate, $panels[3]->alternate);
 
   defineVariableArr("phpcmpId", $cid, $cid, $cid, $cid);
   defineVariableArr("phpleg", 1, 1, 1, 1);
   defineVariableArr("phpord", 0, 0, 0, 0);
   defineVariableArr("phpradio", 'finish', 'finish', 'finish', 'finish');
-  
+
   defineVariableArrFromArr("phpnumbercls", $arr_cls);
-  
+
   defineVariable("screenIndex", $screenIndex);
   defineVariable("rcid", $rcid);
 
@@ -264,6 +269,7 @@
         for(panel=0;panel<<?php echo NB_PANEL; ?>;panel++)
         {
           phpmode[panel] = parseInt(phpmode[panel], 10);
+          phpdisplaynomprenom[panel] = parseInt(phpdisplaynomprenom[panel], 10);
           phpfirstline[panel] = parseInt(phpfirstline[panel], 10);
           phpscrolledlines[panel] = parseInt(phpscrolledlines[panel], 10);
           phpfixedlines[panel] = parseInt(phpfixedlines[panel], 10);
@@ -276,22 +282,23 @@
             phpscrollaftertime[panel] = 50;
           if(phpscrollbeforetime[panel] <= 0)
             phpscrollbeforetime[panel] = 50;
-          
+
           after_decrement_counter[panel] = phpscrollaftertime[panel] / phpscrolltime[panel];
           before_decrement_counter[panel] = phpscrollbeforetime[panel] / phpscrolltime[panel];
         }
 
         displayScrollIndex = [phpfixedlines[0] + phpfirstline[0] - 1, phpfixedlines[1] + phpfirstline[1] - 1, phpfixedlines[2] + phpfirstline[2] - 1, phpfixedlines[3] + phpfirstline[3] - 1];
-        
+
 <?php
-  
+
   $bRefreshTable = false;
   $bRefreshStart = false;
   $bRefreshPage = false;
   $bRefreshRelay = false;
   $bRefreshShowo = false;
   $bRefreshSummary = false;
-  
+  $bRefreshMultistage = false;
+
   $bRefreshBlog = false;
   $bRefreshRadio = false;
   $bRefreshSlide = false;
@@ -343,13 +350,10 @@
             }
           break;
           case CST_MODE_MULTISTAGE:
-            if($i == 0)
-            {
               ?>
-              updateRelay();
+              updateMultistage(<?php echo $i; ?>);
               <?php
-              $bRefreshRelay = true;
-            }
+              $bRefreshMultistage = true;
           break;
         }
       break;
@@ -409,13 +413,18 @@
   {
     echo 'create_refresh_summary();'."\n";
   }
-  
+  if($bRefreshMultistage)
+  {
+    echo 'updateMultistages();'."\n";
+   	echo 'create_refresh_multistage();'."\n";
+  }
+
 ?>
         create_refresh_display();
         create_refresh_page();
-        
+
       } // onload
-        
+
       var ATTENTE_BASE_s = 5;
       var ATTENTE_PAGE_s = 10;
 
@@ -428,7 +437,7 @@
       data2Array[2] = new Array(16);
       data2Array[3] = new Array(16);
       var tableUpdated = new Array(4);
-      
+
       var bfirst = true;
       var mytime = 0;
       var nowtime = 0;
@@ -437,7 +446,7 @@
       {
           return typeof o == "undefined";
       }
-        
+
       function updatePage()
       {
         var xmlhttp = null;
@@ -506,7 +515,7 @@
           xmlhttp.send();
         }
       }
-        
+
       function updateStart(panelIndex)
       {
 //JM      if  ((panelIndex === 0) || (panelIndex === 1) || (panelIndex === 2) || (panelIndex === 3))
@@ -540,7 +549,7 @@
           xmlhttp.send();
         }
       }
-        
+
       function updateRelay()
       {
         var panelIndex = 0;
@@ -576,7 +585,47 @@
                             "&limit=" + mylimit, false);
         xmlhttp.send();
       }
-	  
+
+      function updateMultistage(panelIndex)
+      {
+      	if  (panelIndex < NB_PANEL)
+        {
+        	var xmlhttp = null;
+        	if (window.XMLHttpRequest)
+        	{// code for IE7+, Firefox, Chrome, Opera, Safari
+          	xmlhttp = new XMLHttpRequest();
+        	}
+        	else
+        	{// code for IE6, IE5
+          	xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        	}
+        	xmlhttp.onreadystatechange = function()
+        	{
+          	if((xmlhttp.readyState == 4) && (xmlhttp.status == 200))
+          	{
+            	//alert(xmlhttp.responseText);
+            	dataArray[panelIndex] = eval(xmlhttp.responseText);
+            	data2Array[panelIndex][categorieIndex[panelIndex]] = dataArray[panelIndex];
+            	//alert(dataArray[0]);
+            	tableUpdated[panelIndex] = true;
+          	}
+        	}
+
+        	var mylimit = ((phpcontent[panelIndex] == <?php echo CST_CONTENT_SUMMARY; ?>) ? phpfixedlines[panelIndex] : 99999);
+        	xmlhttp.open("GET", "aj_refreshmultistages.php?cls=" + phpcls[panelIndex][categorieIndex[panelIndex]] +
+                            	"&cmpId=" + phpcmpId[panelIndex] +
+                            	"&leg=" + phpleg[panelIndex] +
+                            	"&ord=" + phpord[panelIndex] +
+                            	"&radio=" + phpradio[panelIndex] +
+                            	"&rcid=" + rcid +
+                            	"&sid=" + screenIndex +
+                            	"&limit=" + mylimit +
+                              "&nbradio=" + nbradio +
+                              "&alternate=" + phpalternate[panelIndex], false);
+        	xmlhttp.send();
+        }
+      }
+
 	  function updateShowO(panelIndex)
       {
         var xmlhttp = null;
@@ -598,7 +647,7 @@
             tableUpdated[panelIndex] = true;
           }
         }
-		
+
         var mylimit = ((phpcontent[panelIndex] == <?php echo CST_CONTENT_SUMMARY; ?>) ? phpfixedlines[panelIndex] : 99999);
         var myqualif = ((tm_count > 1) ? "1" : "0");
         xmlhttp.open("GET", "aj_refreshshowo.php?cls=" + phpcls[panelIndex][categorieIndex[panelIndex]] +
@@ -609,13 +658,13 @@
                             "&qualif=" + myqualif, false);
         xmlhttp.send();
       }
-        
+
       function updateTables()
       {
 <?php
   for ($i=0; $i<$panelscount; $i++)
   {
-    if((($panels[$i]->content == CST_CONTENT_SUMMARY) && ($panels[$i]->mode == CST_MODE_INDIVIDUAL)) || 
+    if((($panels[$i]->content == CST_CONTENT_SUMMARY) && ($panels[$i]->mode == CST_MODE_INDIVIDUAL)) ||
         (($panels[$i]->content == CST_CONTENT_RESULT) && ($panels[$i]->mode == CST_MODE_INDIVIDUAL)))
     {
       print 'updateTable('.$i.');'."\n";
@@ -623,7 +672,21 @@
   }
 ?>
       }
-	  
+
+      function updateMultistages()
+      {
+<?php
+  for ($i=0; $i<$panelscount; $i++)
+  {
+    if(($panels[$i]->mode == CST_MODE_MULTISTAGE) && ((($panels[$i]->content == CST_CONTENT_SUMMARY) && ($panels[$i]->mode == CST_MODE_INDIVIDUAL)) ||
+        (($panels[$i]->content == CST_CONTENT_RESULT) && ($panels[$i]->mode == CST_MODE_INDIVIDUAL))))
+    {
+      print 'updateMultistage('.$i.');'."\n";
+    }
+  }
+?>
+      }
+
 	  function updateSummaries()
       {
 <?php
@@ -633,7 +696,7 @@
   }
 ?>
       }
-      
+
       function updateBlogs()
       {
 <?php
@@ -646,7 +709,7 @@
   }
 ?>
       }
-      
+
       function updateRadios()
       {
 <?php
@@ -659,7 +722,7 @@
   }
 ?>
       }
-      
+
       function updateStarts()
       {
 <?php
@@ -672,7 +735,7 @@
   }
 ?>
       }
-      
+
       function updateShowOs()
       {
 <?php
@@ -685,9 +748,9 @@
   }
 ?>
       }
-        
-      
-      function generateRelayCells(line, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche, alternate)
+
+
+      function generateRelayCells(line, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche, alternate, panelIndex)
       {
         r = '';
         for(var e in line)
@@ -700,7 +763,7 @@
               mycellnum = (e - pos_min_displayable + 1);
 		mymodulo = 7;
 /*
-              if((cells_for_tm == 6) 
+              if((cells_for_tm == 6)
                 || ((cells_for_tm == 5) && ((mycellnum)%6 != 0))
                 || ((cells_for_tm == 4) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4))
                 || ((cells_for_tm == 3) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4) && ((mycellnum)%6 != 3))
@@ -756,7 +819,78 @@
         return r;
       }
 
-      function generateResultCells(line, count, prefix_class,panelscount,alternate)
+      function UrlExists(url)
+      {
+    	var http = new XMLHttpRequest();
+    	http.open('HEAD', "http://192.168.0.10/cfco/" + url, false);
+    	http.send();
+    	//alert("http://192.168.0.10/cfco/" + url + " ----" + http.status);
+    	return http.status!=404;
+      }
+
+      function formatName(text, numpanel)
+      {
+      	var arrstr = text.split(" ");
+      	var names = "";
+      	var firstnames = "";
+      	var i = 0;
+      	var result = "";
+      	for(i=0;i<arrstr.length;i++)
+      	{
+      		if((arrstr[i].length > 1) && (arrstr[i].toUpperCase() == arrstr[i]))
+      		{
+      			names += arrstr[i] + " ";
+      		}
+      		else
+      		{
+	      		firstnames += arrstr[i] + " ";
+      		}
+      	}
+      	switch(phpdisplaynomprenom[numpanel])
+      	{
+      		case 0:
+      		case 3:
+      			result = text;
+      		break;
+      		case 1:
+      		case 4:
+      			result = names + firstnames;
+      		break;
+      		case 2:
+      		case 5:
+      			result = firstnames + names;
+      		break;
+      	}
+      	return result;
+      }
+
+      function addFlag(celltxt, numpanel)
+      {
+      	result = celltxt;
+        hackflag = result.split("/", 2);
+        if(hackflag.length == 2)
+        {
+        	//if(UrlExists("img/flags-mini/" + hackflag[1] + ".png"))
+        	{
+        		if(phpdisplaynomprenom[numpanel] >= 3)
+        		{
+        			result = '<span style="background:url(img/flags-mini/' + hackflag[1] + '.png);background-size:contain;background-repeat:no-repeat;background-position:center;" class="countryflag">&nbsp;</span>' + formatName(hackflag[0], numpanel);
+	            	//result = '<img src="img/flags-mini/' + hackflag[1] + '.png" alt=" " title=" " class="countryflag" />' + formatName(hackflag[0], numpanel);
+            	}
+            	else
+            	{
+            		result = formatName(hackflag[0], numpanel);
+            	}
+        	}
+        	/*else
+        	{
+            	result = formatName(hackflag[0], numpanel);
+        	}*/
+        }
+        return result;
+      }
+
+      function generateMultistageCells(line, count, prefix_class,panelscount,alternate, panelIndex)
       {
         r = '';
         switch (panelscount)
@@ -765,6 +899,114 @@
             for(var e in line)
             {
               cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
+              if(e > 1)
+              {
+                /*if(e == (count - 3))
+                {
+                  r += '<td class="tdmtimediff">' + cell + '</td>\r\n';
+                }
+                else
+                if(e == (count - 4))
+                {
+                  r += '<td class="tdmtimeresult">' + cell + '</td>\r\n';
+                }
+                else*/
+                {
+                  r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
+                }
+              }
+            }
+            break;
+          case 2:
+            for(var e in line)
+            {
+              cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
+              if(e > 1)
+              {
+                /*if(e == (count - 3))
+                {
+                  r += '<td class="tdmtimediff">' + cell + '</td>\r\n';
+                }
+                else
+                if(e == (count - 4))
+                {
+                  r += '<td class="tdmtimeresult">' + cell + '</td>\r\n';
+                }
+                else*/
+                {
+                  r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
+                }
+              }
+            }
+            break;
+          case 3:
+            for(var e in line)
+            {
+              cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
+              if(e > 1)
+              {
+                if ((e<5)||(e>8)) // do not display radio
+                {
+                  /*if(e == (count - 3))
+                  {
+                    r += '<td class="tdmtimediff">' + line[e] + '</td>\r\n';
+                  }
+                  else
+                  if(e == (count - 4))
+                  {
+                    r += '<td class="tdmtimeresult">' + cell + '</td>\r\n';
+                  }
+                  else*/
+                  {
+                    r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
+                  }
+                }
+              }
+            }
+            break;
+          case 4:
+            for(var e in line)
+            {
+              cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
+              if(e > 1)
+              {
+                if ((e<4)||(e>8)) // do not display club and radio
+                {
+                  /*if(e == (count - 3))
+                  {
+                    r += '<td class="tdmtimediff">' + cell + '</td>\r\n';
+                  }
+                  else
+                  if(e == (count - 4))
+                  {
+                    r += '<td class="tdmtimeresult">' + cell + '</td>\r\n';
+                  }
+                  else*/
+                  {
+                    r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
+                  }
+                }
+              }
+            }
+            break;
+        }
+        return r;
+      }
+
+      function generateResultCells(line, count, prefix_class,panelscount,alternate, panelIndex)
+      {
+        r = '';
+        switch (panelscount)
+        {
+          case 1:
+            for(var e in line)
+            {
+              cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
               if(e > 1)
               {
                 if(e == (count - 1))
@@ -787,6 +1029,7 @@
             for(var e in line)
             {
               cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
               if(e > 1)
               {
                 if(e == (count - 1))
@@ -811,6 +1054,7 @@
               for(var e in line)
               {
                 cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+                cell = addFlag(cell, panelIndex);
                 if(e > 1)
                 {
                   if ((e == 2) || (e == 3) || (e == 5) || (e == 6) || (e > 8)) // do not display club, display 2 radios
@@ -842,6 +1086,7 @@
             for(var e in line)
             {
               cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
               if(e > 1)
               {
                 if ((e<5)||(e>8)) // do not display radio
@@ -868,6 +1113,7 @@
             for(var e in line)
             {
               cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
               if(e > 1)
               {
                 if ((e<4)||(e>8)) // do not display club and radio
@@ -893,7 +1139,7 @@
         return r;
       }
 
-	  function generateShowoCells(line, count, prefix_class,panelscount, tmcount)
+	  function generateShowoCells(line, count, prefix_class,panelscount, tmcount, panelIndex)
       {
         r = '';
         switch (panelscount)
@@ -964,7 +1210,7 @@
         return r;
       }
 
-      function generateOthersCells(line, prefix_class, panelscount, alternate)
+      function generateOthersCells(line, prefix_class, panelscount, alternate, panelIndex)
       {
         r = '';
         //parametre alternate pour start: chronologique = 0, alphabetique = 1
@@ -1003,30 +1249,35 @@
       }
 
 
-      function generateCells(identifiant,line, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount, alternate)
+      function generateCells(identifiant,line, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount, alternate, panelIndex)
       {
         if(identifiant === 'result')
         {
-          r = generateResultCells(line, count, prefix_class,panelscount, alternate);
+          r = generateResultCells(line, count, prefix_class,panelscount, alternate, panelIndex);
+        }
+        else
+        if(identifiant === 'multistage')
+        {
+          r = generateMultistageCells(line, count, prefix_class,panelscount, alternate, panelIndex);
         }
         else
         if(identifiant === 'showo')
         {
-          r = generateShowoCells(line, count, prefix_class,panelscount, tmcount);
+          r = generateShowoCells(line, count, prefix_class,panelscount, tmcount, panelIndex);
         }
         else
         if(identifiant === 'relay')
         {
-          r = generateRelayCells(line, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche, alternate)
+          r = generateRelayCells(line, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche, alternate, panelIndex)
         }
         else
         {
-          r = generateOthersCells(line, prefix_class, panelscount, alternate);
+          r = generateOthersCells(line, prefix_class, panelscount, alternate, panelIndex);
         }
         return r;
       }
-      
-      function generateRelaySummaryCells(line, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche, alternate)
+
+      function generateRelaySummaryCells(line, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche, alternate, panelIndex)
       {
         r = '';
         for(var e in line)
@@ -1037,7 +1288,7 @@
             if(e < pos_max_displayable)
             {
               mycellnum = (e - pos_min_displayable + 1);
-/*              if((cells_for_tm == 6) 
+/*              if((cells_for_tm == 6)
                 || ((cells_for_tm == 5) && ((mycellnum)%6 != 0))
                 || ((cells_for_tm == 4) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4))
                 || ((cells_for_tm == 3) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4) && ((mycellnum)%6 != 3))
@@ -1091,7 +1342,7 @@
         return r;
       }
 
-      function generateResultSummaryCells(line, count, prefix_class, panelscount)
+      function generateResultSummaryCells(line, count, prefix_class, panelscount, panelIndex)
       {
         r = '';
         for(var e in line)
@@ -1115,24 +1366,24 @@
             }
           }
         }
-           
+
         return r;
       }
-      
-      function generateSummaryCells(identifiant,line, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount, alternate)
+
+      function generateSummaryCells(identifiant,line, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount, alternate, panelIndex)
       {
         if(identifiant === 'result')
         {
-          r = generateResultSummaryCells(line, count, prefix_class,panelscount);
+          r = generateResultSummaryCells(line, count, prefix_class,panelscount, panelIndex);
         }
         else
         if(identifiant === 'relay')
         {
-          r = generateRelaySummaryCells(line, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche, alternate)
+          r = generateRelaySummaryCells(line, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche, alternate, panelIndex);
         }
         return r;
       }
-      
+
       function initVarForRelay(tmcount, alternate)
       {
           switch(tmcount)
@@ -1206,7 +1457,7 @@
 		pos_tm_finish = Array(8,15,22,29,36,43);
                 pos_min_displayable = 10;
                 pos_max_displayable = count;
-                
+
 				if(alternate == 1)
 				{
 					cells_for_tm = 2;
@@ -1296,7 +1547,7 @@
 <?php
   print "var relay_header_text = '".MyGetText(94)."';\n"; // Relay n
   print "var relay_after_header_text = '".MyGetText(95)."';\n"; // After Relay n
-?>        
+?>
         var r = "";
         var ee = 0;
         var bUpdateNeeded = false;
@@ -1305,7 +1556,7 @@
         var cells_for_tm = 0;
         var bFoundRadio = false;
         var pos_recherche = 0;
-        
+
         var prefix_class = 'td_'+panelscount + '_';
         var position = startline - 1;
         if(position <= 0)
@@ -1314,20 +1565,20 @@
         var cells_count = count;
         if(tmcount === undefined)
           tmcount = 2;
-	  
+
         var isSummary = false;
         if(identifiant === 'resultsummary')
         {
           identifiant = 'result';
           isSummary = true;
         }
-        
+
         if(identifiant === 'relaysummary')
         {
           identifiant = 'relay';
           isSummary = true;
         }
-			
+
         if(identifiant === 'result')
         {
           prefix_class = 'tdsum_'+panelscount + '_';
@@ -1356,9 +1607,9 @@
         // affichage du header
         r += '<thead id="fixedHeader' + panelIndex + '" class="fixedHeader">\r\n';
         r += '<tr class="normalRow">\r\n';
-        
+
         var c;
-        
+
         var txt_nb = '';
         var length=0;
         if (tableUpdated[panelIndex])
@@ -1372,7 +1623,7 @@
 			txt_nb = ' / ' + phpnumbercls[phpcls[panelIndex][num1]];
 		  else
 			txt_nb = length;
-		
+
 		r += '<th class="activeOnglet">' + phpTitle[panelIndex][num1] + ' <span class="number_class">' + txt_nb + '</span></th>\r\n';
 
         r += '</tr>\r\n';
@@ -1394,7 +1645,7 @@
           }
           var line = eval(data2Array[panelIndex][num1][0]);
           //count = line.length;
-              
+
           if(identifiant === 'relay')
           {
             r += '<tr>\r\n';
@@ -1447,11 +1698,11 @@
                 r += '<th class="entete_relay_radio">Finish</th>\r\n';
               }
             }
-            
+
             r += '</tr>\r\n';
           } // end relay
 
-          
+
           //---------------- Fixed part -------------------------------
           while((position < endPosition) && (position < length))
           {
@@ -1473,15 +1724,15 @@
                   nf += ' updated';
                 }
               }
-                
+
               var cl = ((position % 2) ? 'alternateRow' : 'normalRow');
-              
+
               r += '<tr class="' + cl + nf + '">\r\n';
               if(identifiant === 'relay')
               {
                 r += '<td class="'+ prefix_class + '0' +'">' + ((line[pos_rank] === '') ? "&nbsp;" : line[pos_rank]) + '</td>\r\n';
                 r += '<td class="'+ prefix_class + '1' +'">' + ((line[pos_team_name] === '') ? "&nbsp;" : line[pos_team_name]) + '</td>\r\n';
-                
+
                 if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
                 {
                   iFound = tmcount;
@@ -1500,9 +1751,9 @@
                     }
                   }
                 }
-                
+
               }
-              r += generateSummaryCells(identifiant,line, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate);
+              r += generateSummaryCells(identifiant,line, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate, panelIndex);
               r += '</tr>\r\n';
             }
           } // end fixed part
@@ -1535,7 +1786,7 @@
               emptyarr.push("&nbsp;");
             if(identifiant === 'relay')
             {  // first of two relay lines
-              
+
               r += '<td rowspan="2" class="'+ prefix_class + '0' +'">' + "&nbsp;" + '</td>\r\n';
               r += '<td rowspan="2" class="'+ prefix_class + '1' +'">' + "&nbsp;" + '</td>\r\n';
               for(ind=0;ind<tmcount;ind++)
@@ -1556,14 +1807,14 @@
               r += '</tr>\r\n';
               r += '<tr class="' + cl + nf + '">\r\n';
             }  // end first relay line
-            r += generateSummaryCells(identifiant,emptyarr, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate);
+            r += generateSummaryCells(identifiant,emptyarr, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate, panelIndex);
             r += '</tr>\r\n';
           }
           r += "</tbody>\r\n";
           r += '</table>\r\n';
           after_decrement_counter[panelIndex] = 0;
         }
-            
+
         after_decrement_counter[panelIndex]--;
         if(after_decrement_counter[panelIndex] <= 0)
         {
@@ -1571,7 +1822,7 @@
           categorieIndex[panelIndex] = (categorieIndex[panelIndex] + 1) % phpcls[panelIndex].length;
           //alert(categorieIndex[panelIndex]);
           tableUpdated[panelIndex] = false;
-    
+
           if(identifiant === 'result')
           {
               updateTable(panelIndex);
@@ -1581,20 +1832,20 @@
           {
             updateRelay();
           }
-    
+
           after_decrement_counter[panelIndex] = phpscrollaftertime[panelIndex] / phpscrolltime[panelIndex];
         }
-        
+
         return r;
       } // summaryhtmltablerow
-      
+
       function ConvertToNiceHtmlTableRow(panelIndex, identifiant, startline, tmcount, panelscount, alternate)
       {
-        
+
 <?php
   print "var relay_header_text = '".MyGetText(94)."';\n"; // Relay n
   print "var relay_after_header_text = '".MyGetText(95)."';\n"; // After Relay n
-?>        
+?>
         var r = "";
         var ee = 0;
         var bUpdateNeeded = false;
@@ -1603,7 +1854,7 @@
         var cells_for_tm = 0;
         var bFoundRadio = false;
         var pos_recherche = 0;
-        
+
         var prefix_class = 'td';
         var position = startline - 1;
         if(position <= 0)
@@ -1624,6 +1875,12 @@
         if(identifiant === 'result')
         {
           prefix_class = 'td_'+panelscount + '_';
+          count = 7+nbradio; //22 pour 15// 11 pour 4, 7+N pour N
+        }
+        else
+        if(identifiant === 'multistage')
+        {
+          prefix_class = 'td_m'+panelscount + '_';
           count = 7+nbradio; //22 pour 15// 11 pour 4, 7+N pour N
         }
         else
@@ -1655,9 +1912,9 @@
         // affichage du header
         r += '<thead id="fixedHeader' + panelIndex + '" class="fixedHeader">\r\n';
         r += '<tr class="normalRow">\r\n';
-        
+
         var c;
-        
+
         var txt_nb = '';
         var length=0;
         if (tableUpdated[panelIndex])
@@ -1673,7 +1930,7 @@
           if(categorieIndex[panelIndex] == c)
           {
             //if((identifiant === 'result') && (length > 0))
-            if(identifiant === 'result')
+            if((identifiant === 'result') || (identifiant === 'multistage'))
             {
               if (typeof (phpnumbercls[phpcls[panelIndex][c]]) !== 'undefined')
                 txt_nb = length + ' / ' + phpnumbercls[phpcls[panelIndex][c]];
@@ -1684,7 +1941,7 @@
           }
           else
           {
-            if((identifiant === 'result') || (identifiant === 'relay'))
+            if((identifiant === 'result') || (identifiant === 'relay') || (identifiant === 'multistage'))
             {
               r += '<th class="inactiveOnglet">' + phpTitle[panelIndex][c] + '</th>\r\n'; // ' <span class="number_class">(' + phpnumbercls[phpcls[panelIndex][c]] + ')</span>'
             }
@@ -1714,7 +1971,7 @@
           }
           var line = eval(dataArray[panelIndex][0]);
           //count = line.length;
-              
+
           if(identifiant === 'relay')
           {
             r += '<tr>\r\n';
@@ -1767,7 +2024,7 @@
                 r += '<th class="entete_relay_radio">Finish</th>\r\n';
               }
             }
-            
+
             r += '</tr>\r\n';
           } // end relay
           else
@@ -1794,7 +2051,7 @@
             else
               r += '<th class="entete_showo" rowspan="2">Total</th>\r\n'; // temps total avec penalty ou ecart
             r += '</tr>\r\n';
-            
+
             r += '<tr>\r\n';
             if(tmcount == 1)
             {
@@ -1814,14 +2071,14 @@
             r += '</tr>\r\n';
           } // end showo
 
-          
+
           //---------------- Fixed part -------------------------------
           while((position < endPosition) && (position < length))
           {
             line = eval(dataArray[panelIndex][position++]);
             if(line != null)
             {
-              if(identifiant === 'result')
+              if((identifiant === 'result') || (identifiant === 'multistage'))
               {
                 if(line[0] < 1)
                 {
@@ -1836,7 +2093,7 @@
                   nf += ' updated';
                 }
               }
-                
+
               var cl = ((position % 2) ? 'alternateRow' : 'normalRow');
               if(identifiant === 'relay')
               {  // first of two relay lines
@@ -1872,7 +2129,7 @@
                       iFound--;
                     }
                   }
-                    
+
                   if((alternate == 1) && (tmcount == 6))
                     r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
                   else
@@ -1889,30 +2146,30 @@
                     r += '<td colspan="4" class="radio_tm_name">&nbsp;</td>\r\n';
                   }
                 }
-                
+
 
                 r += '</tr>\r\n';
               }  // end first relay line
-              
+
               r += '<tr class="' + cl + nf + '">\r\n';
-              r += generateCells(identifiant,line, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount, alternate);
+              r += generateCells(identifiant,line, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount, alternate, panelIndex);
               r += '</tr>\r\n';
             }
           } // end fixed part
-                
-          //---------------------------- scrolling part -------------------      
+
+          //---------------------------- scrolling part -------------------
           if (length - startline + 1 >= (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
           {
-            if((identifiant === 'result') || (identifiant === 'relay'))
+            if((identifiant === 'result') || (identifiant === 'relay') || (identifiant === 'multistage'))
             {
               r += "</tbody>\r\n";
               r += '</table>\r\n';
-          
+
               r += '<hr />';
               r += '<table class="scrollTable" cellspacing="0" cellpadding="0">\r\n';
               r += '<tbody class="scrollContent">';
             }
-            
+
             var startPosition = displayScrollIndex[panelIndex];
             var endPosition = startPosition + phpscrolledlines[panelIndex];
             nf = '';
@@ -1925,8 +2182,8 @@
                 if(line != null)
                 {
                   var cl = ((position % 2) ? 'alternateRow' : 'normalRow');
-                  
-                  if(identifiant === 'result')
+
+                  if((identifiant === 'result') || (identifiant === 'multistage'))
                   {
                     if(line[0] < 1)
                     {
@@ -1952,7 +2209,7 @@
                     {
                       nf = '';
                     }
-                    
+
                     r += '<tr class="' + cl + nf + '">\r\n';
                     r += '<td rowspan="2" class="'+ prefix_class + '0' +'">' + ((line[pos_rank] === '') ? "&nbsp;" : line[pos_rank]) + '</td>\r\n';
                     r += '<td rowspan="2" class="'+ prefix_class + '1' +'">' + ((line[pos_team_name] === '') ? "&nbsp;" : line[pos_team_name]) + '</td>\r\n';
@@ -1997,11 +2254,11 @@
                     }
                     r += '</tr>\r\n';
 
-                    
+
                   } // end relay
-                  
+
                   r += '<tr class="' + cl + nf + '">\r\n';
-                  r += generateCells(identifiant,line, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate);
+                  r += generateCells(identifiant,line, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate, panelIndex);
                   r += '</tr>\r\n';
                 } // end line!=null
               }
@@ -2013,6 +2270,11 @@
                 if(identifiant === 'result')
                 {
                   count1 = count; //count - 2;
+                }
+                else
+                if(identifiant === 'multistage')
+                {
+	                count1 = count + 2;
                 }
                 else
                 if(identifiant === 'relay')
@@ -2027,11 +2289,14 @@
                 var maxempty = count;
                 if(identifiant == 'relay')
                   maxempty = 2 + count * tmcount;
+                else
+                if(identifiant === 'multistage')
+                  maxempty = 2 + count;
                 for(var inc=0;inc<maxempty;inc++)
                   emptyarr.push("&nbsp;");
                 if(identifiant === 'relay')
                 {  // first of two relay lines
-                  
+
                   r += '<td rowspan="2" class="'+ prefix_class + '0' +'">' + "&nbsp;" + '</td>\r\n';
                   r += '<td rowspan="2" class="'+ prefix_class + '1' +'">' + "&nbsp;" + '</td>\r\n';
                   for(ind=0;ind<tmcount;ind++)
@@ -2052,11 +2317,11 @@
                   r += '</tr>\r\n';
                   r += '<tr class="' + cl + nf + '">\r\n';
                 }  // end first relay line
-                r += generateCells(identifiant,emptyarr, count1, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate);
+                r += generateCells(identifiant,emptyarr, count1, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate, panelIndex);
                 r += '</tr>\r\n';
               }
             } // end for
-              
+
             if(before_decrement_counter[panelIndex] <= 0)
             {
               displayScrollIndex[panelIndex]++;
@@ -2082,6 +2347,11 @@
               count = count;//count - 2;
             }
             else
+            if(identifiant === 'multistage')
+            {
+	            count = count + 2;
+            }
+            else
             if(identifiant === 'relay')
             {
               count = cells_count;
@@ -2104,7 +2374,7 @@
                 emptyarr.push("&nbsp;");
               if(identifiant === 'relay')
               {  // first of two relay lines
-                
+
                 r += '<td rowspan="2" class="'+ prefix_class + '0' +'">' + "&nbsp;" + '</td>\r\n';
                 r += '<td rowspan="2" class="'+ prefix_class + '1' +'">' + "&nbsp;" + '</td>\r\n';
                 for(ind=0;ind<tmcount;ind++)
@@ -2125,7 +2395,7 @@
                 r += '</tr>\r\n';
                 r += '<tr class="' + cl + nf + '">\r\n';
               }  // end first relay line
-              r += generateCells(identifiant,emptyarr, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate);
+              r += generateCells(identifiant,emptyarr, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate, panelIndex);
               r += '</tr>\r\n';
             }
             r += "</tbody>\r\n";
@@ -2147,6 +2417,11 @@
             {
               //count = count - 2;
             }
+          }
+          else
+          if(identifiant === 'multistage')
+          {
+          	count = count + 2;
           }
           else
           if(identifiant === 'relay')
@@ -2171,7 +2446,7 @@
               emptyarr.push("&nbsp;");
             if(identifiant === 'relay')
             {  // first of two relay lines
-              
+
               r += '<td rowspan="2" class="'+ prefix_class + '0' +'">' + "&nbsp;" + '</td>\r\n';
               r += '<td rowspan="2" class="'+ prefix_class + '1' +'">' + "&nbsp;" + '</td>\r\n';
               for(ind=0;ind<tmcount;ind++)
@@ -2192,7 +2467,7 @@
               r += '</tr>\r\n';
               r += '<tr class="' + cl + nf + '">\r\n';
             }  // end first relay line
-            r += generateCells(identifiant,emptyarr, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate);
+            r += generateCells(identifiant,emptyarr, count, prefix_class, pos_min_displayable, pos_max_displayable, cells_for_tm,tmcount,bFoundRadio,pos_recherche,panelscount,alternate, panelIndex);
             r += '</tr>\r\n';
           }
           r += "</tbody>\r\n";
@@ -2200,7 +2475,7 @@
           bUpdateNeeded = true;
           after_decrement_counter[panelIndex] = 0;
         }
-            
+
         if(bUpdateNeeded)
         {
           after_decrement_counter[panelIndex]--;
@@ -2228,10 +2503,15 @@
             {
               updateShowO(panelIndex);
             }
+            else
+            if(identifiant === 'multistage')
+            {
+	            updateMultistage(panelIndex);
+            }
             after_decrement_counter[panelIndex] = phpscrollaftertime[panelIndex] / phpscrolltime[panelIndex];
           }
         }
-        
+
         return r;
       }
 <?php
@@ -2245,7 +2525,7 @@
                 document.getElementById("tableContainer<?php echo ($i); ?>").innerHTML = ConvertToNiceHtmlTableRow(<?php echo ($i); ?>, 'start', <?php echo $panels[$i]->firstline; ?>,tm_count,<?php echo $panelscount; ?>, <?php echo $panels[$i]->alternate; ?>);
             }
         }
-        
+
         function updateDisplay<?php echo ($i+1); ?>()
         {
             if(document.getElementById("tableContainer<?php echo ($i); ?>"))
@@ -2254,12 +2534,15 @@
               $default_identifier = 'result';
               if($panels[$i]->mode == CST_MODE_SHOWO)
                 $default_identifier = 'showo';
+              else
+              if($panels[$i]->mode == CST_MODE_MULTISTAGE)
+                $default_identifier = 'multistage';
 ?>
                 document.getElementById("tableContainer<?php echo ($i); ?>").innerHTML = ConvertToNiceHtmlTableRow(<?php echo ($i); ?>, '<?php echo $default_identifier; ?>', <?php echo $panels[$i]->firstline; ?>,tm_count,<?php echo $panelscount; ?>, <?php echo $panels[$i]->alternate; ?>);
             }
         }
-        
-		
+
+
 		function updateDisplaySummaries<?php echo ($i+1); ?>()
 		{
 <?php
@@ -2285,7 +2568,7 @@
 		}
 <?php
   }
-?>        
+?>
         function updateDisplayRelays()
         {
 <?php
@@ -2298,7 +2581,7 @@
         }
 ?>
         }
-        
+
         function updateDisplayRelay(panel)
         {
             if(document.getElementById("tableContainer" + panel))
@@ -2306,7 +2589,7 @@
                 document.getElementById("tableContainer" + panel).innerHTML = ConvertToNiceHtmlTableRow(panel, 'relay', phpfirstline[panel], tm_count,<?php echo $panelscount; ?>, phpalternate[panel]);
             }
         }
-        
+
         function updateDisplayRelaySummary(panel, num1, num2)
         {
             if(document.getElementById("tableContainer" + panel + "_" + num1 + "_" + num2))
@@ -2314,7 +2597,7 @@
                 document.getElementById("tableContainer" + panel + "_" + num1 + "_" + num2).innerHTML = ConvertToSummaryHtmlTableRow(panel, 'relay', 1, tm_count,<?php echo $panelscount; ?>, num1, num2, phpalternate[panel]);
             }
         }
-        
+
         function updateDisplaySummary(panel, num1, num2)
         {
             if(document.getElementById("tableContainer" + panel + "_" + num1 + "_" + num2))
@@ -2406,6 +2689,10 @@
         {
             window.setInterval(updateTables, ATTENTE_BASE_s*1000);
         }
+        function create_refresh_multistage()
+        {
+            window.setInterval(updateMultistages, ATTENTE_BASE_s*1000);
+        }
         function create_refresh_start()
         {
             window.setInterval(updateStarts, ATTENTE_BASE_s*1000);
@@ -2470,7 +2757,7 @@
               blogView(myblog, panel);
             }
           }
-          xmlhttp.open("GET", "aj_refreshblog.php?rcid=" + rcid + 
+          xmlhttp.open("GET", "aj_refreshblog.php?rcid=" + rcid +
                               "&sid=" + screenIndex +
                               "&limit=" + phpfixedlines[panel], false);
           xmlhttp.send();
@@ -2482,7 +2769,7 @@
       create_refresh_blog();
 <?php
   }
-  
+
   if($bRefreshSlide)
   {
     for($i=0;$i<$panelscount;$i++)
@@ -2490,7 +2777,7 @@
       if($panels[$i]->content == CST_CONTENT_SLIDES)
       {
 ?>
-      
+
       var myIndex_<?php echo $i; ?> = 0;
       function carousel<?php echo $i; ?>()
       {
@@ -2498,14 +2785,14 @@
           var x = document.getElementsByClassName("mySlides<?php echo $i; ?>");
           for (i = 0; i < x.length; i++)
           {
-             x[i].style.display = "none";  
+             x[i].style.display = "none";
           }
           myIndex_<?php echo $i; ?>++;
           if (myIndex_<?php echo $i; ?> > x.length)
           {
             myIndex_<?php echo $i; ?> = 1;
-          }   
-          x[myIndex_<?php echo $i; ?> - 1].style.display = "table-cell";  
+          }
+          x[myIndex_<?php echo $i; ?> - 1].style.display = "table-cell";
           setTimeout(carousel<?php echo $i; ?>, <?php echo $panels[$i]->scrolltime; ?> * 100); // Change image
       }
 <?php
@@ -2514,9 +2801,9 @@
 ?>
     function computeSizeImg(imgElem, or_width, or_height)
     {
-      
+
       var panelCnt = <?php echo $panelscount; ?>;
-      
+
       ratio_device = 1.25;
       screenw = (screen.height - 70) / panelCnt / ratio_device;
       screenh = (screen.width - 140) / ratio_device;
@@ -2525,7 +2812,7 @@
       ratio = Math.max(ratio_h, ratio_w);
       h = or_height / ratio;
       w = or_width / ratio;
-      
+
       imgElem.width = w;
       imgElem.height = h;
       //alert(or_width + "x" + or_height + "**" + w + "x" + h + "//" + screenw + "x" + screenh + "!!" + ratio_w + "x" + ratio_h);
@@ -2582,7 +2869,7 @@
               radioView(myradio, panelIndex, phpTitle[panelIndex][categorieIndex[panelIndex]], phpradioctrl[panelIndex], <?php echo $panelscount; ?>);
             }
           }
-          xmlhttp.open("GET", "aj_refreshradio.php?rcid=" + rcid + 
+          xmlhttp.open("GET", "aj_refreshradio.php?rcid=" + rcid +
                               "&cls=" + phpcls[panelIndex][categorieIndex[panelIndex]] +
                               "&cmpId=" + phpcmpId[panelIndex] +
                               "&sid=" + screenIndex +
@@ -2601,7 +2888,7 @@
 ?>
           -->
         </script>
-        
+
     </head>
     <body>
 <?php
@@ -2620,7 +2907,7 @@
         <div style="float:left;height:<?php print $hauteur; ?>px;display:block;width:70%;text-align:center;">
 <?php
             print '<div style="padding:0;margin:0;vertical-align:top;font-size:'.$titlesize.'px;color:#'.$titlecolor.';">'.$title.'</div>';
-            print '<div style="padding:0;margin:0;vertical-align:top;font-size:'.$subtitlesize.'px;color:#'.$subtitlecolor.';">'.$subtitle.'</div>';    
+            print '<div style="padding:0;margin:0;vertical-align:top;font-size:'.$subtitlesize.'px;color:#'.$subtitlecolor.';">'.$subtitle.'</div>';
 ?>
         </div>
 
@@ -2652,7 +2939,7 @@
             break;
             case CST_CONTENT_SUMMARY:
               print '<div style="padding:0;margin:0;display:block;width:100%">'."\n";
-              if($classPanels[$i] != null)
+              if((isset($classPanels[$i]))  && ($classPanels[$i] != null))
               {
                 foreach($classPanels[$i] as $k => $v)
                 {

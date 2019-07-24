@@ -287,7 +287,8 @@
         print "<td>$name</td>\n";
         print "<td>$date</td>\n";
         print "<td>$organizer</td>\n";
-        print "<td><img src='img/suppr.png' title='".MyGetText(6)."' onclick='DelCompetition(\"".MyGetText(14)."\",$cid,\"$name\");'></img></td>\n"; // Delete
+        $nametmp = addslashes($name);
+        print "<td><img src=\"img/suppr.png\" title=\"".MyGetText(6)."\" onclick=\"DelCompetition('".MyGetText(14)."',$cid,'".$nametmp."');\"></img></td>\n"; // Delete
         print "</tr>\n";
       } 
     }

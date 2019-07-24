@@ -10,76 +10,91 @@ To get a better idea of what it looks like, have a look to the (obsolete) englis
 
 It is provided "as is" as open source code and can be freely used, modified, enhenced and distributed. It is licensed in the same conditions as MeOS.<br/>
 <h2> What's new ?</h2>
+
+
+<h3> 2019-07-24 Multistages events support</h3>
+NOTE : Database tables structure have been altered. On existanig installation, please run mysql_update_20190620.php <b>once</b>.<br/>
+[x] Support multistages events<br/>
+[x] Add competitor's flag display option (require special version of MeOS, see patch on this GitHub)<br/>
+[x] Allow name display order selection (NAME Surname or Surname NAME for instance)<br/>
+
+<h3> 2019-04-18 Add a fourth radio to relay</h3>
+[x] Add the capability to display 4 radios in relay mode<br/>
+
 <h3>2017-12-21 Small fixes</h3>
 [x] On GitHub, pdf.png in img directory is now in lowercase<br/>
 [x] Replacing 192.168.0.10 by <i><ToBeDefined></i> in index.html and index.php in all subdirectories<br/>
 [x] Add index.html and index.php in <i>slides</i> subdirectory in order for this directory to be created on download from GitHub<br/>
 [x] Improve recovering from bad situations in case of LoRa receiver unexpected disconnect<br />
 [x] Add first available competition ID on index page<br/>
+
 <h3>2017-11-16 Alternate 3 panels display</h3>
 [x] Add an alternate display format for 3 panels results display with radio replacing club names.<br/>
 [x] Radio sendpunch Python script improvement : automatic restart if radio is disconnected and replugged<br/>
+
 <h3>2017-07-23 Start time bug fix</h3>
 [x] Fix bug in start time display (use of mysqli instead of mysql with newer version of php)<br/>
+
 <h3>2017-05-17 Quote bug fixed</h3>
 [x] Fix bug dealing with quotes in names (mainly in class names and team names).<br/>
 [x] Fix start list time table timezone issue<br/>
 [x] Fix start list number of fixed lines<br/>
 [x] Changes in Readme organisation and merge bugfix branch into master<br/>
+
 <h3>2017-03-15 Version planned to be used for Nationale Sud Est orienteering race on 2017 march the 18th</h3>
 [x] Fix bugs introduced in original results display show.php (still used for public WiFi diffusion of results on the arena)<br/>
 [x] Fix undefined variables in different php files avoiding Apache error/warning generation in Apache error log file. The error file could grow as large as many hundreds of mega bytes due to warning generation during races ! That slow seriousely the server down for large events.<br/>
 [x] Separate log files from picture file in file management lists<br/>
 [x] Some other cosmetic changes in code.<br/>
+
 <h3> 2016-11-07 Version planned to be used for PACA night orienteering on November the 19th</h3>
 [x] Better support of 1, 2, 3 and 4 panels modes<br/>
 [x] Up to 15 radio controls supported (in 1 panel mode individual race)<br/>
 [x] Better suport for homemade radio system (based on LoRa technology) with real time radio quality and battery level display superimposed on map. Ask for details.<br/>
+
 <h3>2016-05-04 Version used for French Clubs Championship</h3>
-<h4>What's New ?</h4>
 [x] Rows height have been decreased in order to stack more lines on the screen<br/>
 [x] Support for slideshow<br/>
 [x] Support for micro blogging (not connected to standard blogging software)<br/>
 [x] Suport for homemade radio system (based on LoRa technology) with real time radio quality and battery level display superimposed on map. Ask for details.<br/>
 [x] Allows CSS selection on a screen by screen basis to match caracteristics of screens (ex adapt rows height)<br/>
 [x] Partial support of GECO software.<br/>
-<h4>Known bugs</h4>
-[ ] Multistages competition are not correctly handled (no cumulative time)<br/>
-[ ] Documentation is no more up to date, but still help.<br/>
-<h4>Missing features</h4>
-See below.<br/>
+
 <h3>2016-04-04 Relay extended to 10</h3>
-<h4>What's New ?</h4>
 NOTE : Database tables structure have been altered. If you are updating an existing version, please ask for support.<br/>
 [x] Relay extended up to 10 team members<br/>
 [x] Screens can now be divided in two, three or four panels for non relay competitions<br/>
 [x] MP, DNF etc... translation<br/>
 [x] Support for experimental radio transmitted punches improved. Ask for details if interested.<br/>
-<h4>Known bugs</h4>
-[ ] Documentation is no more up to date, but still help.<br/>
-<h4>Missing features</h4>
-[ ] Add multilines scrolling<br/>
-[ ] Allow course based instead of class based display (may require some changes in MeOS)<br/>
+
 <h3>2015-11-08 Picture files management and internationalisation</h3>
-<h4>What's New ?</h4>
 [x] It's now possible from screenconfig.php to upload pictures and html files to their respective directories and to manage them.<br/>
 [x] Fixed an issue relative to picture and html file allowing configuration even if these files do not exist on the PC used for configuration.<br/>
 [x] Added French and Swedish support. Language can be chosen from screenconfig.php. Default language is determined based on browser configuration. Thanks to Jens Kastensson for the Swedish translation.<br/>
-<h4>Known bugs</h4>
-[ ] When screens' panels are empty, they are not correctly refreshed. Workaround : edit the screen in screenconfig.php and press ok.<br/>
-[ ] In relay mode it is mandatory to have at least one radio control<br/>
-[ ] If pressing classes edit button while editing a screen configuration, all changes altready made in the form fields are lost. Workaround : use podium icon in screen.php<br/>
-<h4>Missing features</h4>
-[ ] Relay must be extended to 10 team members<br/>
-[ ] Screens should be dividable in three panels<br/>
-[ ] Rows height should be decreased in order to stack more lines on the screen<br/>
-[ ] Add documentation access from the interface<br/>
+
 <h3>2015-11-04 Source code cleaning and small fixes and improvements</h3>
-<h4>What's New ?</h4>
 [x] Icons for configuration rename and edit have been changed to remove any possible confusion<br/>
 [x] It is now possible to define the fisrt line of a screen or panel (for instance to keep the content of a panel fixed while on another panel the remaining of the class is scrolling)<br/>
 [x] When scrolling, stops now after 3 empty lines<br/>
 [x] It is now possible to select classes in full screen mode right from the summary table of screen.php clicking on the podium icon<br/>
+
 <h3>2015-09-13 Version used by CSP Orienteering club</h3>
-<h4>What's New ?</h4>
 [x] Includes a temporary fix of the lost of class allocation on MeOS service restart.<br/>
+
+<h4>Known bugs</h4>
+[ ] Relay results can only be displayed in the first panel. Please prefer using single panel mode for relay results.<br/>
+[Fixed] Multistages competition are not correctly handled (no cumulative time)<br/>
+[ ] Documentation is no more up to date, but still help.<br/>
+[Fixed] If pressing classes edit button while editing a screen configuration, all changes already made in the form fields are lost. Workaround : use podium icon in screen.php<br/>
+[Fixed] Relay display order may be incorrect if a runner lost time after radio control until he completes the course (he can appears ahead of already arrived competitors in the list).<br/>
+[Fixed] When screens' panels are empty, they are not correctly refreshed. Workaround : edit the screen in screenconfig.php and press ok.<br/>
+[Fixed] In relay mode it is mandatory to have at least one radio control<br/>
+[Fixed] If pressing classes edit button while editing a screen configuration, all changes altready made in the form fields are lost. Workaround : use podium icon in screen.php<br/>
+
+<h4>Missing features</h4>
+[ ] Add multilines scrolling. Well not sure it is really useful...<br/>
+[ ] Allow course based instead of class based display (may require some changes in MeOS)<br/>
+[Done] Display first available competition ID (to be entered in MeOS Services/Online results)<br/>
+[Done] Relay must be extended up to 10 team members<br/>
+[Done] Screens should be dividable in three and four panels<br/>
+[Done] Add MP, DNF etc... translation<br/>

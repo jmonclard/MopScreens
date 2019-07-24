@@ -12,6 +12,18 @@ To get a better idea of what it looks like, have a look to the (obsolete) englis
 It is provided "as is" as open source code and can be freely used, modified, enhenced and distributed. It is licensed in the same conditions as MeOS.
 
 ## What's new ?
+### 2019-07-24 Multistages events support
+NOTE : Database tables structure have been altered. On existanig installation, please run mysql_update_20190620.php once.
+
+[x] Support multistages events
+
+[x] Add competitor's flag display option (require special version of MeOS, see patch on this GitHub)
+
+[x] Allow name display order selection (NAME Surname or Surname NAME for instance)
+
+### 2019-04-18 Add a fourth radio to relay
+[x] Add the capability to display 4 radios in relay mode
+
 ### 2017-12-21 Small fixes
 [x] On GitHub, pdf.png in img directory is now in lowercase
 
@@ -126,7 +138,7 @@ NOTE : Database tables structure have been altered. If you are updating an exist
 ## Known bugs
 [ ] Relay results can only be displayed in the first panel. Please prefer using single panel mode for relay results.
 
-[ ] Multistages competition are not correctly handled (no cumulative time)
+[Fixed] Multistages competition are not correctly handled (no cumulative time)
 
 [ ] Documentation is no more up to date, but still help.
 
@@ -152,6 +164,4 @@ NOTE : Database tables structure have been altered. If you are updating an exist
 [Done] Screens should be dividable in three and four panels
 
 [Done] Add MP, DNF etc... translation
-
-
 
