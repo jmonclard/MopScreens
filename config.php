@@ -45,6 +45,7 @@ define("NB_SCREEN",23);
 define("NB_PANEL",4);
 
 define("CST_NBRADIO_ONEPANEL", 15);
+define("CST_NBRADIO_TWOPANELS", 6);
 define("CST_NBRADIO_PANELS", 4);
 
 ?>

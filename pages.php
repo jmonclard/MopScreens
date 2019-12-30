@@ -1,6 +1,6 @@
 <?php
   /*
-  Copyright 2014-2016 Metraware
+  Copyright 2014-2019 J. MONCLARD
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -221,6 +221,9 @@
       {
         case 1:
           echo CST_NBRADIO_ONEPANEL;
+        break;
+        case 2:
+          echo CST_NBRADIO_TWOPANELS;
         break;
         default:
           echo CST_NBRADIO_PANELS;
@@ -481,7 +484,6 @@
 
       function updateTable(panelIndex)
       {
-//JM      if  ((panelIndex === 0) || (panelIndex === 1) || (panelIndex === 2) || (panelIndex === 3))
         if  (panelIndex < NB_PANEL)
         {
           var xmlhttp = null;
@@ -518,7 +520,6 @@
 
       function updateStart(panelIndex)
       {
-//JM      if  ((panelIndex === 0) || (panelIndex === 1) || (panelIndex === 2) || (panelIndex === 3))
         if  (panelIndex < NB_PANEL)
         {
           var xmlhttp = null;
@@ -760,45 +761,248 @@
           {
             if(e < pos_max_displayable)
             {
-              mycellnum = (e - pos_min_displayable + 1);
-		mymodulo = 7;
-/*
-              if((cells_for_tm == 6)
-                || ((cells_for_tm == 5) && ((mycellnum)%6 != 0))
-                || ((cells_for_tm == 4) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4))
-                || ((cells_for_tm == 3) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4) && ((mycellnum)%6 != 3))
-                || ((cells_for_tm == 2) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4) && ((mycellnum)%6 != 3) && ((mycellnum)%6 != 2))
-                )
-*/
-              if((cells_for_tm == 6)
-                || ((cells_for_tm == 5) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5))
-                || ((cells_for_tm == 4) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5) && ((mycellnum)%mymodulo != 4))
-                || ((cells_for_tm == 3) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5) && ((mycellnum)%mymodulo != 4) && ((mycellnum)%mymodulo != 3))
-                || ((cells_for_tm == 2) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5) && ((mycellnum)%mymodulo != 4) && ((mycellnum)%mymodulo != 3) && ((mycellnum)%mymodulo != 2))
-                )
+           		datacol = e - pos_min_displayable-1;
+           		data_cols_per_tm = 7;
+		      		switch(tmcount)
+		      		{
+		      			case 1: /* useless */
+		      	  		break;
+
+		      			case 2:
+		      	  		switch (datacol % data_cols_per_tm)
+		      	  		{
+		      	    		case 0:
+		      	      		r += '<td class="td2relay2">'+ cell + '</td>\r\n';
+		      	      		break;
+		      	    		case 1:
+		      	      		r += '<td class="td2relay3">' + cell + '</td>\r\n';
+		      	      		break;
+		      	    		case 2:
+		      	      		r += '<td class="td2relay4">' + cell + '</td>\r\n';
+		      	      		break;
+		      	    		case 3:
+		      	      		break;
+		      	    		case 4:
+		      	      		r += '<td class="td2relay5finish2">' + cell +'</td>\r\n';
+		      	      		break;
+		      	    		case 5:
+		      	      		r += '<td class="td2relay6">' + cell + '</td>\r\n';
+		      	      		break;
+		      	    		case 6:
+		      	      		r += '<td class="td2relay6">' + cell + '</td>\r\n';
+		      	      		break;
+		      	  		}
+		      	  		break;
+
+		      				case 3:
+		      	  			switch (datacol % data_cols_per_tm)
+		      	  			{
+		      	    			case 0:
+		      	      			r += '<td class="td3relay2">'+ cell + '</td>\r\n';
+		      	      			break;
+		      	    			case 1:
+		      	      			r += '<td class="td3relay3">' + cell + '</td>\r\n';
+		      	      			break;
+		      	    			case 2:
+		      	      			r += '<td class="td3relay4">' + cell + '</td>\r\n';
+		      	      			break;
+		      	    			case 3:
+		      	      			break;
+		      	    			case 4:
+		      	      			r += '<td class="td3relay5finish3">' + cell +'</td>\r\n';
+		      	      			break;
+		      	    			case 5:
+		      	      			r += '<td class="td3relay6">' + cell + '</td>\r\n';
+		      	      			break;
+		      	    			case 6:
+		      	      			r += '<td class="td3relay6">' + cell + '</td>\r\n';
+		      	      			break;
+		      	  			}
+		      	  			break;
+
+     							case 4:
+		      	  			switch (datacol % data_cols_per_tm)
+		      	  			{
+		      	    			case 0:
+		      	      			r += '<td class="td4relay2">'+ cell + '</td>\r\n';
+		      	      			break;
+		      	    			case 1:
+		      	      			r += '<td class="td4relay3">' + cell + '</td>\r\n';
+		      	      			break;
+		      	    			case 2:
+		      	      			r += '<td class="td4relay4">' + cell + '</td>\r\n';
+		      	      			break;
+		      	    			case 3:
+		      	      			break;
+		      	    			case 4:
+		      	      			r += '<td class="td4relay5finish4">' + cell +'</td>\r\n';
+		      	      			break;
+		      	    			case 5:
+		      	      			break;
+		      	    			case 6:
+		      	      			r += '<td class="td4relay6">' + cell + '</td>\r\n';
+		      	      			break;
+		      	  			}
+		      	  			break;
+
+		      				case 5:
+		      	  			switch (datacol % data_cols_per_tm)
+		      	  			{
+		      	    			case 0:
+		      	      			r += '<td class="td5relay2">' + cell + '</td>\r\n';
+		      	      			break;
+		      	    			case 1:
+		      	      			r += '<td class="td5relay3">' + cell + '</td>\r\n';
+		      	      			break;
+		      	    			case 2:
+		      	    			case 3:
+		      	      			break;
+		      	    			case 4:
+		      	      			r += '<td class="td5relay5finish5">' + cell +'</td>\r\n';
+		      	      			break;
+		      	    			case 5:
+		      	      			break;
+		      	    			case 6:
+		      	      			r += '<td class="td5relay6">' + cell + '</td>\r\n';
+		      	      			break;
+		      	  			}
+		      	  			break;
+
+			      			case 6:
+		      					if (alternate == 1) /* radios at end of line */
 		{
-			if(pos_tm_finish.indexOf(mycellnum) > -1)
+		      	  				switch (datacol % data_cols_per_tm)
 			{
-                		r += '<td class="'+ prefix_class + mycellnum +' finish'+ tmcount +'">' + cell + '</td>\r\n';
+		      	    				case 0:
+		      	    				case 1:
+		      	    				case 2:
+		      	    				case 3:
+		      	      				break;
+		      	    				case 4:
+		      	      				r += '<td class="td6relay5finish6">' + cell +'</td>\r\n';
+		      	      				break;
+		      	    				case 5:
+		      	      				break;
+		      	    				case 6:
+		      	      				r += '<td class="td6relay6">' + cell + '</td>\r\n';
+		      	      				break;
+		      	  				}
 			}
-			else
+		      					else /* radio for each team members */
+		      					{
+		      	  				switch (datacol % data_cols_per_tm)
 			{
-                		r += '<td class="'+ prefix_class + mycellnum +'">' + cell + '</td>\r\n';
+		      	    				case 0:
+		      	      				r += '<td class="td6relay2">' + cell + '</td>\r\n';
+		      	      				break;
+		      	    				case 1:
+		      	    				case 2:
+		      	    				case 3:
+		      	      				break;
+		      	    				case 4:
+		      	      				r += '<td class="td6relay5finish6">' + cell +'</td>\r\n';
+		      	      				break;
+		      	    				case 5:
+		      	      				break;
+		      	    				case 6:
+		      	      				r += '<td class="td6relay6">' + cell + '</td>\r\n';
+		      	      				break;
 			}
 		}
+		      	  			break;
+
+		      				case 7:
+		      	  			switch (datacol % data_cols_per_tm)
+		      	  			{
+		      	    			case 0:
+		      	      			r += '<td class="td7relay2">' + cell + '</td>\r\n';
+		      	      			break;
+		      	    			case 1:
+		      	    			case 2:
+		      	    			case 3:
+		      	      			break;
+		      	    			case 4:
+		      	      			r += '<td class="td7relay5finish7">' + cell +'</td>\r\n';
+		      	      			break;
+		      	    			case 5:
+		      	      			break;
+		      	    			case 6:
+		      	      			r += '<td class="td7relay6">' + cell + '</td>\r\n';
+		      	      			break;
             }
+		      	  			break;
+
+		      				case 8:
+		      	  			switch (datacol % data_cols_per_tm)
+		      	  			{
+		      	    			case 0:
+		      	    			case 1:
+		      	    			case 2:
+		      	    			case 3:
+		      	      			break;
+		      	    			case 4:
+		      	      			r += '<td class="td8relay5finish8">' + cell +'</td>\r\n';
+		      	      			break;
+		      	    			case 5:
+		      	      			break;
+		      	    			case 6:
+		      	      			r += '<td class="td8relay6">' + cell + '</td>\r\n';
+		      	      			break;
           }
+		      	  			break;
+
+		      				case 9:
+		      	  			switch (datacol % data_cols_per_tm)
+		      	  			{
+		      	    			case 0:
+		      	    			case 1:
+		      	    			case 2:
+		      	    			case 3:
+		      	      			break;
+		      	    			case 4:
+		      	      			r += '<td class="td9relay5finish9">' + cell +'</td>\r\n';
+		      	      			break;
+		      	    			case 5:
+		      	      			break;
+		      	    			case 6:
+		      	      			r += '<td class="td9relay6">' + cell + '</td>\r\n';
+		      	      			break;
         }
+		      	  			break;
 
+		      				case 10:
+		      	  			switch (datacol % data_cols_per_tm)
+		      	  			{
+		      	    			case 0:
+		      	    			case 1:
+		      	    			case 2:
+		      	    			case 3:
+		      	      			break;
+		      	    			case 4:
+		      	      			r += '<td class="td10relay5finish10">' + cell +'</td>\r\n';
+		      	      			break;
+		      	    			case 5:
+		      	      			break;
+		      	    			case 6:
+		      	      			r += '<td class="td10relay6">' + cell + '</td>\r\n';
+		      	      			break;
+		      	  			}
+		      	  			break;
 
+		      			}/* switch tmcount */
+
+       			} /* if */
+          } /* if */
+        } /* for e in line... */
+
+        /* in some display schemes, radios are at the end of the line */
         if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
         {
           if((alternate == 1) && (tmcount == 6))
             r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
-          else
-          if(tmcount == 8)
+          else if(tmcount == 8)
             r += '<td class="radio0_8">&nbsp;</td>\r\n';
-          else
+          else /* should never happen */
             r += '<td class="radio0">&nbsp;</td>\r\n';
           if(bFoundRadio)
           {
@@ -870,22 +1074,16 @@
         hackflag = result.split("/", 2);
         if(hackflag.length == 2)
         {
-        	//if(UrlExists("img/flags-mini/" + hackflag[1] + ".png"))
         	{
         		if(phpdisplaynomprenom[numpanel] >= 3)
         		{
         			result = '<span style="background:url(img/flags-mini/' + hackflag[1] + '.png);background-size:contain;background-repeat:no-repeat;background-position:center;" class="countryflag">&nbsp;</span>' + formatName(hackflag[0], numpanel);
-	            	//result = '<img src="img/flags-mini/' + hackflag[1] + '.png" alt=" " title=" " class="countryflag" />' + formatName(hackflag[0], numpanel);
             	}
             	else
             	{
             		result = formatName(hackflag[0], numpanel);
             	}
         	}
-        	/*else
-        	{
-            	result = formatName(hackflag[0], numpanel);
-        	}*/
         }
         return result;
       }
@@ -902,16 +1100,6 @@
               cell = addFlag(cell, panelIndex);
               if(e > 1)
               {
-                /*if(e == (count - 3))
-                {
-                  r += '<td class="tdmtimediff">' + cell + '</td>\r\n';
-                }
-                else
-                if(e == (count - 4))
-                {
-                  r += '<td class="tdmtimeresult">' + cell + '</td>\r\n';
-                }
-                else*/
                 {
                   r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
                 }
@@ -925,16 +1113,6 @@
               cell = addFlag(cell, panelIndex);
               if(e > 1)
               {
-                /*if(e == (count - 3))
-                {
-                  r += '<td class="tdmtimediff">' + cell + '</td>\r\n';
-                }
-                else
-                if(e == (count - 4))
-                {
-                  r += '<td class="tdmtimeresult">' + cell + '</td>\r\n';
-                }
-                else*/
                 {
                   r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
                 }
@@ -950,16 +1128,6 @@
               {
                 if ((e<5)||(e>8)) // do not display radio
                 {
-                  /*if(e == (count - 3))
-                  {
-                    r += '<td class="tdmtimediff">' + line[e] + '</td>\r\n';
-                  }
-                  else
-                  if(e == (count - 4))
-                  {
-                    r += '<td class="tdmtimeresult">' + cell + '</td>\r\n';
-                  }
-                  else*/
                   {
                     r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
                   }
@@ -976,16 +1144,6 @@
               {
                 if ((e<4)||(e>8)) // do not display club and radio
                 {
-                  /*if(e == (count - 3))
-                  {
-                    r += '<td class="tdmtimediff">' + cell + '</td>\r\n';
-                  }
-                  else
-                  if(e == (count - 4))
-                  {
-                    r += '<td class="tdmtimeresult">' + cell + '</td>\r\n';
-                  }
-                  else*/
                   {
                     r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
                   }
@@ -1025,25 +1183,52 @@
               }
             }
             break;
-          case 2:
-            for(var e in line)
+          case 2: // col 4 = club, col 5 to 10 = radios
+            if (alternate==1)  // Do not display club, display 6 radios
             {
-              cell = ((line[e] === '') ? "&nbsp;" : line[e]);
-              cell = addFlag(cell, panelIndex);
-              if(e > 1)
+              for(var e in line)
               {
-                if(e == (count - 1))
+                cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+                cell = addFlag(cell, panelIndex);
+                if((e > 1) && (e!=4))
                 {
-                  r += '<td class="tdtimediff">' + cell + '</td>\r\n';
+                  if(e == (count - 1))
+                  {
+                    r += '<td class="tdtimediff">' + cell + '</td>\r\n';
+                  }
+                  else
+                  if(e == (count - 2))
+                  {
+                    r += '<td class="tdtimeresult">' + cell + '</td>\r\n';
+                  }
+                  else
+                  {
+                    r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
+                  }
                 }
-                else
-                if(e == (count - 2))
+              }
+            }
+            else // Display club and 4 radios
+            {
+              for(var e in line)
+              {
+                cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+                cell = addFlag(cell, panelIndex);
+                if((e > 1) && (e!=9) && (e!=10))
                 {
-                  r += '<td class="tdtimeresult">' + cell + '</td>\r\n';
-                }
-                else
-                {
-                  r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
+                  if(e == (count - 1))
+                  {
+                    r += '<td class="tdtimediff">' + cell + '</td>\r\n';
+                  }
+                  else
+                  if(e == (count - 2))
+                  {
+                    r += '<td class="tdtimeresult">' + cell + '</td>\r\n';
+                  }
+                  else
+                  {
+                    r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
+                  }
                 }
               }
             }
@@ -1083,30 +1268,30 @@
             }
             else
             {
-            for(var e in line)
-            {
-              cell = ((line[e] === '') ? "&nbsp;" : line[e]);
-              cell = addFlag(cell, panelIndex);
-              if(e > 1)
+              for(var e in line)
               {
-                if ((e<5)||(e>8)) // do not display radio
+                cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+                cell = addFlag(cell, panelIndex);
+                if(e > 1)
                 {
-                  if(e == (count - 1))
+                  if ((e<5)||(e>8)) // do not display radio
                   {
-                    r += '<td class="tdtimediff">' + line[e] + '</td>\r\n';
-                  }
-                  else
-                  if(e == (count - 2))
-                  {
-                    r += '<td class="tdtimeresult">' + cell + '</td>\r\n';
-                  }
-                  else
-                  {
-                    r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
+                    if(e == (count - 1))
+                    {
+                      r += '<td class="tdtimediff">' + line[e] + '</td>\r\n';
+                    }
+                    else
+                    if(e == (count - 2))
+                    {
+                      r += '<td class="tdtimeresult">' + cell + '</td>\r\n';
+                    }
+                    else
+                    {
+                      r += '<td class="'+ prefix_class + (e-2) +'">' + cell + '</td>\r\n';
+                    }
                   }
                 }
               }
-            }
             }
             break;
           case 4:
@@ -1288,12 +1473,6 @@
             if(e < pos_max_displayable)
             {
               mycellnum = (e - pos_min_displayable + 1);
-/*              if((cells_for_tm == 6)
-                || ((cells_for_tm == 5) && ((mycellnum)%6 != 0))
-                || ((cells_for_tm == 4) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4))
-                || ((cells_for_tm == 3) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4) && ((mycellnum)%6 != 3))
-                || ((cells_for_tm == 2) && ((mycellnum)%6 != 0) && ((mycellnum)%6 != 4) && ((mycellnum)%6 != 3) && ((mycellnum)%6 != 2))
-                )*/
 		if((cells_for_tm == 6)
                 || ((cells_for_tm == 5) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5))
                 || ((cells_for_tm == 4) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5) && ((mycellnum)%mymodulo != 4))
@@ -1301,18 +1480,11 @@
                 || ((cells_for_tm == 2) && ((mycellnum)%mymodulo != 0) && ((mycellnum)%mymodulo != 5) && ((mycellnum)%mymodulo != 4) && ((mycellnum)%mymodulo != 3) && ((mycellnum)%mymodulo != 2))
                 )
 		{
-			/*if(pos_tm_finish.indexOf(mycellnum) > -1)
-			{
-                		r += '<td class="'+ prefix_class + mycellnum +' finish'+ tmcount +'">' + cell + '</td>\r\n';
-			}
-			else*/
-			{
                 		r += '<td class="'+ prefix_class + mycellnum +'">' + cell + '</td>\r\n';
 			}
 		}
             }
           }
-        }
 
         if((tmcount == 8) || ((alternate == 1) && (tmcount == 6)))
         {
@@ -1389,11 +1561,11 @@
           switch(tmcount)
           {
             case 1:
-                count = 13;//12; // names excluded
+              count = 13; // names excluded
                 pos_rank = 4;
                 pos_team_name = 5;
-                pos_tm_rank = Array(11);//Array(10);
-                pos_tm_name = Array(13);//Array(12);
+              pos_tm_rank = Array(11);
+              pos_tm_name = Array(13);
 		pos_tm_finish = Array(8);
                 pos_min_displayable = 5;
                 pos_max_displayable = count;
@@ -1401,11 +1573,11 @@
                 tm_colspan = 4;
             break;
             case 2:
-                count = 21;//19; // names excluded
+              count = 21; // names excluded
                 pos_rank = 5;
                 pos_team_name = 6;
-                pos_tm_rank = Array(12, 19);//Array(11, 17);
-                pos_tm_name = Array(21, 22);//Array(19, 20);
+              pos_tm_rank = Array(12, 19);
+              pos_tm_name = Array(21, 22);
 		pos_tm_finish = Array(8,15);
                 pos_min_displayable = 6;
                 pos_max_displayable = count;
@@ -1413,11 +1585,11 @@
                 tm_colspan = 4;
             break;
             case 3:
-                count = 29;//26; // names excluded
+              count = 29; // names excluded
                 pos_rank = 6;
                 pos_team_name = 7;
-                pos_tm_rank = Array(13, 20, 27);//Array(12, 18, 24);
-                pos_tm_name = Array(29, 30, 31);//Array(26, 27, 28);
+              pos_tm_rank = Array(13, 20, 27);
+              pos_tm_name = Array(29, 30, 31);
 		pos_tm_finish = Array(8,15,22);
                 pos_min_displayable = 7;
                 pos_max_displayable = count;
@@ -1425,11 +1597,11 @@
                 tm_colspan = 4;
             break;
             case 4:
-                count = 37;//33; // names excluded
+              count = 37; // names excluded
                 pos_rank = 7;
                 pos_team_name = 8;
-                pos_tm_rank = Array(14, 21, 28, 35);//Array(13, 19, 25, 31);
-                pos_tm_name = Array(37, 38, 39, 40);//Array(33, 34, 35, 36);
+              pos_tm_rank = Array(14, 21, 28, 35);
+              pos_tm_name = Array(37, 38, 39, 40);
 		pos_tm_finish = Array(8,15,22,29);
                 pos_min_displayable = 8;
                 pos_max_displayable = count;
@@ -1437,11 +1609,11 @@
                 tm_colspan = 4;
             break;
             case 5:
-                count = 45;//40; // names excluded
+              count = 45; // names excluded
                 pos_rank = 8;
                 pos_team_name = 9;
-                pos_tm_rank = Array(15, 22, 29, 36, 43);//Array(14, 20, 26, 32, 38);
-                pos_tm_name = Array(45, 46, 47, 48, 49);//Array(40, 41, 42, 43, 44);
+              pos_tm_rank = Array(15, 22, 29, 36, 43);
+              pos_tm_name = Array(45, 46, 47, 48, 49);
 		pos_tm_finish = Array(8,15,22,29,36);
                 pos_min_displayable = 9;
                 pos_max_displayable = count;
@@ -1449,11 +1621,11 @@
                 tm_colspan = 3;
             break;
             case 6:
-                count = 53;//47; // names excluded
+              count = 53; // names excluded
                 pos_rank = 9;
                 pos_team_name = 10;
-                pos_tm_rank = Array(16, 23, 30, 37, 44, 51);//Array(15, 21, 27, 33, 39, 45);
-                pos_tm_name = Array(53, 54, 55, 56, 57, 58);//Array(47, 48, 49, 50, 51, 52);
+              pos_tm_rank = Array(16, 23, 30, 37, 44, 51);
+              pos_tm_name = Array(53, 54, 55, 56, 57, 58);
 		pos_tm_finish = Array(8,15,22,29,36,43);
                 pos_min_displayable = 10;
                 pos_max_displayable = count;
@@ -1470,11 +1642,11 @@
 				}
             break;
             case 7:
-                count = 61;//54; // names excluded
+              count = 61; // names excluded
                 pos_rank = 10;
                 pos_team_name = 11;
-                pos_tm_rank = Array(17, 24, 31, 38, 45, 52, 59);//Array(16, 22, 28, 34, 40, 46, 52);
-                pos_tm_name = Array(61, 62, 63, 64, 65, 66, 67);//Array(54, 55, 56, 57, 58, 59, 60);
+              pos_tm_rank = Array(17, 24, 31, 38, 45, 52, 59);
+              pos_tm_name = Array(61, 62, 63, 64, 65, 66, 67);
 		pos_tm_finish = Array(8,15,22,29,36,43,50);
                 pos_min_displayable = 11;
                 pos_max_displayable = count;
@@ -1482,15 +1654,6 @@
                 tm_colspan = 2;
             break;
             case 8:
-                /*count = 61; // names excluded
-                pos_rank = 11;
-                pos_team_name = 12;
-                pos_tm_rank = Array(17, 23, 29, 35, 41, 47, 53, 59);
-                pos_tm_name = Array(61, 62, 63, 64, 65, 66, 67, 68);
-                pos_min_displayable = 12;
-                pos_max_displayable = count;
-                cells_for_tm = 2;
-                tm_colspan = 1;*/
 		count = 69; // names excluded
                 pos_rank = 11;
                 pos_team_name = 12;
@@ -1503,11 +1666,11 @@
                 tm_colspan = 1;
             break;
             case 9:
-                count = 77;//68; // names excluded
+              count = 77; // names excluded
                 pos_rank = 12;
                 pos_team_name = 13;
-                pos_tm_rank = Array(19, 26, 33, 40, 47, 54, 61, 68, 75);//Array(18, 24, 30, 36, 42, 48, 54, 60, 66);
-                pos_tm_name = Array(77, 78, 79, 80, 81, 82, 83, 84, 85);//Array(68, 69, 70, 71, 72, 73, 74, 75, 76);
+              pos_tm_rank = Array(19, 26, 33, 40, 47, 54, 61, 68, 75);
+              pos_tm_name = Array(77, 78, 79, 80, 81, 82, 83, 84, 85);
 		pos_tm_finish = Array(8,15,22,29,36,43,50,57,64);
                 pos_min_displayable = 13;
                 pos_max_displayable = count;
@@ -1515,11 +1678,11 @@
                 tm_colspan = 1;
             break;
             case 10:
-                count = 85;//75; // names excluded
+              count = 85; // names excluded
                 pos_rank = 13;
                 pos_team_name = 14;
-                pos_tm_rank = Array(20, 27, 34, 41, 48, 55, 62, 69, 76, 83);//Array(19, 25, 31, 37, 43, 49, 55, 61, 67, 73);
-                pos_tm_name = Array(85, 86, 87, 88, 89, 90, 91, 92, 93, 94);//Array(75, 76, 77, 78, 79, 80, 81, 82, 83, 84);
+              pos_tm_rank = Array(20, 27, 34, 41, 48, 55, 62, 69, 76, 83);
+              pos_tm_name = Array(85, 86, 87, 88, 89, 90, 91, 92, 93, 94);
 		pos_tm_finish = Array(8,15,22,29,36,43,50,57,64,71);
                 pos_min_displayable = 14;
                 pos_max_displayable = count;
@@ -1582,7 +1745,7 @@
         if(identifiant === 'result')
         {
           prefix_class = 'tdsum_'+panelscount + '_';
-          count = 11;//9;
+          count = 11;
         }
         else
         if(identifiant === 'relay')
@@ -1665,8 +1828,7 @@
               {
                 if((alternate == 1) && (tmcount == 6))
                   r += '<th class="entete_radio0_6alt" rowspan="2">&nbsp;</th>\r\n';
-                else
-		if(tmcount == 8)
+                else if(tmcount == 8)
                   r += '<th class="entete_radio0_8" rowspan="2">&nbsp;</th>\r\n';
 		else
                   r += '<th class="entete_radio0" rowspan="2">&nbsp;</th>\r\n';
@@ -1740,8 +1902,8 @@
                   pos_recherche = 0;
                   while((iFound > 0) && (bFoundRadio == false))
                   {
-                    pos_recherche = pos_min_displayable + 1 + 7 * (iFound-1); // + 6 * (iFound-1);
-                    if((line[pos_recherche] != '') || (line[pos_recherche+1] != '')) // || (line[pos_recherche+2] != '')
+                    pos_recherche = pos_min_displayable + 1 + 7 * (iFound-1);
+                    if((line[pos_recherche] != '') || (line[pos_recherche+1] != ''))
                     {
                       bFoundRadio = true;
                     }
@@ -1766,7 +1928,7 @@
           nf = '';
           if(identifiant === 'result')
           {
-            count = count;//count - 2;
+            count = count;
           }
           else
           if(identifiant === 'relay')
@@ -1797,8 +1959,7 @@
               {
                 if((alternate == 1) && (tmcount == 6))
                   r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
-		else
-                if(tmcount == 8)
+		            else if(tmcount == 8)
                   r += '<td class="radio0_8">&nbsp;</td>\r\n';
 		else
                   r += '<td class="radio0">&nbsp;</td>\r\n';
@@ -1820,7 +1981,6 @@
         {
           displayScrollIndex[panelIndex] = phpfixedlines[panelIndex] + startline - 1;
           categorieIndex[panelIndex] = (categorieIndex[panelIndex] + 1) % phpcls[panelIndex].length;
-          //alert(categorieIndex[panelIndex]);
           tableUpdated[panelIndex] = false;
 
           if(identifiant === 'result')
@@ -1866,28 +2026,25 @@
         if(identifiant === 'start')
         {
           prefix_class = 'tdi_'+panelscount + '_';
-          // 20170517 -- 2 following lines commented out
-          //phpscrolledlines[panelIndex] = phpfixedlines[panelIndex] + phpscrolledlines[panelIndex];
-          //phpfixedlines[panelIndex] = 0;
           count = 6;
         }
         else
         if(identifiant === 'result')
         {
           prefix_class = 'td_'+panelscount + '_';
-          count = 7+nbradio; //22 pour 15// 11 pour 4, 7+N pour N
+          count = 7+nbradio;
         }
         else
         if(identifiant === 'multistage')
         {
           prefix_class = 'td_m'+panelscount + '_';
-          count = 7+nbradio; //22 pour 15// 11 pour 4, 7+N pour N
+          count = 7+nbradio;
         }
         else
         if(identifiant === 'showo')
         {
           prefix_class = 'td_showo'+panelscount + '_';
-          count = 4 + 3 * tmcount;//5;
+          count = 4 + 3 * tmcount;
         }
         else
         if(identifiant === 'relay')
@@ -1929,7 +2086,6 @@
         {
           if(categorieIndex[panelIndex] == c)
           {
-            //if((identifiant === 'result') && (length > 0))
             if((identifiant === 'result') || (identifiant === 'multistage'))
             {
               if (typeof (phpnumbercls[phpcls[panelIndex][c]]) !== 'undefined')
@@ -1943,7 +2099,7 @@
           {
             if((identifiant === 'result') || (identifiant === 'relay') || (identifiant === 'multistage'))
             {
-              r += '<th class="inactiveOnglet">' + phpTitle[panelIndex][c] + '</th>\r\n'; // ' <span class="number_class">(' + phpnumbercls[phpcls[panelIndex][c]] + ')</span>'
+              r += '<th class="inactiveOnglet">' + phpTitle[panelIndex][c] + '</th>\r\n';
             }
             else
             if(identifiant === 'start')
@@ -1965,12 +2121,11 @@
 
           // lignes fixes
           var endPosition = phpfixedlines[panelIndex] + startline - 1;
-          if (length - startline + 1 < (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex])) // if (length < (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
+          if (length - startline + 1 < (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
           {
               endPosition = length;
           }
           var line = eval(dataArray[panelIndex][0]);
-          //count = line.length;
 
           if(identifiant === 'relay')
           {
@@ -1991,8 +2146,7 @@
               {
                 if((alternate == 1) && (tmcount == 6))
                   r += '<th class="entete_radio0_6alt" rowspan="2">&nbsp;</th>\r\n';
-		else
-                if(tmcount == 8)
+		            else if(tmcount == 8)
                   r += '<th class="entete_radio0_8" rowspan="2">&nbsp;</th>\r\n';
 		else
                   r += '<th class="entete_radio0" rowspan="2">&nbsp;</th>\r\n';
@@ -2119,8 +2273,8 @@
                   pos_recherche = 0;
                   while((iFound > 0) && (bFoundRadio == false))
                   {
-                    pos_recherche = pos_min_displayable + 1 + 7 * (iFound-1); // 6 * (iFound-1);
-                    if((line[pos_recherche] != '') || (line[pos_recherche+1] != '')) // || (line[pos_recherche+2] != '')
+                    pos_recherche = pos_min_displayable + 1 + 7 * (iFound-1);
+                    if((line[pos_recherche] != '') || (line[pos_recherche+1] != ''))
                     {
                       bFoundRadio = true;
                     }
@@ -2226,8 +2380,8 @@
                       pos_recherche = 0;
                       while((iFound > 0) && (bFoundRadio == false))
                       {
-                        pos_recherche = pos_min_displayable + 1 + 7 * (iFound-1); // + 6 * (iFound-1);
-                        if((line[pos_recherche] != '') || (line[pos_recherche+1] != '')) // || (line[pos_recherche+2] != '')
+                        pos_recherche = pos_min_displayable + 1 + 7 * (iFound-1);
+                        if((line[pos_recherche] != '') || (line[pos_recherche+1] != ''))
                         {
                           bFoundRadio = true;
                         }
@@ -2269,7 +2423,7 @@
                 r += '<tr class="' + cl + nf + '">\r\n';
                 if(identifiant === 'result')
                 {
-                  count1 = count; //count - 2;
+                  count1 = count;
                 }
                 else
                 if(identifiant === 'multistage')
@@ -2344,7 +2498,7 @@
             nf = '';
             if(identifiant === 'result')
             {
-              count = count;//count - 2;
+              count = count;
             }
             else
             if(identifiant === 'multistage')
@@ -2409,30 +2563,21 @@
           nf = '';
           if(identifiant === 'result')
           {
-            if((panelscount == 3) && (alternate == 1))
-            {
-              //count = count - 1;
-            }
-            else
-            {
-              //count = count - 2;
-            }
+            count = count;
           }
-          else
-          if(identifiant === 'multistage')
+          else if(identifiant === 'multistage')
           {
           	count = count + 2;
           }
-          else
-          if(identifiant === 'relay')
+          else if(identifiant === 'relay')
           {
             count = cells_count;
           }
-          else
-          if(identifiant === 'showo')
+          else if(identifiant === 'showo')
           {
             count = count;
           }
+
           while(position < (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
           {
             position++;
@@ -2726,13 +2871,11 @@
           {
             if(mytab[i][0] < (phpupdateduration[panel] * 60))
             {
-              //content += '<li class="blogrecent"><span class="blogtime">' + d.toLocaleTimeString() + '</span>' + mytab[i][1] + '</li>';
               content += '<li class="blogrecent"><span class="blogtime">' + mytab[i][2] + '</span>' + mytab[i][1] + '</li>';
             }
             else
             {
               content += '<li><span class="blogtime">' + mytab[i][2] + '</span>' + mytab[i][1] + '</li>';
-              //content += '<li><span class="blogtime">' + d.toLocaleTimeString() + '</span>' + mytab[i][1] + '</li>';
             }
           }
           document.getElementById('bloglist' + panel).innerHTML = content;
@@ -2815,7 +2958,6 @@
 
       imgElem.width = w;
       imgElem.height = h;
-      //alert(or_width + "x" + or_height + "**" + w + "x" + h + "//" + screenw + "x" + screenh + "!!" + ratio_w + "x" + ratio_h);
     }
 <?php
   }
@@ -2896,12 +3038,12 @@
 ?>
         <div style="float:right;height:<?php print $hauteur; ?>px;display:block;width:15%;text-align:right;">
 <?php
-            print displayTopPicture($titlerightpict, $hauteur); //'<img src="pictures/'.$titlerightpict.'" alt="" max-height="100%">';
+            print displayTopPicture($titlerightpict, $hauteur);
 ?>
         </div>
         <div style="float:left;height:<?php print $hauteur; ?>px;display:block;width:15%;text-align:left;">
 <?php
-            print displayTopPicture($titleleftpict, $hauteur); //'<img src="pictures/'.$titleleftpict.'" alt="" max-height="100%">';
+            print displayTopPicture($titleleftpict, $hauteur);
 ?>
         </div>
         <div style="float:left;height:<?php print $hauteur; ?>px;display:block;width:70%;text-align:center;">
@@ -2967,7 +3109,6 @@
                 {
                   $arr_img = getimagesize ('./slides/'.$panels[$i]->slides.'/'.$val);
                   echo '<img class="mySlides'.$i.'" src="./slides/'.$panels[$i]->slides.'/'.$val.'" style="" onload="computeSizeImg(this, '.$arr_img[0].', '.$arr_img[1].');">'."\n";
-                  //echo '<img class="mySlides'.$i.'" src="./slides/'.$panels[$i]->slides.'/'.$val.'" style="" />'."\n";
                 }
               }
               print '</div>'."\n";
