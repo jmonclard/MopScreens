@@ -509,6 +509,10 @@
       $text[119]['en']="Flag + Firstname NAME";
       $text[119]['sv']="Flag + Firstname NAME";
 
+      $text[120]['fr']="Score";
+      $text[120]['en']="Rogaining";
+      $text[120]['sv']="Rogaining";
+
 return $text[$sentence][$_SESSION['CurrentLanguage']];
 
     }

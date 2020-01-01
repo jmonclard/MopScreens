@@ -1,6 +1,6 @@
 <?php
   /*
-  Copyright 2014-2015 Metraware
+  Copyright 2019-2020 Metraware
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@
   $sql = 'UPDATE resultscreen SET panel1lastrefresh='.time().' WHERE rcid='.$rcid.' AND sid='.$sid;
   mysqli_query($link, $sql);
 
-
+  /*
   $arr_radio = array();
   $sql = 'SELECT * FROM mopclasscontrol WHERE cid ='.$cmpId.' AND id='.$cls.' AND leg='.$leg.' ORDER BY ord ASC';
   $res = mysqli_query($link, $sql);
@@ -61,23 +61,23 @@
     }
   }
   $numlegs = null;
-
+  */
       //No teams;
       if ($radio!='') {
         if ($radio == 'finish') {
-            $sql = "SELECT cmp.id AS id, cmp.timestamp, cmp.name AS name, cmp.country, org.name AS team, cmp.rt AS time, cmp.stat AS status ".
+            $sql = "SELECT cmp.id AS id, cmp.timestamp, cmp.name AS name, cmp.country, org.name AS team, cmp.rt AS time, cmp.stat AS status, cmp.rogpoints AS pts, cmp.rogpointsgross AS ptsgross ".
                  "FROM mopcompetitor cmp LEFT JOIN moporganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
                  "WHERE cmp.cls = '$cls' ".
                  "AND cmp.cid = '$cmpId' ".
                  "AND ((cmp.stat>0) OR ((cmp.stat=0) AND ((SELECT COUNT(*) FROM mopradio AS mr WHERE mr.cid='$cmpId' AND cmp.id=mr.id) > 0)))".
-                 "ORDER BY FIELD(cmp.stat, 1) DESC, cmp.stat ASC, cmp.rt ASC, cmp.id";
+                 "ORDER BY FIELD(cmp.stat, 1) DESC, cmp.stat ASC, cmp.rogpoints DESC, cmp.rt ASC, cmp.id";
             $rname = "Finish";
 
             $res = mysqli_query($link, $sql);
-            $results = newCalculateResult($res, $nb_radio);
+            $results = CalculateRogainingResult($res, $nb_radio);
 
         }
-
+        /*
         if($arr_radio != null)
         {
             $rid = implode(', ', $arr_radio);
@@ -87,13 +87,13 @@
                  "LEFT JOIN moporganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
                  "WHERE radio.ctrl IN(".$rid.") ".
                  "AND radio.id=cmp.id ".
-                 /*"AND cmp.stat<=1 ".*/
                  "AND cmp.cls='$cls' ".
                  "AND cmp.cid = '$cmpId' AND radio.cid = '$cmpId' ".
                  "ORDER BY radio.id ASC, radio.rt ASC ";
             $res = mysqli_query($link, $sql);
             $results = addRadioResult($res, $results);
-        }
+        } */
+        
         formatResultScreen($results, $limit);
       }
 

@@ -263,25 +263,36 @@
               print "<option value='1' selected>".MyGetText(101)."</option>\n"; // indiv
               print "<option value='2'>".MyGetText(102)."</option>\n"; // relay
               print "<option value='3'>".MyGetText(103)."</option>\n"; // multistages
-			  print "<option value='4'>".MyGetText(105)."</option>\n"; // showO
+              print "<option value='4'>".MyGetText(105)."</option>\n"; // showO
+              print "<option value='5'>".MyGetText(120)."</option>\n"; // Rogaining
               break;
           case 2:
               print "<option value='1'>".MyGetText(101)."</option>\n"; // indiv
               print "<option value='2' selected>".MyGetText(102)."</option>\n"; // relay
               print "<option value='3'>".MyGetText(103)."</option>\n"; // multistages
-			  print "<option value='4'>".MyGetText(105)."</option>\n"; // showO
+              print "<option value='4'>".MyGetText(105)."</option>\n"; // showO
+              print "<option value='5'>".MyGetText(120)."</option>\n"; // Rogaining
               break;
           case 3:
               print "<option value='1'>".MyGetText(101)."</option>\n"; // indiv
               print "<option value='2'>".MyGetText(102)."</option>\n"; // relay
               print "<option value='3' selected>".MyGetText(103)."</option>\n"; // multistages
-			  print "<option value='4'>".MyGetText(105)."</option>\n"; // showO
+              print "<option value='4'>".MyGetText(105)."</option>\n"; // showO
+              print "<option value='5'>".MyGetText(120)."</option>\n"; // Rogaining
               break;
           case 4:
               print "<option value='1'>".MyGetText(101)."</option>\n"; // indiv
               print "<option value='2'>".MyGetText(102)."</option>\n"; // relay
               print "<option value='3'>".MyGetText(103)."</option>\n"; // multistages
-			  print "<option value='4' selected>".MyGetText(105)."</option>\n"; // showO
+              print "<option value='4' selected>".MyGetText(105)."</option>\n"; // showO
+              print "<option value='5'>".MyGetText(120)."</option>\n"; // Rogaining
+              break;
+          case 5:
+              print "<option value='1'>".MyGetText(101)."</option>\n"; // indiv
+              print "<option value='2'>".MyGetText(102)."</option>\n"; // relay
+              print "<option value='3'>".MyGetText(103)."</option>\n"; // multistages
+              print "<option value='4'>".MyGetText(105)."</option>\n"; // showO
+              print "<option value='5' selected>".MyGetText(120)."</option>\n"; // Rogaining
               break;
       }
       print "</select></td>\n";

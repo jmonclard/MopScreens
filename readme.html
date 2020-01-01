@@ -11,11 +11,18 @@ To get a better idea of what it looks like, have a look to the (obsolete) englis
 It is provided "as is" as open source code and can be freely used, modified, enhenced and distributed. It is licensed in the same conditions as MeOS.<br/>
 <h2> What's new ?</h2>
 
+<h3> 2020-01-01 Add rogaining support </h3>
+[x] Add a rogaine result mode. Very similar to regular results display use, just select the rogaining mode.
+[x] New css file to be used (2019-12-31.css)
+CAUTION :
+1) To be usefull you NEED a special version of MeOS. See on this GitHub site, in the MeOS section (https://github.com/jmonclard/meos).
+2) Be sure to have run once mysql_update_20190620.php (see 2019-07-24 note) to have the correct database structure if you have not alresady do that during previous months. If it is a fresh install using setup.php you ALSO need to run mysql_update_20190620.php.  
+
 <h3> 2019-12-30 Relay bug fixed</h3>
 [x] Fix relay related bug introduced with flag support in july
 
 <h3> 2019-07-24 Multistages events support</h3>
-NOTE : Database tables structure have been altered. On existanig installation, please run mysql_update_20190620.php <b>once</b>.<br/>
+NOTE : Database tables structure have been altered. On existing installation, please run mysql_update_20190620.php <b>once</b>.<br/>
 [x] Support multistages events<br/>
 [x] Add competitor's flag display option (require special version of MeOS, see patch on this GitHub)<br/>
 [x] Allow name display order selection (NAME Surname or Surname NAME for instance)<br/>

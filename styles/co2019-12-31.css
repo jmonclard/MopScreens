@@ -231,23 +231,78 @@
 
             td.td_1_1, td.td_1_2, td.td_1_3, td.td_1_4, td.td_1_5, td.td_1_6, td.td_1_7, td.td_1_8, td.td_1_9, td.td_1_10, td.td_1_11, td.td_1_12, td.td_1_13, td.td_1_14, td.td_1_15, td.td_1_16, td.td_1_17,
 			td.td_2_1, td.td_2_2, td.td_2_3, td.td_2_4, td.td_2_5, td.td_2_6, td.td_2_7, td.td_2_8,
-			td.td_3_1, td.td_3_2, td.td_3_3, td.td_3_4, td.td_3_5, td.td_3_6, td.td_3_7, td.td_3_8, td.td_3_1alt, 
+			td.td_3_1, td.td_3_2, td.td_3_3, td.td_3_4, td.td_3_5, td.td_3_6, td.td_3_7, td.td_3_8, td.td_3_1alt,
 			td.td_4_1, td.td_4_2, td.td_4_3, td.td_4_4, td.td_4_5, td.td_4_6, td.td_4_7, td.td_4_8,
             td.tdi_1_1, td.tdi_1_2, td.tdi_1_3, td.tdi_1_4, td.tdi_1_5, td.tdi_1_6, td.tdi_1_7, td.tdi_1_8,
 			td.tdi_2_1, td.tdi_2_2, td.tdi_2_3, td.tdi_2_4, td.tdi_2_5, td.tdi_2_6, td.tdi_2_7, td.tdi_2_8,
 			td.tdi_3_1, td.tdi_3_2, td.tdi_3_3, td.tdi_3_4, td.tdi_3_5, td.tdi_3_6, td.tdi_3_7, td.tdi_3_8,
 			td.tdi_4_1, td.tdi_4_2, td.tdi_4_3, td.tdi_4_4, td.tdi_4_5, td.tdi_4_6, td.tdi_4_7, td.tdi_4_8,
-            td.tdtimediff, td.tdtimeresult, td.tdtimeresultshowo,
+            td.tdtimediff, td.tdtimeresult, td.tdtimeresultshowo, td.tdmtimediff, td.tdmtimeresult,
 			td.td_showo1_1, td.td_showo1_2,
 			td.td_showo2_1, td.td_showo2_2,
 			td.relay_tm_name, td.radio_tm_name,
 			td.td_showo2_4, td.td_showo2_7, td.td_showo2_10, td.td_showo2_13, td.td_showo2_16,
 			td.td_showo2_5, td.td_showo2_8, td.td_showo2_11, td.td_showo2_14, td.td_showo2_17,
-			td.td1relay1, td.td2relay1, td.td3relay1, td.td4relay1, td.td5relay1, td.td6relay1, td.td7relay1, td.td8relay1, td.td9relay1, td.td10relay1
+			td.td1relay1, td.td2relay1, td.td3relay1, td.td4relay1, td.td5relay1, td.td6relay1, td.td7relay1, td.td8relay1, td.td9relay1, td.td10relay1,
+			td.td_m3_0, td.td_m3_1, td.td_m3_2, td.td_m3_9, td.td_m3_10
             {
                 white-space:    nowrap;
                 overflow:   hidden;
             }
+
+            tbody.scrollContent tr.alternateRow td.td_m3_0, tbody.scrollContent tr.normalRow td.td_m3_0
+            {
+            	font-weight: bold;
+				width:	12px;
+				max-width:	12px;
+                min-width:	12px;
+                text-align: center;
+                font-size: 8px;
+                padding: 0px 1px 0px 1px;
+            }
+
+            tbody.scrollContent tr.alternateRow td.td_m3_1, tbody.scrollContent tr.normalRow td.td_m3_1
+            {
+            	width:	116px;
+				max-width:	116px;
+                min-width:	116px;
+                font-size: 8px;
+                padding: 0px 1px 0px 1px;
+            }
+
+            td.td_m3_2
+            {
+            	width:	66px;
+				max-width:	66px;
+                min-width:	66px;
+                font-size: 8px;
+            }
+
+            tbody.scrollContent tr.alternateRow td.td_m3_3, tbody.scrollContent tr.alternateRow td.td_m3_4, tbody.scrollContent tr.alternateRow td.td_m3_5,
+            tbody.scrollContent tr.alternateRow td.td_m3_6, tbody.scrollContent tr.alternateRow td.td_m3_7, tbody.scrollContent tr.alternateRow td.td_m3_8,
+            tbody.scrollContent tr.alternateRow td.td_m3_9,
+            tbody.scrollContent tr.normalRow td.td_m3_3, tbody.scrollContent tr.normalRow td.td_m3_4, tbody.scrollContent tr.normalRow td.td_m3_5,
+            tbody.scrollContent tr.normalRow td.td_m3_6, tbody.scrollContent tr.normalRow td.td_m3_7, tbody.scrollContent tr.normalRow td.td_m3_8,
+            tbody.scrollContent tr.normalRow td.td_m3_9
+			{
+				width:	30px;
+				max-width:	30px;
+                min-width:	30px;
+                font-size: 8px;
+                text-align: right;
+                padding: 0px 1px 0px 1px;
+            }
+
+            tbody.scrollContent tr.alternateRow td.td_m3_10, tbody.scrollContent tr.normalRow td.td_m3_10
+            {
+				width:	12px;
+				max-width:	12px;
+                min-width:	12px;
+                text-align: center;
+                font-size: 8px;
+                padding: 0px 1px 0px 1px;
+            }
+
 
             td.td_1_0
 			{
@@ -391,7 +446,7 @@
                 max-width: 64px;
                 min-width: 64px;
             }
-			
+
 
             td.tdi_1_1, td.tdi_1_3
             {
@@ -468,7 +523,7 @@
             {
                 font-size: 8px;
             }
-			
+
             tbody.scrollContent tr.normalRow td.tdi_1_2, tbody.scrollContent tr.alternateRow td.tdi_1_2,
 			tbody.scrollContent tr.normalRow td.tdi_2_2, tbody.scrollContent tr.alternateRow td.tdi_2_2,
 			tbody.scrollContent tr.normalRow td.tdi_3_2, tbody.scrollContent tr.alternateRow td.tdi_3_2,
@@ -476,13 +531,18 @@
             {
             border-right: 3px solid #000000;
             }
-			
+
 			td.tdtimeresult
             {
                 font-size: 12px;
             }
-			
-			
+
+            td.tdmtimeresult
+            {
+                font-size: 8px;
+            }
+
+
 
             td.td_1_0, td.td_1_1
             {
@@ -508,10 +568,18 @@
 				max-width:	40px;
                 min-width:	40px;
 			}
-			
-			
 
-			td.td_1_3, td.td_1_4, td.td_1_5, td.td_1_6, td.td_1_7, td.td_1_8, td.td_1_9, td.td_1_10, td.td_1_11, td.td_1_12, td.td_1_13, td.td_1_14, td.td_1_15, td.td_1_16, td.td_1_17 
+			td.tdmtimeresult
+			{
+				text-align:	right;
+				width:	30px;
+				max-width:	30px;
+                min-width:	30px;
+			}
+
+
+
+			td.td_1_3, td.td_1_4, td.td_1_5, td.td_1_6, td.td_1_7, td.td_1_8, td.td_1_9, td.td_1_10, td.td_1_11, td.td_1_12, td.td_1_13, td.td_1_14, td.td_1_15, td.td_1_16, td.td_1_17
 			{
 				width:	28px;
 				max-width:	28px;
@@ -542,6 +610,16 @@
                 min-width:	28px;
                 font-size: 8px;
                 text-align: right;
+            }
+
+            tbody.scrollContent tr.alternateRow td.tdmtimediff, tbody.scrollContent tr.normalRow td.tdmtimediff
+			{
+				width:	26px;
+				max-width:	26px;
+                min-width:	26px;
+                font-size: 8px;
+                text-align: right;
+                padding: 0px 1px 0px 1px;
             }
 
             td.tdtimediff
@@ -919,8 +997,8 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 				font-size: 8px;
             }
 
-			
-	td.finish1, td.finish2, td.finish3, td.finish4, 
+
+	td.finish1, td.finish2, td.finish3, td.finish4,
 	td.finish5, td.finish6, td.finish7, td.finish8,
 	td.finish9, td.finish10
             {
@@ -1022,7 +1100,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
                 /*padding: 4px 3px;*/
                 text-align: center
             }
-			
+
 			th.entete_showo
 			{
                 background: #C09060;
@@ -1119,31 +1197,31 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
             th.entete_relayvide
                         {
             }
-			
+
 			/* BLOG */
       span.blogtime
       {
         font-size: 9px;
         margin-right: 8px;
       }
-      
+
       ul.blogview
       {
         list-style: none;
       }
-      
+
       ul.blogview li
       {
         padding-bottom: 6px;
         font-size: 16px;
       }
-      
+
       li.blogrecent
       {
         color: #333399;
       }
-	  
-	  
+
+
 	  td.td_showo1_0
 	  {
 			min-width: 20px;
@@ -1163,8 +1241,8 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 			max-width: 170px;
 			width: 170px;
 	  }
-	  
-	
+
+
 	td.td_showo1_3, td.td_showo1_6, td.td_showo1_9, td.td_showo1_12, td.td_showo1_15
 	{
 		font-size: 10px;
@@ -1189,7 +1267,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		width: 60px;
 		text-align: right;
 	}
-	
+
 	td.tdtimeresult1showo
 	{
 		text-align:	right;
@@ -1199,7 +1277,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		font-size: 12px;
 		font-weight: bold;
 	}
-	
+
 	td.td_showo2_0
 	  {
 			min-width: 20px;
@@ -1221,8 +1299,8 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 			max-width: 80px;
 			width: 80px;
 	  }
-	  
-	
+
+
 	td.td_showo2_3, td.td_showo2_6, td.td_showo2_9, td.td_showo2_12, td.td_showo2_15
 	{
 		font-size: 10px;
@@ -1247,7 +1325,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		width: 49px;
 		text-align: right;
 	}
-	
+
 	td.tdtimeresult2showo
 	{
 		text-align:	right;
@@ -1257,13 +1335,13 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		font-size: 11px;
 		font-weight: bold;
 	}
-	
-	
+
+
 	.mySlides0, .mySlides1, .mySlides2, .mySlides3
 	{
 		display:none;
 	}
-	
+
 	/* result summary */
 	td.tdsum_1_1, td.tdsum_1_2, td.tdsum_1_3, td.tdsum_1_4, td.tdsum_1_5, td.tdsum_1_6, td.tdsum_1_7, td.tdsum_1_8,
 	td.tdsum_2_1, td.tdsum_2_2, td.tdsum_2_3, td.tdsum_2_4, td.tdsum_2_5, td.tdsum_2_6, td.tdsum_2_7, td.tdsum_2_8,
@@ -1364,7 +1442,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		min-width:	53px;
 		font-size: 8px;
 	}
-	
+
 	td.tdsumtimeresult
 	{
 		text-align:	right;
@@ -1373,7 +1451,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		min-width:	32px;
 		font-size: 10px;
 	}
-	
+
 	td.tdsumtimediff
 	{
 		width:	30px;
@@ -1389,7 +1467,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		white-space:    nowrap;
 		overflow:   hidden;
 	}
-	
+
 	td.tdsum8relay0
 	{
 		width:	8px;
@@ -1428,7 +1506,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		font-size: 8px;
 		text-align: right;
 	}
-	
+
 	td.tdsum8relay8, td.tdsum8relay15, td.tdsum8relay22,
 	td.tdsum8relay29, td.tdsum8relay36, td.tdsum8relay43,
 	td.tdsum8relay50, td.tdsum8relay57, td.tdsum8relay64,
@@ -1440,7 +1518,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		font-size: 10px;
 		text-align: right;
 	}
-	
+
 	th.entete_sumrelay
 	{
 		background: #C09060;
@@ -1452,7 +1530,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		text-align: center;
 		font-size: 8px;
 	}
-	
+
 	/* RADIO */
 	table.radioview
 	{
@@ -1465,7 +1543,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 	{
 		color: #333399;
 	}
-		
+
 	td.radiotime_1
 	{
 		width:	30px;
@@ -1494,7 +1572,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		white-space:    nowrap;
 		overflow:   hidden;
 	}
-	
+
 	td.radiotime_2
 	{
 		width:	30px;
@@ -1523,7 +1601,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		white-space:    nowrap;
 		overflow:   hidden;
 	}
-	
+
 	td.radiotime_3
 	{
 		width:	30px;
@@ -1552,7 +1630,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		white-space:    nowrap;
 		overflow:   hidden;
 	}
-	
+
 	td.radiotime_4
 	{
 		width:	24px;
@@ -1581,7 +1659,7 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		white-space:    nowrap;
 		overflow:   hidden;
 	}
-	
+
 	table.radioview tr.normalRow td
 	{
 		background: #F0F0F0;
@@ -1600,14 +1678,14 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		border-top: 1px solid #D0D0D0;
 		padding: 0px 3px 0px 4px;/*2px 3px 3px 4px*/
 	}
-	
+
 	table.radioview
 	{
 		border: 1px solid #C09060;
 		width: 100%;
 		min-width: 100%;
 	}
-	
+
 	th.entete_listradio
 	{
 		background: #C09060;
@@ -1621,4 +1699,262 @@ td.td10relay8, td.td10relay15, td.td10relay22, td.td10relay29, td.td10relay36, t
 		overflow:   hidden;
 	}
 
+	img.countryflag, span.countryflag
+	{
+		height: 8px;
+		width: 13px;
+		padding-right: 1px;
+		padding-left: 0px;
+		display: inline-block;
+	}
+
+/*---------- Rogaining ----------------*/
+
+/*-- 1 panel --*/
+	td.td1rog0 /* rank */
+	{
+		font-size: 10px;
+		min-width: 15px;
+		max-width: 15px;
+		width: 15px;
+		text-align: right;
+	}
+
+	td.td1rog1 /* name */
+	{
+		font-size: 10px;
+		min-width: 150px;
+		max-width: 150px;
+		width: 150px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td1rog2 /* club */
+	{
+		font-size: 10px;
+		min-width: 150px;
+		max-width: 150px;
+		width: 150px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td1rog3 /* time */
+	{
+		font-size: 10px;
+		min-width: 50px;
+		max-width: 50px;
+		width: 50px;
+		text-align: right;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td1rog4 /* points (gross) */
+	{
+		font-size: 8px;
+		min-width: 15px;
+		max-width: 15px;
+		width: 15px;
+		text-align: right;
+	}
+
+	td.td1rog5 /* points */
+	{
+		font-size: 10px;
+		min-width: 15px;
+		max-width: 15px;
+		width: 15px;
+		text-align: right;
+		font-weight: bold;
+	}
+
+/*-- 2 panels --*/
+	td.td2rog0 /* rank */
+	{
+		font-size: 10px;
+		min-width: 15px;
+		max-width: 15px;
+		width: 15px;
+		text-align: right;
+	}
+
+	td.td2rog1 /* name */
+	{
+		font-size: 10px;
+		min-width: 150px;
+		max-width: 150px;
+		width: 150px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td2rog2 /* club */
+	{
+		font-size: 10px;
+		min-width: 150px;
+		max-width: 150px;
+		width: 150px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td2rog3 /* time */
+	{
+		font-size: 10px;
+		min-width: 50px;
+		max-width: 50px;
+		width: 50px;
+		text-align: right;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td2rog4 /* points (gross) */
+	{
+		font-size: 8px;
+		min-width: 15px;
+		max-width: 15px;
+		width: 15px;
+		text-align: right;
+	}
+
+	td.td2rog5 /* points */
+	{
+		font-size: 10px;
+		min-width: 15px;
+		max-width: 15px;
+		width: 15px;
+		text-align: right;
+		font-weight: bold;
+	}
+
+/*-- 3 panels --*/
+	td.td3rog0 /* rank */
+	{
+		font-size: 10px;
+		min-width: 15px;
+		max-width: 15px;
+		width: 15px;
+		text-align: right;
+	}
+
+	td.td3rog1 /* name */
+	{
+		font-size: 10px;
+		min-width: 120px;
+		max-width: 120px;
+		width: 120px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td3rog2 /* club */
+	{
+		font-size: 10px;
+		min-width: 80px;
+		max-width: 80px;
+		width: 80px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td3rog3 /* time */
+	{
+		font-size: 10px;
+		min-width: 35px;
+		max-width: 35px;
+		width: 35px;
+		text-align: right;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td3rog4 /* points (gross) */
+	{
+		font-size: 8px;
+		min-width: 11px;
+		max-width: 11px;
+		width: 11px;
+		text-align: right;
+	}
+
+	td.td3rog5 /* points */
+	{
+		font-size: 10px;
+		min-width: 15px;
+		max-width: 15px;
+		width: 15px;
+		text-align: right;
+		font-weight: bold;
+	}
+
+	/*-- 4 panels --*/
+	td.td4rog0 /* rank */
+	{
+		font-size: 10px;
+		min-width: 15px;
+		max-width: 15px;
+		width: 15px;
+		text-align: right;
+	}
+
+	td.td4rog1 /* name */
+	{
+		font-size: 10px;
+		min-width: 120px;
+		max-width: 120px;
+		width: 120px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td4rog2 /* club */
+	{
+		font-size: 10px;
+		min-width: 80px;
+		max-width: 80px;
+		width: 80px;
+		text-align: left;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td4rog3 /* time */
+	{
+		font-size: 10px;
+		min-width: 35px;
+		max-width: 35px;
+		width: 35px;
+		text-align: right;
+		white-space:    nowrap;
+		overflow:   hidden;
+	}
+
+	td.td4rog4 /* points (gross) */
+	{
+		font-size: 8px;
+		min-width: 11px;
+		max-width: 11px;
+		width: 11px;
+		text-align: right;
+	}
+
+	td.td4rog5 /* points */
+	{
+		font-size: 10px;
+		min-width: 15px;
+		max-width: 15px;
+		width: 15px;
+		text-align: right;
+		font-weight: bold;
+	}
 

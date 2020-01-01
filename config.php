@@ -34,6 +34,7 @@ define("CST_MODE_INDIVIDUAL",1);
 define("CST_MODE_RELAY", 2);
 define("CST_MODE_MULTISTAGE",3);
 define("CST_MODE_SHOWO",4);
+define("CST_MODE_ROGAINING",5);
 
 define("CST_OPTION_NORMAL",0);
 define("CST_OPTION_ALTERNATE", 1);
