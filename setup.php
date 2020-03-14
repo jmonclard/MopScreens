@@ -1,7 +1,7 @@
 <?php
   /*
   Copyright 2013 Melin Software HB
-  Copyright 2014-2016 Metraware
+  Modified 2014-2020 jmonclard
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ function setup() {
    			" date DATE NOT NULL DEFAULT '2013-11-04',".
    			" organizer VARCHAR(64) NOT NULL DEFAULT '',".
    			" homepage VARCHAR(128) NOT NULL DEFAULT ''".
+        " visible TINYINT(1) NOT NULL DEFAULT '1'".
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
 
@@ -67,6 +68,12 @@ function setup() {
          ", tstat TINYINT NOT NULL DEFAULT 0,". // Total status
          " it INT NOT NULL DEFAULT 0,". // Input time
          " timestamp INT NOT NULL DEFAULT 0". // Last refresh
+         " crs INT(11) NOT NULL DEFAULT '0'".
+         " rogpoints INT(11) NOT NULL DEFAULT '0' AFTER crs".
+         " rogpointsgross INT(11) NOT NULL DEFAULT '0'".
+         " rogreduction INT(11) NOT NULL DEFAULT '0'".
+         " rogovertime INT(11) NOT NULL DEFAULT '0'".
+         " country VARCHAR(3) NOT NULL DEFAULT 'FRA'".
    			") ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
 
@@ -269,6 +276,22 @@ function setup() {
       ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
   query($sql);
 
+  $sql = "CREATE TABLE IF NOT EXISTS mopcourse (
+      `cid int(11) NOT NULL,
+      `id int(11) NOT NULL,
+      `name varchar(64) NOT NULL,
+      `ord int(11) NOT NULL DEFAULT '0'
+      ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
+  query($sql);
+  
+  $sql = "CREATE TABLE resultcourse (
+      `rcid int(11) NOT NULL,
+      `cid int(11) NOT NULL DEFAULT '0',
+      `id int(11) NOT NULL,
+      `sid int(11) NOT NULL,
+      `panel int(2) NOT NULL DEFAULT '1'
+      ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci";
+  query($sql);  
 }
 
 ?>
