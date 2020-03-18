@@ -1,0 +1,900 @@
+\documentclass[a4paper]{ffco-rapport}
+\setcounter{tocdepth}{1}
+
+\usepackage{minted}
+\usepackage{listings}
+
+\begin{document}
+	\langue{english}
+
+	\titre{Mopscreens}
+	\soustitre{Configuration of a server for results display}
+	\auteur{J. Monclard}
+	\datedoc{March 2020}
+	\couverture
+	
+	%=============================================================
+\chapter{Architecture}
+	
+\begin{figure}[!ht]
+	\centering
+		\includegraphics[height=5cm]{gap.jpg}
+	\label{fig:g}
+\end{figure}
+
+\vspace{5mm}
+
+This document presents a procedure to install a system to handle events results display on screens using MopScreens.
+For the use of such a system, see MopScreens user manual.
+
+The hereafter procedure corresponds to the hardware and software used in Provence (south of France). Many other configurations are possible and as efficient as this one.
+
+\includegraphics[width=15cm]{SystemeAffichage.pdf}
+
+The full system is made of :
+\begin{itemize}
+	\item a server and a WiFi router dedicated to results display and located near the computer running MeOS. The WiFi router is also used as an Ethernet switch to connect all the PC used to handle the event.
+	\item a set of screens driven by Android TV dongles communicating with the display server through WiFi
+	\item optionally one or more WiFi routers to broadcast results to public
+	\item optionally a radio system (please refer to dedicated documentation)
+	\item optionally a way to upload results in real time to Internet using the WAN port of the WiFi router used for results display
+\end{itemize}
+
+\chapter{Hardware}
+	A possible list of equipment is :
+
+	\begin{itemize}
+		\item a mini-PC (an Intel NUC, reference NUC5CPYH, for instance)
+		\item a 4GB DDR3L-1600 RAM module (Crucial CT51264BF160BJ for instance)
+		\item a SATA 2.5" SSD (SanDisk SDSSDA-120G for instance)
+		\item a WiFi router (tp-link TL-WR841N for instance)
+		\item a minimum 2GB USB flash drive
+		\item an USB keyboard, an USB mouse, and a screen with HDMI input for software installation and configuration
+		\item a cross-headed screwdriver
+	\end{itemize}
+
+	During use you will also need :
+	\begin{itemize}
+		\item TV or PC screens with HDMI inputs
+		\item Android TV dongles with WiFi (MK809III for instance)
+		\item main power extension leads
+		\item RJ45 cables
+	\end{itemize}
+	~
+	
+	It may also be interesting to have a second WiFi router to broadcast results to the public
+
+	A support as to be provided for the screens (metal fence grid, scaffold, wooden support, etc.) in order to allow numerous persons to look simultaneously to results.
+
+	It is also necessary to have an Internet access during software installation and sever configuration (either wireless or by cable) and WiFi Android TV dongles. No Internet access is required during utilisation.
+
+\chapter{Software}
+	All required programs are free software. They are :
+	
+	\begin{itemize}
+		\item \emph{UNetbootin} to create a bootable USB flash drive to install Linux on the server,
+		\item \emph{Lubuntu} : a Linux compact version,
+		\item \emph{Apache} : a web server,
+		\item \emph{MySQL} : a relational database management system,
+		\item \emph{phpMyAdmin} a database administration tool,
+		\item \emph{MopScreens} : a set of php files dedicated to the results screens management.
+	\end{itemize}
+
+  The first step is to download UNetbootin and Lubuntu in order do create a \emph{bootable} USB flash drive.
+	
+	\section{Downloading UNetbootin}
+
+		This is an application that will be used to build a bootable USB flash drive.
+
+		Download the application at \verb|https://unetbootin.github.io|
+
+		Select "Download (Windows)"
+
+	\section{Downloading Linux}
+	  Go to Lubuntu web site : \verb|http://lubuntu.me/downloads|
+		
+		Download the latest LTS (long term support) version. For instance, on 2020-03-17 download the 18.04.4 version. Select the 32 bits desktop version.
+
+		Downloading the 900+ MB .iso file may require some minutes !
+
+	\section{Creating the installation USB flash drive}
+\begin{figure}[!ht]
+	\centering
+		\includegraphics{CreationClefUSBLinux.jpg}
+	\label{fig:a}
+\end{figure}
+Run UNetbootin, select "Disk image". Click on "..." and select the previously downloaded .iso file.
+
+In the drive area select the USB flash drive disk unit. Click OK.
+
+The operation may take some minutes to complete.
+
+\chapter{Hardware installation}
+
+\begin{enumerate}
+	\item Take the NUC out of its box
+	\item Remove the 4 screw located in the rubber feet of the NUC using a cross-headed screwdriver (see NUC documentation for details)
+	\item Install the DDR3 RAM module (see NUC documentation for details)
+	\item Install the SSD (see NUC documentation for details, secure the SSD with the two smallest screws provided in a small plastic bag with the NUC.)
+	\item Close the NUC
+	\item Clip on the power supply the right adapter according to your country
+	\item Plu on the NUC :
+	\begin{itemize}
+		\item an HDMI screen
+		\item a keyboard
+		\item a mouse
+		\item the USB flash drive
+		\item the power supply cable
+	\end{itemize}
+\end{enumerate}
+
+During the first start, in case of issue, press the "power on" button located on the top of the NUC until the NUC stops, then press shortly on this same button to restart.
+
+The system shall boot from the USB flash drive and an installation menu shall appear. If this is not the case, enter the bios pressing F2 in order to allow booting from external flash storage.
+
+\chapter{Installing software}
+
+\section{Installation of Linux on the NUC}
+Connect :
+\begin{itemize}
+	\item an HDMI screen
+	\item a keyboard
+	\item a mouse
+	\item an Ethernet cable in order to access Internet
+\end{itemize}
+
+After the boot from the USB flash drive, a menu offers different options.
+
+\subsection{Compatibility Test}
+
+	It is recommended in a first time to perform an utilisation test of Linux without installing it in order to check hardware compatibility. Thus, one will select \emph{Try Lubuntu without installing}.
+	
+	The Linux operating system should start and display the desktop.
+
+\subsection{Lubuntu installation}
+	Double click on the "Install Lubuntu" icon or, after having restarted the NUC with the bootable USB flash drive present, select in the menu \emph{Install Lubuntu}.
+
+	Select your preferred language in the language menu.
+
+	Connect the NUC to a network if available. That could be using WiFi or cable. It will allow updating the Linux operating system during installation. To do that, the checkboxes \emph{"Download updates during installation"} and \emph{"Install third party software"} have to be checked.
+
+	At the question \emph{Should the changes be applied ?} click on "continue". Then select your localisation and your keyboard layout (the default should be just fine).
+
+	Check the box \emph{Erase the disk and install Lubuntu} and to not ask for data cyphering.
+
+	It is then necessary to give a name to the computer and to create a first user (use preferably lower case), define its password and confirm it. Write down all these values for future reference ! Notably this first user has privileges that allow him to have full control over the computer (administrator role).
+
+	One will then check \emph{Open the session at start-up} in order for the system to start without keyboard and a user to log-in.
+
+	It is then necessary to wait some minutes for the installation to complete with a success message and asking for a reboot. Click on \emph{Restart now}.
+
+	The NUC should now start normally and display the Linux desktop. Quit Linux selecting shutdown. You can now remove the USB flash drive.
+
+
+\section{Installing Apache and MySql}
+	Now that Linux is up and working, we will configure it in a web server.
+
+	In order to do that we must install and configure the Apache server, the relational database management system MySQL and the PHP command interpreter.
+
+	\subsection{Downloading Apache}
+		Open a command window (click in the bottom left cornet of the desktop and select \emph{System tools} then \emph{LQ terminal}).
+
+		Check that the operating system is really up too date with the command \verb|sudo apt-get update|
+
+		The sudo command asks for the administrator password during its first use during the session, or if it is not used for some time.
+
+		Then enter the command \verb|sudo apt-get install apache2| Downloading about 7 MB is proposed. To the question "Do you want to continue ?" answer Y.
+		
+	\subsection{Downloading MySql}
+
+		Enter the command \verb|sudo apt-get install mysql-server php-mysql|
+		
+		Downloading about 170 MB is proposed.  To the question "Do you want to continue ?" answer Y.
+		
+	\subsection{Creating MySQL accounts}
+		\label{lbl:utilmysql}
+		Since version 5.7 of MySQL, phpMyAdmin can't any more use the \emph{root} account to connect to PhpMyAdmin.
+		
+		In oder to be able to adminstrate the databases with PhpMyAdmin, and to allow \emph{MopScreens} to access the tables, it is necessary to create users and grant some privileges.
+
+		Enter the following command in order to switch to "super user" command mode in MySQL : \verb|sudo mysql --user=root mysql|
+		
+		Then type-in following commands in the MySQL command interpreter (\emph{phpmyadmin\_password} and \emph{mopscreens\_password} have to be replaced by the desired passwords).
+
+\makeatletter
+\global\let\tikz@ensure@dollar@catcode=\relax
+\makeatother
+	
+			\begin{minted}[fontsize=\footnotesize,showspaces,spacecolor=lightgray]{sql}
+CREATE USER 'phpmyadmin'@'localhost' IDENTIFIED BY 'phpmyadmin_password';
+GRANT ALL PRIVILEGES ON *.* TO 'phpmyadmin'@'localhost' WITH GRANT OPTION;
+CREATE USER 'mopscreens'@'localhost' IDENTIFIED BY 'mopscreens_password';
+GRANT ALL PRIVILEGES ON *.* TO 'mopscreens'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+quit;
+			\end{minted}
+
+	\subsection{Creating a MySQL account for MeOS}
+	
+		If the use of the NUC as a MeOS server is wanted, for isntance if the user don't want to install a MySQL server on another PC on the network, it is necessary to create a MySQL account for MeOS.
+		One will proceed as previously, entering now the following commands. Note that the "up" key can be used to recall previous commands. Here again \emph{meos\_password} has to be replaced by the desired password.
+	
+			\begin{minted}[fontsize=\footnotesize,showspaces,spacecolor=lightgray]{sql}
+CREATE USER 'meos'@'localhost' IDENTIFIED BY 'meos_password';
+GRANT ALL PRIVILEGES ON *.* TO 'meos'@'localhost';
+REVOKE SHUTDOWN ON *.* FROM 'meos'@'localhost';
+REVOKE GRANT OPTION ON *.* FROM 'meos'@'localhost';
+REVOKE SUPER ON *.* FROM 'meos'@'localhost';
+REVOKE CREATE USER ON *.* FROM 'meos'@'localhost';
+
+CREATE USER 'meos'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'meos'@'%';
+REVOKE SHUTDOWN ON *.* FROM 'meos'@'%';
+REVOKE GRANT OPTION ON *.* FROM 'meos'@'%';
+REVOKE SUPER ON *.* FROM 'meos'@'%';
+REVOKE CREATE USER ON *.* FROM 'meos'@'%';
+
+FLUSH PRIVILEGES;
+quit;
+			\end{minted}
+	
+		It is then mandatory to edit the \emph{my.cnf} file :
+	
+		\verb|sudo nano /etc/mysql/my.cnf|
+		
+		Type-in the following lines :
+
+			\begin{minted}[fontsize=\footnotesize]{sql}
+[mysqld]
+bind-address=*
+			\end{minted}
+		
+		Finally, the MySQL service as to be restarted :
+		
+		\verb|sudo service mysql restart|
+
+	\subsection{Downloading the PHP interpreter}
+
+		Enter the command \verb|sudo apt-get install php libapache2-mod-php|
+
+		Downloading about 10.7 MB is proposed. To the question "Do you want to continue ?" answer Y.
+		
+	\subsection{Test the server}
+		Run a browser (click in the bottom left corner of the desktop and select \emph{Internet} then \emph{Firefox browser}).
+
+		It the navigation bar enter \verb|127.0.0.1|
+		
+		The default Apache page for Ubuntu should be displayed.
+
+	\subsection{If difficulties arose}
+	
+	One may find mode detailed explanation here : \newline
+	\scriptsize{\verb|https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-16-04|}
+	\normalsize
+
+\section{Defining the IP address}
+	Using the results display system is much more easier if the srver has a fixed IP address.
+
+	To define the IP address, click on the network icon located at the bottom right corner of the desktop and select \emph{Interface setup}
+
+	Select the wired network if present, or select "Add a connexion" then "Ethernet" in the list. Nevertheless, if the wired interface is not in the list, the easiest way is probably to connect the WiFi router to the NUC with a RJ45 cable using any of the LAN port of the router and reselect \emph{Interface setup}.
+
+	Select \emph{Wired interface} then \emph{Edit}.
+	
+	In the \emph{IP V4 parameters} tab, select "Fixed" the enter the address of the server (\texttt{192.168.0.10} for instance) and the subnet mask (\texttt{255.255.255.0}).
+	It is not mandatory to enter a gateway address nor a DNS, but for the latest one may chose Google DNS (\texttt{8.8.8.8}).
+
+	After validation, deactivate the network and activate it again with a mouse right click in the bottom right corner of the desktop on "Interface information".
+	
+	\subsection{Special case of a "virtual box"}
+		In the case of a Lubuntu 18.04 installed in a "virtual box" under Windows, the IP address can't be defined from the previously described menu and must be fixed in the following way :
+		
+		\begin{enumerate}
+			\item Enter the command \verb|sudo nano /etc/netplan/01-netcfg.yaml|
+			\item Type-in the following lines :
+				\begin{minted}[tabsize=2]{c}
+network:
+	version:2
+	renderer:networkd
+	ethernets:
+		enp0s3:
+			addresses:[192.168.0.10/24]
+			gateway4:192.168.0.254
+			nameservers:
+				addresses:[8.8.8.8]
+			dhcp4:no
+				\end{minted}
+			\item Enter the command \verb|sudo netplan apply|
+			\item One can check the IP address of the computer with the command \verb|ifconfig|
+		\end{enumerate}
+	
+	\subsection{Optional installation}
+		If the user want to take control of the NUC from another computer on same network, it is useful to install FTP and SSH servers.
+	
+	\subsubsection{FTP server}
+		The FTP server will be used to transfer files between a PC and the NUC. If you want to do the transfer from Windows, a ftp client must be installed on the Windows computer. Filezilla is a good option.
+
+		As configured the FTP server will allow transferring files from the PC to the user's "home" directory on the NUC and from any directory of the NUC to the PC.
+		It is not possible to directly write to the \verb|/var/www/html| directory from the PC since a remote login as root is not allowed.
+		
+		The FTP server is installed with the following command :
+		
+		\verb|sudo apt-get install vsftpd|
+		
+		Then it is necessary to grand write access editing the \verb|vsftpd.conf| file :
+		
+		\verb|sudo nano /etc/vsftpd.conf|
+		
+		
+		\begin{itemize}
+			\item Comment out the line \verb|write_enable=YES| removing the \# sign at the beginning of the line.
+			\item Comment out the line \verb|local_umask=022| removing the \# sign at the beginning of the line.
+			\item Save and quit the editor (Ctrl-X, Y, Enter).
+			\item Restart the service with : \verb|sudo service vsftpd restart|
+		\end{itemize}
+		
+		
+		
+	\subsubsection{SSH server}
+		The SSH server is installed with the following command :
+		
+		\verb|sudo apt-get install openssh-server|
+
+		Downloading about 5.3 MB is proposed. To the question "Do you want to continue ?" answer Y.
+
+\section{Test the server}
+	Run a browser (click in the bottom left corner of the desktop and select \emph{Internet} then \emph{Firefox browser}).
+
+	It the navigation bar enter the IP address of the server, \texttt{192.168.0.10} for instance.
+	
+	The default Apache page for Ubuntu should be displayed.
+		
+\section{Configuring the database management system MySql}
+	A new database has to be created for managing the results screens. This will be done thanks to PhpMyAdmin.
+
+	\subsection{Downloading PhpMyAdmin}
+		Enter in a command window \verb|sudo apt-get install phpmyadmin|
+		
+		Downloading about 54 MB is proposed. To the question "Do you want to continue ?" answer Y.
+
+		Indicate then that the server to configure is \emph{apache2}.
+		{\bfseries WARNING : } it is mandatory to press on the space bar.
+		The "*" symbol {\bfseries must} be present in front of \emph{apache2}.
+		The red filled box isn't enough !
+		
+		Answer yes to the question "\emph{Do you want to configure the database of phpmyadmin with dbconfig-common ?}". Enter the password for administrating the MySQL database and confirm typing it again.
+
+	\subsection{Configure phpMyAdmin}
+			use \verb|sudo nano /etc/dbconfig-common/phpmyadmin.conf| to update the values of username (normally \emph{phpmyadmin}) and password :
+
+
+			\begin{minted}{sql}
+# dbc_dbuser: database user
+#       the name of the user who we will use to connect to the database.
+dbc_dbuser='phpmyadmin'
+
+# dbc_dbpass: database user password
+#       the password to use with the above username when connecting
+#       to a database, if one is required
+dbc_dbpass='phpmyadmin_password'
+			\end{minted}
+	
+		\subsection{Creating the database for managing the results screens}
+			Run a browser (click at the bottom left corner of the desktop and select \emph{Internet} then \emph{Firefox browser}).
+
+			It the navigation bar enter the IP address of the server followed by phpmyadmin, for instance :  \verb|192.168.0.10/phpmyadmin|
+
+			The administration page of phpmyadmin should be displayed.
+			
+			In the login field enter \verb|phpmyadmin| and type-in the password that has been defined for \emph{PhpMyAdmin} in \ref{lbl:utilmysql}.
+			
+			In the \og{}Appearance settings\fg{} area, change the language to your preferred one if not already done.
+			
+			Choose in the left part of the window \emph{New database}
+
+			In the right part, enter as database name \verb|mopscreens| and \emph{utf8mb4\_general\_ci} as collation. Click on "Create".
+
+\section{MopScreens installation}
+
+	\subsection{Downloading MopScreens}
+			Run a browser (click at the bottom left corner of the desktop and select \emph{Internet} then \emph{Firefox browser}).
+
+			It the navigation bar enter \verb|https://github.com/jmonclard/MopScreens|
+	
+			Download the whole set of files clicking on the green button \emph{Clone or download} then choosing \emph{Download zip} in the bottom right corner of the window that opened. Then click \emph{Save file}. Write down the name of the directory where the zip file is stored (normally \emph{Downloads}).
+		
+	\subsection{Installing MopScreens}
+		For next operation it will be necessary to open an explorer in administrator mode.
+		To do that enter in a command window : \verb|sudo pcmanfm-qt &|
+
+		Go to the directory in which the downloaded zip file has been saved with a command such as : \verb|cd /home/<username>/downloads| where \verb|<username>| has to be replaced by the login used to open the Linux session (normally the name given at the beginning of the procedure).
+
+		Select the downloaded zip file, and with a right click on it unzip it with \emph{Extract here}. That should create a \emph{MopScreens\_master} directory.
+		
+		Enter the newly created directory that contains the whole Mopscreens files hierarchy.
+		
+		If the use of radio is forecast, move the \verb|LoRa| folder in the user home directory, i.e. \verb|/home/<username>|
+
+		Move everything else, files and subdirectories to \verb|/var/www/html| During the command execution it will be asked to confirm that we really want to overwrite the \verb|index.html| file. Click on \emph{Replace}.
+		
+	\subsection{Configuring MopScreens}
+		Configuring Mopscreens requires to edit some php files in order to specify the name of directories, users and passwords defined during installation.
+	
+		Go to the directory containing Mopscreens php files with \verb|cd /var/www/html| command.
+
+		\subsubsection{config.php}
+		Edit the file \emph{config.php} with \verb|sudo nano config.php|
+		
+		Edit the constants MYSQL\_HOSTNAME, MYSQL\_USERNAME, MYSQL\_DBNAME, MYSQL\_PASSWORD et MEOS\_PASSWORD located in the first lines of the file.
+		
+		Possible values are respectively :
+		
+		\begin{itemize}
+			\item for MYSQL\_HOSTNAME : \texttt{"localhost"}
+			\item for MYSQL\_USERNAME : \texttt{"mopscreens"}
+			\item for MYSQL\_DBNAME : \texttt{"mopscreens"}
+			\item for MYSQL\_PASSWORD : the \emph{MopScreens} password you defined in \ref{lbl:utilmysql}
+			\item for MEOS\_PASSWORD :  the password to be used in the \og{}services\fg{} tab of MeOS to connect to MopScreens.
+		\end{itemize}
+		
+		Press \verb|Ctrl-X| to quit and answer Y to save the changes in the file.
+		
+		\subsubsection{index.php}
+			It is also necessary to specify the correct IP address in \emph{index.php}.
+			To do that, edit the \emph{index.php} file with \verb|sudo nano index.php|
+			
+			At line 7 enter the correct IP address, for instance :
+			
+			\verb|header("Location: http://192.168.0.10/show.php");|
+
+			Do the same at line 64 :
+			
+			\scriptsize
+			\verb|<b>For screens configuration <a href="http://192.168.0.10/screenconfig.php">click here !</a></b>|
+			\normalsize
+			
+			and at line 69 :
+			
+			\verb|<b>MeOS URL &nbsp;</b>http://192.168.0.10/update.php|
+		
+		\subsubsection{index.html}
+			To improve security, the \emph{index.html} file redirect automatically to the \emph{index.php} file.
+			
+			It is necessary to indicate the link with the right IP address. Thus one will edit the \emph{index.html} file.
+		
+			At line 10 :
+		
+			\verb|window.location = "http://192.168.0.10/index.php";|
+		
+			At line 15 :
+		
+			\verb|<a href="http://192.168.0.10/index.php">Lien</a>|
+		
+		\subsubsection{Subdirectories index files}
+		
+			Proceed as previously replacing \verb|<ToBeDefined>| by MopScreens installation path (\verb|http://192.168.0.10/| as default) in the \emph{index.php} and \emph{index.html} files of all subdirectories (\emph{htmlfiles}, \emph{img}, \emph{jscolor}, \emph{pictures},  \emph{radio}, \emph{slides} and \emph{styles}) as well as in the \emph{functions.php} file.
+		
+\section{Write access}
+	In order to be allowed to download images, it is mandatory to grand write access to \emph{pictures}, \emph{htmlfiles} and \emph{slides} subdirectories.
+
+	To do so, following commands have to be executed :
+	
+	\begin{itemize}
+		\item \verb|cd /var/www/html|
+		\item \verb|sudo chown -R www-data pictures|
+		\item \verb|sudo chgrp -R www-data pictures|
+		\item \verb|sudo chown -R www-data htmlfiles|
+		\item \verb|sudo chgrp -R www-data htmlfiles|
+		\item \verb|sudo chown -R www-data radio|
+		\item \verb|sudo chgrp -R www-data radio|
+		\item \verb|sudo chown -R www-data slides|
+		\item \verb|sudo chgrp -R www-data slides|
+	\end{itemize}
+	
+\section{Tables creation}
+	Execute {\bfseries once} \emph{setup.php}. To do that enter in a browser navigation bar MopScreens installation path followed by \emph{setup.php}.
+
+	For instance, if MopScreens has been installed in a \emph{cfco} subdirectory and if the server is at IP address \emph{192.168.0.10}, the following command will be typed in the navigation bar : \verb|http://192.168.0.10/cfco/setup.php|
+	
+	If the installation went fine, it may be safer to remove the \emph{setup.php} file to be sure to never rerun it again.
+	
+\section{DNS server installation}
+	Installing a DNS (Domain Name Server) allows spectators to connect to public WiFi entering any url in their browser (\emph{www.o.com} for instance) instead of the server IP.
+	
+	\subsection{DNS server installation}
+		Enter the command : \verb|sudo apt-get install bind9|
+	
+		Downloading about 4.5 MB is proposed. To the question "Do you want to continue ?" answer Y.
+
+	\subsection{DNS server configuration}
+		Edit \emph{named.conf.local} file in the \emph{/etc/bind} directory with the command :
+		
+		\verb|sudo nano /etc/bind/named.conf.local|
+		
+		Add to the file the following lines :
+		
+		\lstset{tabsize=2}
+		\begin{center}
+			\ttfamily
+			\begin{minipage}{8cm}
+				\begin{lstlisting}[basicstyle=\small,language={},gobble=10]
+					zone "." {
+						type master;
+						file "/etc/bind/db.catchall";
+					};
+				\end{lstlisting}
+			\end{minipage}
+		\end{center}
+
+		Press \verb|Ctrl-X| to quit and answer Y when prompted for confirmation to save changes.
+
+		Then create the \emph{db.catchall} file using the command :
+		
+		\verb|sudo nano /etc/bind/db.catchall|
+		
+		and type in (replace 192.168.0.10 with the server IP address) :
+		
+		\lstset{tabsize=2,showspaces=false,showtabs=false,tab=\rightarrowfill}
+		\begin{center}
+			\ttfamily
+			\begin{minipage}{10cm}
+				\begin{lstlisting}[basicstyle=\small,language={},gobble=10]
+					$TTL 604800
+					@ IN SOA . root.localhost. (
+						1       ; serial
+						604800  ; refresh
+						86400   ; retry
+						2419200 ; expire
+						604800 ); negative cache ttl
+
+							IN NS .
+					.   IN A 192.168.0.10
+					*.  IN A 192.168.0.10
+					* A 192.168.0.10
+				\end{lstlisting}
+			\end{minipage}
+		\end{center}
+
+		Press \verb|Ctrl-X| to quit and answer Y to save the changes in the file.
+	
+		Edit the file \emph{host.conf} located in \emph{/etc} directory with the command  :
+		
+		\verb|sudo nano /etc/host.conf|
+		
+		and type in :
+
+		\lstset{tabsize=2,showspaces=false,showtabs=false,tab=\rightarrowfill}
+		\begin{center}
+			\ttfamily
+			\begin{minipage}{10cm}
+				\begin{lstlisting}[basicstyle=\small,language={},gobble=10]
+					order hosts,bind
+					multi on
+				\end{lstlisting}
+			\end{minipage}
+		\end{center}	
+	
+		Press \verb|Ctrl-X| to quit and answer Y to save the changes in the file.
+
+		Restart the DNS server :
+		
+		\verb|sudo service bind9 restart|
+	
+\section{Miscellaneous Configurations}
+	
+	\subsection{Removing shutdown acknowledgement}
+		With version 18.10 of Lubuntu, the user has to acknowledge the shutdown process.
+		
+		This is a problem when no screen is connected as the shutdown process has to wait for a more than 30 seconds timeout to complete.
+		
+		To avoid this situation, it is useful to select the \emph{LXQT session settings} menu and to uncheck \emph{Ask for confirmation to leave session}.
+
+	\subsection{Python installation}
+		The Python 3 interpreter, useful only when planning to use a radio system similar to the one used in Provence, is normally already installed.
+
+		This can be checked executing the following command in a command window : \verb|python3|
+
+		Press \verb|Ctrl-D| to quit the Python interpreter.
+		
+  	\subsubsection{Pip installation}
+			Pip is used to add packages to Python. To install Pip en ter the following Linux command :
+		
+			\verb|sudo apt-get install python3-pip|
+			
+		\subsubsection{Installation of missing Python packages}
+			To install missing packages, enter successively the followin commands in a command window :
+			
+			\begin{itemize}
+				\item \verb|pip3 install coloredlogs|
+				\item \verb|pip3 install termcolor|
+				\item \verb|pip3 install pyserial|
+				\item \verb|sudo -H pip3 install --system coloredlogs|
+				\item \verb|sudo -H pip3 install --system termcolor|
+				\item \verb|sudo -H pip3 install --system pyserial|
+			\end{itemize}
+
+			The last three items are necessary to allow automatically execution at start-up. It is possible that the first three one may be unnecessary if the last three one are executed, but that has not been tested yet.
+
+	\subsection{Automatic launching of the radio management software}
+		This section is only useful if you plan to use a radio system similar to the one used in Provence. The following actions are necessary to allow the \emph{sendpunch.py} script to be automatically run when the server starts.
+		
+		\subsubsection{Modifying the script for it to be executable}
+			If not already done, insert as a first line in the \emph{sendpunch.py} file the following line in order for the system to know it must run the script using Python3.
+			
+			\verb|#!/usr/bin/python3|
+			
+			Then access permissions to the file must be changed with the command :
+			
+			\verb|sudo chmod a+x sendpunch.py|
+		
+		\subsubsection{Creating a service file}
+			It is mandatory to create a \emph{sendpunch.service} file in the \texttt{/etc/systemd/system} directory.
+
+			This file is used to describe the application that must be run when Lubuntu starts. The following lines must be typed-in, replacing "username" by the Lubuntu login.
+			
+			\begin{minted}{xml}
+[Unit]
+Description=Sendpunch service
+
+[Service]
+Type=simple
+ExecStart=/home/<username>/LoRa/sendpunch.py
+Restart=on-failure
+RestartSec=10
+User=root
+
+[Install]
+WantedBy=multi-user.target			
+			\end{minted}
+
+		\subsubsection{Registering the service}
+			The file must then be added as a service (start to run it, enable to run it when Lubuntu starts) :
+			
+			\begin{itemize}
+				\item \verb|sudo systemctl start sendpunch|
+				\item \verb|sudo systemctl enable sendpunch|
+			\end{itemize}
+
+			One can check everything works fine with the following command :
+
+				\verb|systemctl status sendpunch|
+			
+			or
+			
+				\verb|journalctl -f|
+			
+			
+
+	\subsection{NUC WiFi removal}
+		Now, to improve security, it may be wise to remove WiFi access to the server. This can be done clicking in the bottom right corner of the desktop aand selecting \emph{Remove WiFi network}
+
+\section{Tests}
+	It is possible to test that the server is working well entering in a browser the IP address of the server, for instance \verb|http://192.168.0.10|. The welcome page with the link to the screens management pages and a short MeOS configuration help should then appears.
+	
+\begin{figure}[!ht]
+	\centering
+		\includegraphics[width=10cm]{pageaccueil.jpg}
+	\label{fig:b}
+\end{figure}
+
+Clicking the link should bring to the page to use to create screens management configuration, creating events and uploading images (logo, pictures, slides, etc.).
+
+Please refer to MopScreens user manual for more information on using MopScreens.
+
+\begin{figure}[!ht]
+	\centering
+		\includegraphics[width=8cm]{pageconfig.jpg}
+	\label{fig:c}
+\end{figure}
+
+\chapter{WiFi router for results screens}
+
+	The default IP address of the router is 192.168.0.1.
+	
+	Connect the WiFi routerusing one its LAN port to a PC located on the same submask but having a different IP address (i.e. an adress looking like 192.168.0.n with n$\neq$1).
+	
+	That can be the server if its address is 192.168.0.10 as proposed in the previous sections.
+	
+	Run a browser and enter in the navigation bar \verb|192.168.0.1|
+
+	Type-in the login and the password. The defaults are respectively \emph{admin} and \emph{admin}.
+	
+	In the menu located on the left, select \emph{Network} then \emph{LAN}. Enter \texttt{192.168.0.12} as IP address and \texttt{255.255.255.0} as submask.
+
+	In the menu located on the left, select \emph{System Tools} then \emph{Password}. Type-in a name for the user in \emph{Username} and a password in \emph{Password}. Write them down for future reference.
+	
+  If necessary log again in with the new login and password, entering now in the navigation bar the new IP address (192.168.0.12).
+
+	In the \emph{DHCP} menu, check \emph{Enabled}. Enter \texttt{192.168.0.35} as \emph{Start IP} and \texttt{192.168.0.220} as \emph{End IP}.
+	For \emph{Lease time} parmeter, keep the 120 minutes default value.
+
+	In the menu located on the left, select \emph{Network} then \emph{WAN} and select \emph{Dynamic IP}.
+	
+	In \emph{Wireless} menu enter :
+		
+	\begin{itemize}
+		\item \emph{Network Name} : <give a name>
+		\item \emph{Mode} : \texttt{11bgnMixed}
+		\item \emph{Channel} : \texttt{Auto}
+		\item \emph{Bandwidth} : \texttt{Auto}
+	\end{itemize}
+	
+	\textbf{Uncheck} \emph{Enable SSID Broadcast} \textbf{in order for the WiFi used for results display not to be visible publicly}.
+	Spectators will have their own distinct WiFi network in order not to overload the one used for results display which must remain at the highest priority.
+
+	In \emph{Wireless Security} menu, check \texttt{WPA/WPA2}. Select \emph{Type} : \texttt{WPA2-PSK} and \emph{Encryption} : \texttt{AES}.
+
+	Type-in the password that will grant access to the results WiFi network in \emph{Wireless Password}.
+	This password, longer than 8 characters, will have to be entered in all Android dongles for them to connect to the server. It must be kept unknown from the general public.
+	
+	In the \emph{Security Basic security} menu, check \emph{Firewall}.
+	
+	In the \emph{Security Advanced security}  menu, check \emph{Forbid ping packet from WAN port}.
+
+	Finally complete the configuration, setting the router clock in the \emph{System Tools} menu, selecting the relevant \emph{Time Zone} and clicking on \emph{Get From PC} in order for the server to immediately set its local clock to the current time of the server.
+	
+
+\chapter{Public WiFi router}
+	The public WiFi router will be used as a bridge. It thus will have two IP address for the two sub-networks it connects to. One may use for instance 192.168.0.20 on the organisation side and 192.168.1.1 on the public side.
+
+	It will also be used as a DHCP server for the public, and other WiFi routers (having aIP addresses like 192.168.1.2, 192.168.1.3 etc.) will be able to connect to it in order to handle more simultaneous users connexions. One must in that later case manage correctly the frequency bands allocated to the different wireless routers to avoid interferences.
+		
+	\begin{enumerate}
+		\item Connect a PC to one of the LAN port of the router with a RJ45 cable.
+					It may be useful to change the IP address of the PC in order to be on the public side of the LAN.
+					For instance, if the router has already been configured to be at address \texttt{192.168.1.1} on the public side, the PC could have a \texttt{192.168.1.54} IP address and a \texttt{255.255.255.0} submask. If it has never been configured, see the router documentation to find out the default IP address.
+
+		\item Run a browser (Firefox, Chrome, Internet Explorer, etc.) and type-in the IP address of the administration page of the router.
+		\item Log in. See the router documentation for defaults if this is the first time you connect to the router.
+		\item In the \emph{WAN} menu, select \emph{Static} as IP type et ente in \emph{WAN IP address} the IP address of the router on the organisation network, \texttt{192.168.0.20} for instance. Enter \texttt{255.255.255.0} as \emph{Subnet mask}.
+					For \emph{Primary DNS} indicate the IP address of the results display server (the NUC), \texttt{192.168.0.10} for instance.
+					If necessary, use the same address as \emph{Default Gateway}.
+		\item In\emph{Wireless} menu, activate the transmission (\emph{Wireless enabled}).
+					Type-in the ID of the network that will be visible by the public in the \emph{SSID} field, for instance \texttt{PUBLIC1}
+					In \emph{Region} select ETSI and in \emph{Channel} Channel1. Do not use a password for public access : \emph{Authentication Type =} \texttt{None}.
+		\item In \emph{WPS settings} menu, keep WPS disabled.
+		\item In \emph{Network - WAN} menu, check that IP address are static and correct, and that the submask is \texttt{255.255.255.0}.
+					Set the MTU parameter to 1500 (or keep the default value).
+					Keep the secondary IP adresses disabled.
+		\item In \emph{Network - LAN} menu, enter the IP address we want for the router on the public network side (\texttt{192.168.1.1} for instance) and  \texttt{255.255.255.0} as submask.
+		\item In \emph{Network - IGMP proxy} menu, keep \emph{IGMP proxy} disabled.
+		\item In \emph{Network - Operation mode} menu, select \emph{Gateway}.
+		\item In \emph{Wireless - Wireless settings} menu, check that WiFi is enabled and its SSID. Select the (\emph{Radio band}) \texttt{802.11b+g+n} and \emph{Radio mode}as \emph{Access point}. Check that the \emph{SSID broadcast} is \emph{Enabled}.
+		\item In \emph{Wireless - Wireless security} menu, check that tere is no authentication by password \emph{Authentication type : None}.
+		\item In \emph{Wireless - Wireless MAC filtering} menu, check that MAC address filtering is disabled.
+		\item In \emph{DHCP - DHCP settings} menu, activate the DHCP server (\emph{DHCP server status : enabled}).
+					Enter as \emph{Start IP address} \texttt{192.168.1.20} and as \emph{End IP address} \texttt{192.168.1.81} to allow 62 simultaneous connexions on this router. Set the \emph{Address lease time} to 86400 or a smaller value.
+		\item In \emph{System Tools - Password} menu, if this is the first configuration, after entering the current password in \emph{Old Password} select a \emph{New Username} and a \emph{New Password}. Write them down !
+	\end{enumerate}
+	
+	After public configuration, connect its WAN port to one of the LAN port of the results display router with an RJ45 cable.
+
+	Change the IP of the PC used to configure the router in order to let it use a dynamic IP (the router is now a DHCP server). The PC is still connected to a LAN port of the router.
+	
+	Run a browser on the PC and enter in the navigation bar the IP of the results server (\texttt{http://192.168.0.10} for instance). A page with a list of events that occurred during the previous 7 days should be displayed.
+	
+	You should be able to see the results for all classes of the the event you click on.
+
+	Proceed as previously but entering any url (\texttt{www.dummy.com} for instance). The same page listing events should be displayed.
+	
+	Connect to the network using WiFi selecting the defined SSID (PUBLIC1 for instance) with a laptop, a mobile phone or a tablet. Enter in a browser any url (\texttt{www.dummy.com} for instance). The same page should again be displayed.
+	
+	It should not be possible to ask for a result page intended for the screens. This can be checked using as URL \texttt{http://192.168.0.10/pages.php?p=1}. It should also be impossible to connect to the PC running MeOS (located for instance at \texttt{192.168.0.1}) as the public is on a separated network.
+		
+\chapter{Android TV dongle}
+
+	The goal of this section is to install a browser (\emph{Dolphin Browser}) and configure it in order for it to load as default one of the pages dedicated to results display. Android is then configured to automatically launch the browser and open this page at power-up.
+	
+	It is very important to use a browser that can run even if no keyboard is present, without any screen saver or power down mode, and which cover the full screen (no navigation bar).
+	
+	\newcommand{\ico}[1]{\includegraphics[height=7mm]{icone#1.jpg}}
+	
+	\begin{enumerate}
+		\item Create a \emph{gmail} account if you don't have one yet.
+		\item Connect the power supply, a scren, a keyboard and a mouse to the Android TV dongle.
+		\item Click on \ico{1} then on \emph{settings}. \ico{2}
+		\item Enable WiFi clicking on \emph{WiFi OFF $\rightarrow$ ON}, then select a WiFi SSID allowing access to Internet.
+					If necessary, enter the password to get access to the Internet.
+		\item Scroll options on the left and click on \emph{Language \& input}.
+					Click at top right and choose your preferred language \emph{Français (France)}. Validate.
+					Click on \ico{3} at the very bottom left.
+		\item Click on \emph{Play Store} \ico{4}.
+					Click on \emph{existing account}, enter your e-mail (\emph{john@gmail.com}) and the associated password.
+					Click on the right arrow.
+		\item Uncheck \emph{Receive Google Play activities and offers}. Validate and wait.
+					Click on \emph{Not now}. Click again on \emph{Not now}.
+					Uncheck \emph{Keep a backup of this tablet in my Google account}.
+					Click on the right arrow at the bottom right.
+					Uncheck (if not already done) \emph{Keep me in touch of Google Play activities and offers}. Validate.
+		\item Select in the Play Store the \emph{Dolphin Browser} application.
+					At the top right click on \ico{5} then, at the top left click on \emph{All}.
+					Select if not already done \emph{Auto Start} then click on \ico{6} at the very bottom.
+		\item Select the WiFi SSID of the router used for results display on screens.
+					\footnote{The WiFi of this router has been hidden during router configuration to enhance the security. It can be useful for now to have the SSID visible during Android dongles configuration (check \emph{Enable SSID Broadcast} in the \emph{Wireless} menu of the router).
+					Don't forget to disable the SSID broadcast once configuration of all dongle is done.}
+					Select the WiFi SSID allowing the connexion to Internet then \emph{Forget network} in order for the dongle not to try to reconnect to Internet during normal use.
+		\item Click on \ico{1} then click on \emph{Browser} \ico{7}.
+		\item Click at the very top right on \ico{8} then \emph{Settings}.
+					In \emph{General} click on \emph{Set homepage} then \emph{Others}. Enter \texttt{http://192.168.0.10/pages.php?p=}x where x is the number of the Android TV dongle (1 for the first, 2 for the second, etc.) and where 192.168.0.10 has to be replaced by the IP address of the server. Validate.
+		\item Click on the left on \emph{Labs} then check \emph{Quick link}.
+					Click on \ico{3} at the very bottom.
+					Click at the very top left of the screen (near the border) and keep the button pressed. Drag it over icon \ico{9} then on the \emph{X} and release the button.
+		\item Click on \emph{AutoStart} \ico{10}. Click on \emph{OFF}, then on \emph{Add}.
+					Check \emph{Show all applications}. Click on \emph{Browser}.
+		\item Switch the Android TV dongle off and put a label on it with its number (1 for the first, 2 for the second, etc.).
+		
+	\end{enumerate}
+
+\chapter*{APPENDIX : logins and passwords}
+
+Last column contains examples of acceptable values. For security reason, please use different ones at least for passwords !
+
+Fill in the blanks during execution of the installation procedure and keep this page safe.
+
+\section*{Linux server}
+
+\begin{tabular}{lp{6cm}l}
+	IP Address  & \hrulefill &\color{gray}\footnotesize\texttt{192.168.0.10}\\
+	Server name & \hrulefill &\color{gray}\footnotesize\texttt{myserver}\\
+	Login & \hrulefill &\color{gray}\footnotesize\texttt{mylogin}\\
+	Password & \hrulefill &\color{gray}\footnotesize\texttt{mypasssword}\\
+\end{tabular}
+
+
+\section*{MySQL}
+
+\begin{tabular}{lp{6cm}l}
+	Login & \hrulefill &\color{gray}\footnotesize\texttt{mysqllogin}\\
+	Password & \hrulefill &\color{gray}\footnotesize\texttt{mysqlpassword}\\
+\end{tabular}
+
+
+\section*{PhpMyAdmin}
+
+\begin{tabular}{lp{6cm}l}
+	Login & \hrulefill &\color{gray}\footnotesize\texttt{myphpadmlogin}\\
+	Password & \hrulefill &\color{gray}\footnotesize\texttt{myphpadmpassword}\\
+	MopScreens DBNAME & \hrulefill &\color{gray}\footnotesize\texttt{mopscreens}\\
+\end{tabular}
+
+\section*{Apache server}
+
+\begin{tabular}{lp{6cm}l}
+	Directory & \hrulefill &\color{gray}\footnotesize\texttt{/var/www/html}\\
+	Error log file & \hrulefill &\color{gray}\footnotesize\texttt{/var/log/Apache2/error.log}\\
+\end{tabular}
+
+\section*{MopScreens}
+
+\begin{tabular}{lp{6cm}l}
+	URL to be used in MeOS & \hrulefill &\color{gray}\footnotesize\texttt{http://192.168.0.10/myfolder/update.php}\\
+	Password to be used in MeOS & \hrulefill &\color{gray}\footnotesize\texttt{resultspwd}\\
+\end{tabular}
+
+\section*{Results WiFi router}
+
+\begin{tabular}{lp{6cm}l}
+	IP address & \hrulefill &\color{gray}\footnotesize\texttt{192.168.0.12}\\
+	User name & \hrulefill &\color{gray}\footnotesize\texttt{admin}\\
+	Password & \hrulefill &\color{gray}\footnotesize\texttt{routersecretpassword}\\
+	Network name & \hrulefill &\color{gray}\footnotesize\texttt{ORGANIZERPRIVATE}\\
+	Wireless password & \hrulefill &\color{gray}\footnotesize\texttt{resultspassword}\\
+	DHCP address range & \hrulefill &\color{gray}\footnotesize\texttt{192.168.0.35} to \texttt{192.168.0.220}\\
+\end{tabular}
+
+\section*{Public WiFi router}
+
+\begin{tabular}{lp{6cm}l}
+	Private network side IP address & \hrulefill &\color{gray}\footnotesize\texttt{192.168.0.20}\\
+	Public side IP address & \hrulefill &\color{gray}\footnotesize\texttt{192.168.1.1}\\
+	User name & \hrulefill &\color{gray}\footnotesize publicrouterlogin\\
+	Password & \hrulefill &\color{gray}\footnotesize publicrouterpassword\\
+	Network name & \hrulefill &\color{gray}\footnotesize\texttt{PUBLIC1}\\
+	Wireless password & \hrulefill &\color{gray}\footnotesize No password\\ 
+	Channel & \hrulefill &\color{gray}\footnotesize1\\
+	DHCP public IP address range & \hrulefill &\color{gray}\footnotesize\texttt{192.168.1.20} to \texttt{192.168.1.81}\\
+\end{tabular}
+
+	
+\end{document}
+
