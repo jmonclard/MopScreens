@@ -299,6 +299,7 @@
   $bRefreshPage = false;
   $bRefreshRelay = false;
   $bRefreshShowo = false;
+  $bRefreshRogaining = false;
   $bRefreshSummary = false;
   $bRefreshMultistage = false;
 
@@ -357,6 +358,12 @@
               updateMultistage(<?php echo $i; ?>);
               <?php
               $bRefreshMultistage = true;
+          break;
+          case CST_MODE_ROGAINING:
+              ?>
+              updateRogaining(<?php echo $i; ?>);
+              <?php
+              $bRefreshRogaining = true;
           break;
         }
       break;
@@ -420,6 +427,11 @@
   {
     echo 'updateMultistages();'."\n";
    	echo 'create_refresh_multistage();'."\n";
+  }
+  if($bRefreshRogaining)
+  {
+    echo 'updateRogainings();'."\n";
+   	echo 'create_refresh_rogaining();'."\n";
   }
 
 ?>
@@ -660,6 +672,47 @@
         xmlhttp.send();
       }
 
+
+      function updateRogaining(panelIndex)
+      {
+        if  (panelIndex < NB_PANEL)
+        {
+          var xmlhttp = null;
+          if (window.XMLHttpRequest)
+          {// code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+          }
+          else
+          {// code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+          }
+          xmlhttp.onreadystatechange = function()
+          {
+            if((xmlhttp.readyState == 4) && (xmlhttp.status == 200))
+            {
+              //alert(xmlhttp.responseText);
+              dataArray[panelIndex] = eval(xmlhttp.responseText);
+              //alert(dataArray[0]);
+              data2Array[panelIndex][categorieIndex[panelIndex]] = dataArray[panelIndex];
+              tableUpdated[panelIndex] = true;
+            }
+          }
+          var mylimit = ((phpcontent[panelIndex] == <?php echo CST_CONTENT_SUMMARY; ?>) ? phpfixedlines[panelIndex] : 99999);
+          xmlhttp.open("GET", "aj_refreshrogaining.php?cls=" + phpcls[panelIndex][categorieIndex[panelIndex]] +
+                              "&cmpId=" + phpcmpId[panelIndex] +
+                              "&leg=" + phpleg[panelIndex] +
+                              "&ord=" + phpord[panelIndex] +
+                              "&radio=" + phpradio[panelIndex] +
+                              "&rcid=" + rcid +
+                              "&sid=" + screenIndex +
+                              "&limit=" + mylimit +
+                              "&nbradio=" + nbradio, false);
+          xmlhttp.send();
+        }
+      }
+
+
+
       function updateTables()
       {
 <?php
@@ -745,6 +798,19 @@
     if(($panels[$i]->content == CST_CONTENT_RESULT) && ($panels[$i]->mode == CST_MODE_SHOWO))
     {
       print 'updateShowO('.$i.');'."\n";
+    }
+  }
+?>
+      }
+
+      function updateRogainings()
+      {
+<?php
+  for ($i=0; $i<$panelscount; $i++)
+  {
+    if(($panels[$i]->content == CST_CONTENT_RESULT) && ($panels[$i]->mode == CST_MODE_ROGAINING))
+    {
+      print 'updateRogaining('.$i.');'."\n";
     }
   }
 ?>
@@ -1395,6 +1461,141 @@
         return r;
       }
 
+      function generateRogainingCells(line, count, prefix_class,panelscount,alternate, panelIndex)
+      {
+        r = '';
+        switch (panelscount)
+        {
+          case 1:
+            for(var e in line)
+            {
+              datacol = e-2;
+              cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
+              switch(datacol)
+              {
+                case 0:
+                  r += '<td class="td1rog0">' + cell + '</td>\r\n';
+                  break;
+                case 1:
+                  r += '<td class="td1rog1">' + cell + '</td>\r\n';
+                  break;
+                case 2:
+                  r += '<td class="td1rog2">' + cell + '</td>\r\n';
+                  break;
+                case 3:
+                  r += '<td class="td1rog3">' + cell + '</td>\r\n';
+                  break;
+                case 4:
+                  r += '<td class="td1rog4">' + cell + '</td>\r\n';
+                  break;
+                case 5:
+                  r += '<td class="td1rog5">' + cell + '</td>\r\n';
+                  break;
+                default:
+                  break;
+              }
+            }
+            break;
+          case 2:
+            for(var e in line)
+            {
+              datacol = e-2;
+              cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
+              switch(datacol)
+              {
+                case 0:
+                  r += '<td class="td2rog0">' + cell + '</td>\r\n';
+                  break;
+                case 1:
+                  r += '<td class="td2rog1">' + cell + '</td>\r\n';
+                  break;
+                case 2:
+                  r += '<td class="td2rog2">' + cell + '</td>\r\n';
+                  break;
+                case 3:
+                  r += '<td class="td2rog3">' + cell + '</td>\r\n';
+                  break;
+                case 4:
+                  r += '<td class="td2rog4">' + cell + '</td>\r\n';
+                  break;
+                case 5:
+                  r += '<td class="td2rog5">' + cell + '</td>\r\n';
+                  break;
+                default:
+                  break;
+              }
+            }
+            break;
+          case 3:
+            for(var e in line)
+            {
+              datacol = e-2;
+              cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
+              switch(datacol)
+              {
+                case 0:
+                  r += '<td class="td3rog0">' + cell + '</td>\r\n';
+                  break;
+                case 1:
+                  r += '<td class="td3rog1">' + cell + '</td>\r\n';
+                  break;
+                case 2:
+                  r += '<td class="td3rog2">' + cell + '</td>\r\n';
+                  break;
+                case 3:
+                  r += '<td class="td3rog3">' + cell + '</td>\r\n';
+                  break;
+                case 4:
+                  r += '<td class="td3rog4">' + cell + '</td>\r\n';
+                  break;
+                case 5:
+                  r += '<td class="td3rog5">' + cell + '</td>\r\n';
+                  break;
+                default:
+                  break;
+              }
+            }
+            break;
+          case 4:
+            for(var e in line)
+            {
+              datacol = e-2;
+              cell = ((line[e] === '') ? "&nbsp;" : line[e]);
+              cell = addFlag(cell, panelIndex);
+              switch(datacol)
+              {
+                case 0:
+                  r += '<td class="td4rog0">' + cell + '</td>\r\n'; // rank
+                  break;
+                case 1:
+                  r += '<td class="td4rog1">' + cell + '</td>\r\n'; // name
+                  break;
+                case 2: // club (not displayed)
+                  break;
+                case 3:
+                  r += '<td class="td4rog3">' + cell + '</td>\r\n'; // time
+                  break;
+                case 4:
+                  r += '<td class="td4rog4">' + cell + '</td>\r\n'; // points (gross)
+                  break;
+                case 5:
+                  r += '<td class="td4rog5">' + cell + '</td>\r\n'; // points
+                  break;
+                default:
+                  break;
+              }
+            }
+            break;
+        }
+        return r;
+      }
+
+
+
+
       function generateOthersCells(line, prefix_class, panelscount, alternate, panelIndex)
       {
         r = '';
@@ -1449,6 +1650,11 @@
         if(identifiant === 'showo')
         {
           r = generateShowoCells(line, count, prefix_class,panelscount, tmcount, panelIndex);
+        }
+        else
+        if(identifiant === 'rogaining')
+        {
+          r = generateRogainingCells(line, count, prefix_class,panelscount, tmcount, panelIndex);
         }
         else
         if(identifiant === 'relay')
@@ -2047,6 +2253,12 @@
           count = 4 + 3 * tmcount;
         }
         else
+        if(identifiant === 'rogaining')
+        {
+          prefix_class = 'td_rog'+panelscount + '_';
+          count = 7+nbradio;
+        }
+        else
         if(identifiant === 'relay')
         {
           prefix_class = 'td' + tmcount + 'relay';
@@ -2086,7 +2298,7 @@
         {
           if(categorieIndex[panelIndex] == c)
           {
-            if((identifiant === 'result') || (identifiant === 'multistage'))
+            if((identifiant === 'result') || (identifiant === 'multistage') || (identifiant === 'rogaining'))
             {
               if (typeof (phpnumbercls[phpcls[panelIndex][c]]) !== 'undefined')
                 txt_nb = length + ' / ' + phpnumbercls[phpcls[panelIndex][c]];
@@ -2097,7 +2309,7 @@
           }
           else
           {
-            if((identifiant === 'result') || (identifiant === 'relay') || (identifiant === 'multistage'))
+            if((identifiant === 'result') || (identifiant === 'relay') || (identifiant === 'multistage') || (identifiant === 'rogaining'))
             {
               r += '<th class="inactiveOnglet">' + phpTitle[panelIndex][c] + '</th>\r\n';
             }
@@ -2232,7 +2444,7 @@
             line = eval(dataArray[panelIndex][position++]);
             if(line != null)
             {
-              if((identifiant === 'result') || (identifiant === 'multistage'))
+              if((identifiant === 'result') || (identifiant === 'multistage') || (identifiant === 'rogaining'))
               {
                 if(line[0] < 1)
                 {
@@ -2314,7 +2526,7 @@
           //---------------------------- scrolling part -------------------
           if (length - startline + 1 >= (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
           {
-            if((identifiant === 'result') || (identifiant === 'relay') || (identifiant === 'multistage'))
+            if((identifiant === 'result') || (identifiant === 'relay') || (identifiant === 'multistage') || (identifiant === 'rogaining'))
             {
               r += "</tbody>\r\n";
               r += '</table>\r\n';
@@ -2337,7 +2549,7 @@
                 {
                   var cl = ((position % 2) ? 'alternateRow' : 'normalRow');
 
-                  if((identifiant === 'result') || (identifiant === 'multistage'))
+                  if((identifiant === 'result') || (identifiant === 'multistage') || (identifiant === 'rogaining'))
                   {
                     if(line[0] < 1)
                     {
@@ -2421,7 +2633,7 @@
                 var cl = ((position % 2) ? 'alternateRow' : 'normalRow');
                 nf = '';
                 r += '<tr class="' + cl + nf + '">\r\n';
-                if(identifiant === 'result')
+                if ((identifiant === 'result') || (identifiant === 'rogaining'))
                 {
                   count1 = count;
                 }
@@ -2515,6 +2727,11 @@
             {
               count = count;
             }
+            else
+            if(identifiant === 'rogaining')
+            {
+              count = count;
+            }
             while(position < startline - 1 + (phpfixedlines[panelIndex] + phpscrolledlines[panelIndex]))
             {
               position++;
@@ -2574,6 +2791,10 @@
             count = cells_count;
           }
           else if(identifiant === 'showo')
+          {
+            count = count;
+          }
+          else if(identifiant === 'rogaining')
           {
             count = count;
           }
@@ -2653,6 +2874,11 @@
             {
 	            updateMultistage(panelIndex);
             }
+            else
+            if(identifiant === 'rogaining')
+            {
+              updateRogaining(panelIndex);
+            }
             after_decrement_counter[panelIndex] = phpscrollaftertime[panelIndex] / phpscrolltime[panelIndex];
           }
         }
@@ -2682,6 +2908,9 @@
               else
               if($panels[$i]->mode == CST_MODE_MULTISTAGE)
                 $default_identifier = 'multistage';
+              else
+              if($panels[$i]->mode == CST_MODE_ROGAINING)
+                $default_identifier = 'rogaining';
 ?>
                 document.getElementById("tableContainer<?php echo ($i); ?>").innerHTML = ConvertToNiceHtmlTableRow(<?php echo ($i); ?>, '<?php echo $default_identifier; ?>', <?php echo $panels[$i]->firstline; ?>,tm_count,<?php echo $panelscount; ?>, <?php echo $panels[$i]->alternate; ?>);
             }
@@ -2800,6 +3029,11 @@
                     window.setInterval(updateDisplay<?php echo ($i+1); ?>, phpscrolltime[<?php echo ($i); ?>]*100);
                     <?php
                   break;
+                  case CST_MODE_ROGAINING:
+                    ?>
+                    window.setInterval(updateDisplay<?php echo ($i+1); ?>, phpscrolltime[<?php echo ($i); ?>]*100);
+                    <?php
+                  break;
                 }
               break;
               case CST_CONTENT_SUMMARY:
@@ -2837,6 +3071,10 @@
         function create_refresh_multistage()
         {
             window.setInterval(updateMultistages, ATTENTE_BASE_s*1000);
+        }
+        function create_refresh_rogaining()
+        {
+            window.setInterval(updateRogainings, ATTENTE_BASE_s*1000);
         }
         function create_refresh_start()
         {

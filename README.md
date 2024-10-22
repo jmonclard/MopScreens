@@ -12,6 +12,11 @@ To get a better idea of what it looks like, have a look to the (obsolete) englis
 It is provided "as is" as open source code and can be freely used, modified, enhenced and distributed. It is licensed in the same conditions as MeOS.
 
 ## What's new ?
+### 2024-10-22 Add rogaining support
+[x] Add rogaining results display. In fact rogainning support exists back to 2020, but I never uploaded the code to GitHub :-(
+
+**IMPORTANT** For rogaining points to be displayed, a special version of MeOS is mandatory. Currently you have to clone MeOS sources from my GitHub and recompile it for MeOS to export rogaining points. I don't try to follow every versions of MeOS but I generate a patched version every time somebody need an update, egenrally once a year. If you need an already compiled version of the patched MeOS, just ask. Of course you can also apply yourself the tiny changes I made in infoserver.h and infoserver.cpp to any MeOS version source code from Erik GitHub and compile your own.
+
 ### 2019-12-30 Relay bug fixed
 
 [x] Fix relay related bug introduced with flag support in july
@@ -157,8 +162,6 @@ NOTE : Database tables structure have been altered. If you are updating an exist
 [Fixed] If pressing classes edit button while editing a screen configuration, all changes altready made in the form fields are lost. Workaround : use podium icon in screen.php
 
 ## Missing Features
-[ ] Add Rogaining results
-
 [ ] Add multilines scrolling. Well not sure it is really useful...
 
 [ ] Allow course based instead of class based display (may require some changes in MeOS)

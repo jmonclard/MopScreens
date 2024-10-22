@@ -19,6 +19,7 @@ $lang['time'] = "Time";
 $lang['finish'] = "Finish";
 $lang['tottime'] = "Total Time";
 $lang['totafter'] = "&nbsp;";
+$lang['pts'] = "Pts";
 
 define("CST_CONTENT_PICTURE", 1);
 define("CST_CONTENT_TEXT", 2);
@@ -34,6 +35,7 @@ define("CST_MODE_INDIVIDUAL",1);
 define("CST_MODE_RELAY", 2);
 define("CST_MODE_MULTISTAGE",3);
 define("CST_MODE_SHOWO",4);
+define("CST_MODE_ROGAINING",5);
 
 define("CST_OPTION_NORMAL",0);
 define("CST_OPTION_ALTERNATE", 1);

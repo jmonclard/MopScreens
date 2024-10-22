@@ -15,6 +15,11 @@
   limitations under the License.
   */
 
+  //================================================================
+  $rogainingmode = true; // TODO remplacer true par false
+  $nbjours = 200;        // TODO remplacer par 7
+  //================================================================
+
 	include_once('functions.php');
 	session_start();
   header('Content-type: text/html;charset=utf-8');
@@ -184,11 +189,22 @@ td {padding-right:1em;}
         $radio = selectRadio($cls);              
         if ($radio!='') {
           if ($radio == 'finish') {
+	    if ($rogainingmode ) {
+	      $sql = "SELECT cmp.id AS id, cmp.timestamp, cmp.name AS name, cmp.country, org.name AS team, cmp.rt AS time, cmp.stat AS status, cmp.rogpoints AS pts, cmp.rogpointsgross AS ptsgross ".
+                     "FROM mopcompetitor cmp LEFT JOIN moporganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
+		     "WHERE cmp.cls = '$cls' ".
+		     "AND cmp.cid = '$cmpId' ".
+		     "AND ((cmp.stat>0) OR ((cmp.stat=0) AND ((SELECT COUNT(*) FROM mopradio AS mr WHERE mr.cid='$cmpId' AND cmp.id=mr.id) > 0)))".
+		     "ORDER BY FIELD(cmp.stat,1) DESC, cmp.stat ASC, cmp.rogpoints DESC, cmp.rt ASC, cmp.id";
+	     $rname = $lang["finish"];
+	    }
+	    else {
             $sql = "SELECT cmp.id AS id, cmp.name AS name, org.name AS team, cmp.rt AS time, cmp.stat AS status ".
                    "FROM mopcompetitor cmp LEFT JOIN moporganization AS org ON cmp.org = org.id AND cmp.cid = org.cid ".
                    "WHERE cmp.cls = '$cls' ".
                    "AND cmp.cid = '$cmpId' AND cmp.stat>0 ORDER BY cmp.stat, cmp.rt ASC, cmp.id";
             $rname = $lang["finish"];
+          }
           }
           else {
             $rid = (int)$radio;
@@ -208,7 +224,12 @@ td {padding-right:1em;}
                    "ORDER BY radio.rt ASC ";
           }
           $res = mysqli_query($link, $sql);
+	        if ($rogainingmode) {
+            $results = CalculateWiFiRogainingResult($res);
+          }
+	        else {
           $results = calculateResult($res);
+          }
           print "<h3>$rname</h3>\n";
           formatResult($results); 
         }

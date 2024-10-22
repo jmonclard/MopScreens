@@ -1,6 +1,7 @@
 <?php
   /*
   Copyright 2013 Melin Software HB
+  Modified by Jerome Monclard 2015-2020
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -147,7 +148,7 @@ function newCalculateResult($res, $nb_radio = 4)
   $totalResult = array();
   $hasTotal = false;
 
-while ($r = mysqli_fetch_array($res))
+  while ($r = mysqli_fetch_array($res))
   {
     if ($lastTeam == $r['id'])
     {
@@ -240,6 +241,157 @@ while ($r = mysqli_fetch_array($res))
   }
   return $out;
 }
+
+function CalculateRogainingResult($res)
+{
+
+  global $global_out;
+  global $global_out2;
+  global $global_out3;
+  global $global_out4;
+
+  $out = array();
+  $global_out = array();
+  $global_out2 = array();
+  $global_out3 = array();
+  $global_out4 = array();
+  $temp_out = array();
+
+  $place = 0;
+  $count = 0;
+  $lastTime = -1;
+  $bestTime = -1;
+  $lastTeam = -1;
+  $totalResult = array();
+  $hasTotal = false;
+  
+  while ($r = mysqli_fetch_array($res))
+  {
+    if ($lastTeam == $r['id'])
+    {
+      $out[$count]['name'] .= " / " . $r['name'];
+      continue;
+    }
+    else
+    {
+      $lastTeam = $r['id'];
+    }
+    $count++;
+    $t = $r['time']/10;
+    if ($bestTime == -1)
+      $bestTime = $t;
+    if ($lastTime != $t)
+    {
+      $place = $count;
+      $lastTime = $t;
+    }
+    $row = array();
+    if ($r['status'] == 1) {
+      $row['st'] = $r['status'];
+      $row['timestamp'] = $r['timestamp'];
+      $row['place'] = $place;//.".";
+      $row['name'] = $r['name'].'/'.strtolower($r['country']); /*addFlag($r['country']).*/
+      $row['team'] = $r['team'];
+      if ($t >= 3600)
+        $row['time'] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
+      else
+      if ($t > 0)
+        $row['time'] = sprintf("%02d:%02d", ($t/60), $t%60);
+      else
+        $row['time'] = "OK"; // No timing
+    }
+    else  /* status != 1 */
+    {
+      $row['st'] = $r['status'];
+      $row['timestamp'] = $r['timestamp'];
+      $row['place'] = "";
+      $row['name'] = $r['name'].'/'.strtolower($r['country']); /*addFlag($r['country']).*/
+      $row['team'] = $r['team'];
+      $row['time'] = newGetStatusString($r['status']);
+    }
+    $row['ptsgross'] = $r['ptsgross'];
+    $row['pts'] = $r['pts'];
+    $out[$count] = $row;
+  }
+  return $out;
+}
+
+
+// JM 2022-01-01
+function CalculateWiFiRogainingResult($res)
+{
+
+  global $global_out;
+  global $global_out2;
+  global $global_out3;
+  global $global_out4;
+
+  $out = array();
+  $global_out = array();
+  $global_out2 = array();
+  $global_out3 = array();
+  $global_out4 = array();
+  $temp_out = array();
+
+  $place = 0;
+  $count = 0;
+  $lastTime = -1;
+  $bestTime = -1;
+  $lastTeam = -1;
+  $totalResult = array();
+  $hasTotal = false;
+  while ($r = mysqli_fetch_array($res))
+  {
+    if ($lastTeam == $r['id'])
+    {
+      $out[$count]['name'] .= " / " . $r['name'];
+      continue;
+    }
+    else
+    {
+      $lastTeam = $r['id'];
+    }
+    $count++;
+    $t = $r['time']/10;
+    if ($bestTime == -1)
+      $bestTime = $t;
+    if ($lastTime != $t)
+    {
+      $place = $count;
+      $lastTime = $t;
+    }
+
+    $row = array();
+    if ($r['status'] == 1) {
+      $row['place'] = $place;
+      $row['name'] = $r['name'];
+      $row['team'] = $r['team'];
+      if ($t >= 3600)
+        $row['time'] = sprintf("%d:%02d:%02d", $t/3600, ($t/60)%60, $t%60);
+      else
+      if ($t > 0)
+        $row['time'] = sprintf("&nbsp;&nbsp;&nbsp;%02d:%02d", ($t/60), $t%60);
+      else
+        $row['time'] = "OK"; // No timing
+    }
+    else  /* status != 1 */
+    {
+      $row['place'] = "";
+      $row['name'] = $r['name'];
+      $row['team'] = $r['team'];
+      $row['time'] = getStatusString($r['status']);
+    }
+    $penalite = $r['ptsgross']-$r['pts'];
+    $row['pts'] = $r['pts'];
+    $row['ptsgross'] = "(".$r['ptsgross']." - $penalite)";
+
+    $out[$count] = $row;
+  }
+  
+  return $out;
+}
+
+
 
 function newCalculateMultistageAlternateResult($res, $bestTime, $nb_radio = 4)
 {
@@ -511,7 +663,7 @@ function calculateResult($res) {
   $lastTeam = -1;
   $totalResult = array();
   $hasTotal = false;
-while ($r = mysqli_fetch_array($res))
+  while ($r = mysqli_fetch_array($res))
   {
     if ($lastTeam == $r['id']) {
       $out[$count]['name'] .= " / " . $r['name'];
@@ -1619,6 +1771,11 @@ function processCompetitor($cid, $cmp) {
     	$tstat = (int)$input['tstat'];
     	$sqlupdate.=", it=$it, tstat=$tstat";
   	}
+    if (isset($base['pts'])) {
+      $rogpoints = (int)$base['pts'];
+      $rogpointsgross = (int)$base['ptsgr'];
+    	$sqlupdate.=", rogpoints=$rogpoints, rogpointsgross=$rogpointsgross";
+    }
   	updateTable("mopcompetitor", $cid, $id, $sqlupdate);
 	/*
  	// ORIGINAL
