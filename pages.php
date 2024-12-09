@@ -443,7 +443,7 @@
       var ATTENTE_BASE_s = 5;
       var ATTENTE_PAGE_s = 10;
 
-	var pos_tm_finish = new Array();
+	    var pos_tm_finish = new Array();
 
       var dataArray = new Array(4);
       var data2Array = new Array(4);
@@ -875,13 +875,13 @@
 		      	    			case 3:
 		      	      			break;
 		      	    			case 4:
-		      	      			r += '<td class="td3relay5finish3">' + cell +'</td>\r\n';
+		      	      			r += '<td class="finish3">' + cell +'</td>\r\n';
 		      	      			break;
 		      	    			case 5:
 		      	      			r += '<td class="td3relay6">' + cell + '</td>\r\n';
 		      	      			break;
 		      	    			case 6:
-		      	      			r += '<td class="td3relay6">' + cell + '</td>\r\n';
+		      	      			r += '<td class="td3relay7">' + cell + '</td>\r\n';
 		      	      			break;
 		      	  			}
 		      	  			break;
@@ -2358,9 +2358,9 @@
               {
                 if((alternate == 1) && (tmcount == 6))
                   r += '<th class="entete_radio0_6alt" rowspan="2">&nbsp;</th>\r\n';
-		            else if(tmcount == 8)
+                else if(tmcount == 8)
                   r += '<th class="entete_radio0_8" rowspan="2">&nbsp;</th>\r\n';
-		else
+                else
                   r += '<th class="entete_radio0" rowspan="2">&nbsp;</th>\r\n';
                 r += '<th class="entete_radio1" rowspan="2">Radio1</th>\r\n';
                 r += '<th class="entete_radio2" rowspan="2">Radio2</th>\r\n';
@@ -2604,10 +2604,10 @@
                       }
                       if((alternate == 1) && (tmcount == 6))
                         r += '<td class="radio0_6alt">&nbsp;</td>\r\n';
-                  else
-                  if(tmcount == 8)
-                    r += '<td class="radio0_8">&nbsp;</td>\r\n';
-                  else
+                      else
+                      if(tmcount == 8)
+                        r += '<td class="radio0_8">&nbsp;</td>\r\n';
+                      else
                         r += '<td class="radio0">&nbsp;</td>\r\n';
                       if(bFoundRadio)
                       {
